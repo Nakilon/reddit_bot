@@ -1,7 +1,7 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'reddit_bot/version'
+require "reddit_bot"
 
 Gem::Specification.new do |spec|
   spec.name          = "reddit_bot"
