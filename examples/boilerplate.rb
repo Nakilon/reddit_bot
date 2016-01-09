@@ -2,8 +2,8 @@ STDOUT.sync = true
 
 require "pp"
 
-require_relative File.join \
-  *("../../../download_with_retry" if ENV["LOGNAME"] == "nakilon"),
+require_relative File.join "../..",
+  *("../download_with_retry" if ENV["LOGNAME"] == "nakilon"),
   "download_with_retry"
 
 require "reddit_bot"
