@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    reddit_bot (0.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  reddit_bot
+
+BUNDLED WITH
+   1.11.2

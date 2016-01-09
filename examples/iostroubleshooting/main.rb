@@ -1,5 +1,3 @@
-STDOUT.sync = true
-
 require_relative File.join "..", "boilerplate"
 
 # SUBREDDIT = "test___________"
