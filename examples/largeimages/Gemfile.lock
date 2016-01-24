@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    mll (2.2.1)
+    reddit_bot (0.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  mll
+  reddit_bot
+
+BUNDLED WITH
+   1.11.2
