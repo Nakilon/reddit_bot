@@ -1,5 +1,7 @@
 # RedditBot
 
+[![Join the chat at https://gitter.im/Nakilon/reddit_bot](https://badges.gitter.im/Nakilon/reddit_bot.svg)](https://gitter.im/Nakilon/reddit_bot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Gem Version](https://badge.fury.io/rb/reddit_bot.svg)](http://badge.fury.io/rb/mll)  
 
 #### What
