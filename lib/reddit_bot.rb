@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "0.1.2"
+  VERSION = "0.1.3"
 
   class << self
 
@@ -164,7 +164,7 @@ module RedditBot
       end
       response = begin
         http.request request
-      rescue Net::ReadTimeout, Errno::EPIPE # doubt in Errno::EPIPE
+      rescue Net::ReadTimeout, Errno::EPIPE, EOFError
         puts "ERROR: Net::ReadTimeout"
         retry
       end
