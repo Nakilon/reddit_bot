@@ -13,8 +13,8 @@ loop do
     next puts msg["data"]["dest"] unless msg["data"]["dest"] == "CPTFlairBot3"
     next puts msg["data"]["subject"] unless SUBREDDITS.include? msg["data"]["subject"]
     unless /^(?<name>\S+)\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>\S+)$/ =~ msg["data"]["body"]
-      puts "marking invalid message as read: %p" % msg["data"]["body"]
-      BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless ENV["LOGNAME"] == "nakilon"
+      # puts "marking invalid message as read: %p" % msg["data"]["body"]
+      # BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless ENV["LOGNAME"] == "nakilon"
       next
     end
     begin
