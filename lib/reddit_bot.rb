@@ -8,24 +8,24 @@ require "json"
 
 
 module RedditBot
-  VERSION = "0.1.3"
+  VERSION = "1.0.0"
 
-  class << self
+  class Bot
 
-    attr_accessor :token_cached
-    attr_accessor :username
-    attr_accessor :iden_and_captcha
-    attr_accessor :ignore_captcha
-    attr_accessor :secrets
-
-    def init *secrets, **kwargs
-      @secrets = secrets
-      kwargs
+    def initialize secrets, **kwargs
+      @secrets = secrets.values_at *%i{ client_id client_secret password login }
       @ignore_captcha = kwargs[:ignore_captcha]
     end
 
-    def json mtd, url, form = []
-      response = JSON.parse resp_with_token mtd, url, Hash[form].merge({api_type: "json"})
+    # attr_accessor :token_cached
+    # attr_accessor :username
+    # attr_accessor :iden_and_captcha
+    # attr_accessor :ignore_captcha
+    # attr_accessor :secrets
+
+    def json mtd, url, _form = []
+      form = Hash[_form]
+      response = JSON.parse resp_with_token mtd, url, form.merge({api_type: "json"})
       if response.is_a?(Hash) && response["json"] # for example, flairlist.json and {"error": 403} do not have it      
         puts "ERROR OCCURED on #{[mtd, url]}" unless response["json"]["errors"].empty?
         # pp response["json"]
@@ -34,10 +34,10 @@ module RedditBot
           case error
           when "ALREADY_SUB" ; puts "was rejected by moderator if you didn't see in dups"
           when "BAD_CAPTCHA" ; update_captcha
-            json mtd, url, form.concat([
-                                        ["iden", @iden_and_captcha[0]],
-                                        ["captcha", @iden_and_captcha[1]],
-                                      ]) unless @ignore_captcha
+            json mtd, url, form.merger( {
+              iden: @iden_and_captcha[0],
+              captcha: @iden_and_captcha[1],
+            } ) unless @ignore_captcha
           else ; raise error
           end
         end
@@ -48,10 +48,8 @@ module RedditBot
     def wiki_edit subreddit, page, text
       json :post,
         "/r/#{subreddit}/api/wiki/edit",
-        [
-          ["page", page],
-          ["content", text]
-        ]
+        page: page,
+        content: text
       # ["previous", result["data"]["children"].last["id"]],
     end
 
@@ -60,13 +58,11 @@ module RedditBot
     def token
       return @token_cached if @token_cached
       response = JSON.parse(reddit_resp(:post,
-        "https://www.reddit.com/api/v1/access_token",
-        [
-          ["grant_type", "password"],
-          ["username", @username = @secrets[3]],
-          ["password", @secrets[2]],
-        ],
-        {}, # headers
+        "https://www.reddit.com/api/v1/access_token", {
+          grant_type: "password",
+          username: @username = @secrets[3],
+          password: @secrets[2],
+        }, {}, # headers
         [@secrets[0], @secrets[1]],
       ))
       raise response.inspect unless @token_cached = response["access_token"]
@@ -181,13 +177,13 @@ module RedditBot
       fail response.to_hash["x-ratelimit-remaining"][0] \
       if response.to_hash["x-ratelimit-remaining"] &&
          response.to_hash["x-ratelimit-remaining"][0].size <= 2
-# /home/ec2-user/largeimages/bot.rb:126:in `_resp': 288 (RuntimeError)
-      # File.write File.join(__dir__(), "temp.json"), response.body
-# if response.code == "401"
-#   puts request.path
-#   puts request.body
-#   pp request.to_hash
-# end
+
+      # if response.code == "401"
+      #   puts request.path
+      #   puts request.body
+      #   pp request.to_hash
+      # end
+
       response
     end
 

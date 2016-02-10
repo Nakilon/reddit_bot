@@ -7,9 +7,15 @@ require_relative File.join "../..",
   "download_with_retry"
 
 require "reddit_bot"
-# RedditBot.init *File.read(File.join(Dir.pwd, "secrets")).split, ignore_captcha: true
-RedditBot.init *File.read("secrets").split, ignore_captcha: true
+
+if RedditBot::VERSION <= "0.1.3"
+
+  RedditBot.init *File.read("secrets").split, ignore_captcha: true
+
+end
 
 require_relative File.join "../..",
   *(".." if ENV["LOGNAME"] == "nakilon"),
   "awsstatus/2.rb"
+
+require "yaml"
