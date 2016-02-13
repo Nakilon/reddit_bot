@@ -20,7 +20,10 @@ loop do
       begin
         BOT.json :post, "/r/#{msg["data"]["subject"]}/api/flair", {
           name: msg["data"]["author"],
-          text: "#{id} | #{name}",
+          text: {
+            "casualpokemontrades" => "#{id} | #{name}",
+            "relaxedpokemontrades" => "#{name} #{id}",
+          }[msg["data"]["subject"]],
           css_class: css_class,
         }.tap{ |h| puts "setting up flair at /r/#{msg["data"]["subject"]}: #{h}" }
       rescue RuntimeError => e
