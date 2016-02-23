@@ -7,7 +7,7 @@
 #### What
 
 This library provides an easy way to run bots and scripts that use Reddit API.
-I (@nakilon) currently run 8 bots with it.
+I (@nakilon) currently run near 10 bots with it.
 
 #### Why
 
@@ -33,23 +33,13 @@ The [examples folder](examples) includes:
            SkyPorn           Total: 11     Quality: 45%   
            carporn           Total: 11     Quality: 45%   
       InfrastructurePorn     Total: 9      Quality: 77%   
-           ArtPorn           Total: 9      Quality: 22%   
-          EarthPorn          Total: 8      Quality: 75%   
-          waterporn          Total: 8      Quality: 87%   
-           GunPorn           Total: 7      Quality: 85%   
-         ExposurePorn        Total: 7      Quality: 57%   
-         DessertPorn         Total: 7      Quality: 14%   
-         MilitaryPorn        Total: 7      Quality: 57%   
-       ArchitecturePorn      Total: 7      Quality: 57%   
-          spaceporn          Total: 7      Quality: 14%   
-        AbandonedPorn        Total: 6      Quality: 50%   
                                                        
-You obviously can't run these examples as is, because they have some dependencies that are not in this repo. Like `secrets` file for authorization of the following format:
+You obviously can't run these examples as is, because they have some dependencies that are not in this repo. Like `secrets.yaml` file for authorization of the following format:
 
-    Kb9.......6wBw
-    Fqo.....................AFI
-    mybotpassword
-    MyBotUsername
+    :client_id: Kb9.......6wBw
+    :client_secret: Fqo.....................AFI
+    :password: mybotpassword
+    :login: MyBotUsername
 
 #### Usage
 
