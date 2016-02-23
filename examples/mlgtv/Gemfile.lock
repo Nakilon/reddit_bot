@@ -1,7 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    reddit_bot (0.1.0)
+    json (1.8.3)
+    reddit_bot (1.0.0)
+      json
 
 PLATFORMS
   ruby

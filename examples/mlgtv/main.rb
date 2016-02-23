@@ -1,7 +1,8 @@
 require_relative File.join "..", "boilerplate"
 
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
+
 SUBREDDIT = "codcompetitive"
-# SUBREDDIT = "test___________"
 
 loop do
   AWSStatus::touch
@@ -47,7 +48,7 @@ loop do
 
     end.join("  \n") + "\n"
 
-    settings = RedditBot.json(:get, "/r/#{SUBREDDIT}/about/edit")["data"]
+    settings = BOT.json(:get, "/r/#{SUBREDDIT}/about/edit")["data"]
     # https://github.com/praw-dev/praw/blob/c45e5f6ca0c5cd9968b51301989eb82740f8dc85/praw/__init__.py#L1592
     settings.store "sr", settings.delete("subreddit_id")
     settings.store "lang", settings.delete("language")
@@ -68,7 +69,7 @@ loop do
     next puts "nothing to change" if prefix + text + postfix == settings["description"]
 
     settings["description"] = prefix + text + postfix
-    _ = RedditBot.json :post, "/api/site_admin", settings.to_a
+    _ = BOT.json :post, "/api/site_admin", settings.to_a
     fail _.inspect if _ != {"json"=>{"errors"=>[]}} && !(_["json"]["errors"].map(&:first) - ["BAD_CAPTCHA"]).empty?
 
   end
