@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.0.0"
+  VERSION = "1.0.1"
 
   class Bot
 
@@ -51,6 +51,13 @@ module RedditBot
         page: page,
         content: text
       # ["previous", result["data"]["children"].last["id"]],
+    end
+
+    def report reason, thing_id
+      json :post, "/api/report",
+        reason: "other",
+        other_reason: reason,
+        thing_id: thing_id
     end
 
     private
