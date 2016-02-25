@@ -37,7 +37,9 @@ loop do
     # BOT.report "1080x1920", "t3_#{id}"
 
     ### delete
-    BOT.json :post, "/api/remove", id: "t3_#{id}"
+    BOT.json :post, "/api/remove",
+      id: "t3_#{id}",
+      spam: false
     ### modmail
     BOT.json :post, "/api/compose",
       subject: "possible screenshot detected",
