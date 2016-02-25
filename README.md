@@ -19,6 +19,8 @@ The [examples folder](examples) includes:
 
 * iostroubleshooting -- (currently active) bot that applies flairs to posts
 * mlgtv -- (currently active) bot that updates sidebar with currently streaming twitch channels
+* pokemon_trading -- (currently active) bot that sets flair to user according to request submitted via PM
+* oneplus -- bot that removes and modmails about links to 1080x1920 images
 * largeimages -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
   It calculates quality of x-posts from different subreddits based on mods activity (remove/approve).  
   For example, this shows that it would be ok to ignore /r/pics from now:
@@ -54,7 +56,7 @@ probably Gemfile:
     source "https://rubygems.org"
     gem "reddit_bot"
 
-TODO: Write usage instructions here
+TODO: Write usage instructions here  
 TODO: manual on how to create bots with Reddit web interface and run via bash console
 
 #### Contributing and License
