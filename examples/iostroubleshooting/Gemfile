@@ -2,4 +2,4 @@
 
 # ruby "2.0.0"
 gem "json"#, "1.7.7"
-gem "reddit_bot"
+gem "reddit_bot", "0.1.3"
