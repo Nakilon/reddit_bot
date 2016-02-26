@@ -2,7 +2,7 @@
 
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 
-require_relative "../../../../dimensioner/get_dimensions"
+require_relative "#{"../" if ENV["LOGNAME"] == "nakilon"}../../../dimensioner/get_dimensions"
 
 SUBREDDIT = "oneplus"
 # FLAIR_CLASS = "redflair"
