@@ -8,13 +8,15 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.0.1"
+  VERSION = "1.1.0"
 
   class Bot
 
     def initialize secrets, **kwargs
       @secrets = secrets.values_at *%i{ client_id client_secret password login }
-      @ignore_captcha = kwargs[:ignore_captcha]
+      @ignore_captcha = true
+      @ignore_captcha = kwargs[:ignore_captcha] if kwargs.has_key?(:ignore_captcha)
+      @subreddit = kwargs[:subreddit]
     end
 
     # attr_accessor :token_cached
@@ -26,7 +28,7 @@ module RedditBot
     def json mtd, url, _form = []
       form = Hash[_form]
       response = JSON.parse resp_with_token mtd, url, form.merge({api_type: "json"})
-      if response.is_a?(Hash) && response["json"] # for example, flairlist.json and {"error": 403} do not have it      
+      if response.is_a?(Hash) && response["json"] # for example, flairlist.json and {"error": 403} do not have it
         puts "ERROR OCCURED on #{[mtd, url]}" unless response["json"]["errors"].empty?
         # pp response["json"]
         response["json"]["errors"].each do |error, description|
@@ -58,6 +60,38 @@ module RedditBot
         reason: "other",
         other_reason: reason,
         thing_id: thing_id
+    end
+
+    # def each_new_post &block
+    #   # Enumerator.new do |e|
+    #   json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
+    #     fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
+    #     block.call post["data"]
+    #   end
+    # end
+
+    def each_new_post_with_top_level_comments
+      json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
+        fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
+        t = BOT.json :get, "/comments/#{post["data"]["id"]}",
+          # sort: "top",
+          depth: 1,
+          limit: 100500
+        fail "smth weird about /comments/<id> response" unless t.size == 2
+        yield post["data"], t[1]["data"]["children"].map{ |child|
+          fail "unknown type child['kind']: #{child["kind"]}" unless child["kind"] == "t1"
+          child["data"]
+        }.to_enum
+      end
+    end
+
+    def set_post_flair post, link_flair_css_class, link_flair_text
+      json :post, "/api/selectflair",
+        link: post["name"],
+        text: link_flair_text,
+        flair_template_id: (@flairselector_choices ||=
+          json :post, "/r/#{@subreddit}/api/flairselector", link: post["name"]
+        )["choices"].find{ |i| i["flair_css_class"] == link_flair_css_class }["flair_template_id"]
     end
 
     private
