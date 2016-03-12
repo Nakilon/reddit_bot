@@ -1,7 +1,7 @@
 require_relative "../boilerplate"
 
-SUBREDDIT = "test___________"
-# SUBREDDIT = "yayornay"
+# SUBREDDIT = "test___________"
+SUBREDDIT = "yayornay"
 
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true, subreddit: SUBREDDIT
 
@@ -14,9 +14,10 @@ loop do
     yay = []
     nay = []
     comments.each do |comment|
-      yay |= [comment["author"]] if comment["body"][/yay/i]
-      nay |= [comment["author"]] if comment["body"][/nay/i]
+      yay |= [comment["author"]] if comment["body"][/\A\s*yay/i]
+      nay |= [comment["author"]] if comment["body"][/\A\s*nay/i]
     end
+    p [post["id"], yay, nay] if ENV["LOGNAME"] == "nakilon"
     yay, nay = [(yay - nay).size, (nay - yay).size]
     next if 0 == total = yay + nay
     proper_class = yay > nay ? "yay" : yay < nay ? "nay" : "none"
