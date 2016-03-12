@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.0"
+  VERSION = "1.1.1"
 
   class Bot
 
@@ -186,16 +186,8 @@ module RedditBot
           use_ssl: uri.scheme == "https",
           verify_mode: OpenSSL::SSL::VERIFY_NONE,
           open_timeout: 300
-      rescue Errno::ECONNRESET
-        puts "ERROR: SSL_connect (Errno::ECONNRESET)"
-        sleep 5
-        retry
-      rescue OpenSSL::SSL::SSLError
-        puts "ERROR: SSL_connect SYSCALL returned=5 errno=0 state=SSLv3 read server session ticket A (OpenSSL::SSL::SSLError)"
-        sleep 5
-        retry
-      rescue Net::OpenTimeout
-        puts "ERROR: execution expired (Net::OpenTimeout)"
+      rescue Errno::ECONNRESET, OpenSSL::SSL::SSLError, Net::OpenTimeout, SocketError => e
+        puts "ERROR: #{e.class}: #{e}"
         sleep 5
         retry
       end
