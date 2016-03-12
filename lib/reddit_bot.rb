@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.1"
+  VERSION = "1.1.2"
 
   class Bot
 
@@ -40,7 +40,7 @@ module RedditBot
               iden: @iden_and_captcha[0],
               captcha: @iden_and_captcha[1],
             } ) unless @ignore_captcha
-          else ; raise error
+          else ; fail error
           end
         end
       end
@@ -91,22 +91,25 @@ module RedditBot
         text: link_flair_text,
         flair_template_id: (@flairselector_choices ||=
           json :post, "/r/#{@subreddit}/api/flairselector", link: post["name"]
-        )["choices"].find{ |i| i["flair_css_class"] == link_flair_css_class }["flair_template_id"]
+        )["choices"].find{ |i| i["flair_css_class"] == link_flair_css_class }.tap{ |flair|
+          fail "can't find '#{link_flair_css_class}' flair class at https://www.reddit.com/r/#{@subreddit}/about/flair/#link_templates" unless flair
+        }["flair_template_id"]
     end
 
     private
 
     def token
       return @token_cached if @token_cached
-      response = JSON.parse(reddit_resp(:post,
+      response = JSON.parse reddit_resp :post,
         "https://www.reddit.com/api/v1/access_token", {
           grant_type: "password",
           username: @username = @secrets[3],
           password: @secrets[2],
-        }, {}, # headers
-        [@secrets[0], @secrets[1]],
-      ))
-      raise response.inspect unless @token_cached = response["access_token"]
+        }, {}, [@secrets[0], @secrets[1]]
+      unless @token_cached = response["access_token"]
+        fail "bot isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
+        fail response.inspect
+      end
       puts "new token is: #{@token_cached}"
       update_captcha if "true" == resp_with_token(:get, "/api/needs_captcha", {})
       @token_cached
@@ -123,7 +126,7 @@ module RedditBot
     end
 
     def resp_with_token mtd, url, form
-      {} until _ = catch(:"401") do
+      nil until _ = catch(:"401") do
         reddit_resp mtd, "https://oauth.reddit.com" + url, form, [
           ["Authorization", "bearer #{token}"],
           ["User-Agent", "bot/#{@username}/0.0.0 by /u/nakilon"],
@@ -134,7 +137,7 @@ module RedditBot
 
     def reddit_resp *args
       response = nil
-      1.times do
+      tap do
         response = _resp *args
         case response.code
         when "502", "503", "520", "500", "521", "504", "400", "522"

@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    reddit_bot (1.0.1)
+    reddit_bot (1.1.1)
       json
 
 GEM
