@@ -51,6 +51,7 @@ module RedditBot
     end
 
     def wiki_edit subreddit, page, text
+      puts "editing wiki page '/r/#{subreddit}/wiki/#{page}'"
       json :post,
         "/r/#{subreddit}/api/wiki/edit",
         page: page,
@@ -59,6 +60,7 @@ module RedditBot
     end
 
     def report reason, thing_id
+      puts "reporting '#{thing_id}'"
       json :post, "/api/report",
         reason: "other",
         other_reason: reason,
@@ -86,6 +88,7 @@ module RedditBot
     end
 
     def set_post_flair post, link_flair_css_class, link_flair_text
+      puts "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post}'"
       json :post, "/api/selectflair",
         link: post["name"],
         text: link_flair_text,
