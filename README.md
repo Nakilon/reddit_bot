@@ -1,8 +1,7 @@
 # RedditBot
 
-[![Join the chat at https://gitter.im/Nakilon/reddit_bot](https://badges.gitter.im/Nakilon/reddit_bot.svg)](https://gitter.im/Nakilon/reddit_bot?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Gem Version](https://badge.fury.io/rb/reddit_bot.svg)](http://badge.fury.io/rb/mll)  
+[![Join the chat at https://gitter.im/Nakilon/reddit_bot](https://badges.gitter.im/Nakilon/reddit_bot.svg)](https://gitter.im/Nakilon/reddit_bot)
+[![Gem Version](https://badge.fury.io/rb/reddit_bot.svg)](http://badge.fury.io/rb/reddit_bot)
 
 #### What
 
@@ -26,17 +25,17 @@ The [examples folder](examples) includes:
   It calculates quality of x-posts from different subreddits based on mods activity (remove/approve).  
   For example, this shows that it would be ok to ignore /r/pics from now:
 
-             pics            Total: 98     Quality: 19%   
-          wallpapers         Total: 69     Quality: 52%   
-          wallpaper          Total: 45     Quality: 51%   
-           woahdude          Total: 30     Quality: 66%   
-           CityPorn          Total: 17     Quality: 82%   
-           FoodPorn          Total: 13     Quality: 7%    
-           MapPorn           Total: 13     Quality: 46%   
-           SkyPorn           Total: 11     Quality: 45%   
-           carporn           Total: 11     Quality: 45%   
-      InfrastructurePorn     Total: 9      Quality: 77%   
-                                                       
+             pics            Total: 98     Quality: 19%  
+          wallpapers         Total: 69     Quality: 52%  
+          wallpaper          Total: 45     Quality: 51%  
+           woahdude          Total: 30     Quality: 66%  
+           CityPorn          Total: 17     Quality: 82%  
+           FoodPorn          Total: 13     Quality: 7%  
+           MapPorn           Total: 13     Quality: 46%  
+           SkyPorn           Total: 11     Quality: 45%  
+           carporn           Total: 11     Quality: 45%  
+      InfrastructurePorn     Total: 9      Quality: 77%  
+
 You obviously can't run these examples as is, because they have some dependencies that are not in this repo. Like `secrets.yaml` file for authorization of the following format:
 
     :client_id: Kb9.......6wBw
