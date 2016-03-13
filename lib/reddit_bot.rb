@@ -8,12 +8,15 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.2"
+  VERSION = "1.1.3"
 
   class Bot
 
+    attr_reader :name
+
     def initialize secrets, **kwargs
       @secrets = secrets.values_at *%i{ client_id client_secret password login }
+      @name = secrets[:login]
       @ignore_captcha = true
       @ignore_captcha = kwargs[:ignore_captcha] if kwargs.has_key?(:ignore_captcha)
       @subreddit = kwargs[:subreddit]
@@ -73,10 +76,7 @@ module RedditBot
     def each_new_post_with_top_level_comments
       json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
         fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
-        t = BOT.json :get, "/comments/#{post["data"]["id"]}",
-          # sort: "top",
-          depth: 1,
-          limit: 100500
+        t = json :get, "/comments/#{post["data"]["id"]}", depth: 1, limit: 100500#, sort: "top"
         fail "smth weird about /comments/<id> response" unless t.size == 2
         yield post["data"], t[1]["data"]["children"].map{ |child|
           fail "unknown type child['kind']: #{child["kind"]}" unless child["kind"] == "t1"
