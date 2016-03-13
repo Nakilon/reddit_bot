@@ -99,6 +99,31 @@ module RedditBot
         }["flair_template_id"]
     end
 
+    def leave_a_comment thing_id, text
+      puts "leaving a comment on '#{thing_id}'"
+      json(:post, "/api/comment",
+        thing_id: thing_id,
+        text: text,
+      ).tap do |result|
+        fail result["json"]["errors"].to_s unless result["json"]["errors"].empty?
+      end
+    end
+
+    def each_comment_of_the_post_thread article
+      Enumerator.new do |e|
+        f = lambda do |smth|
+          smth["data"]["children"].each do |child|
+            f[child["data"]["replies"]] if child["data"]["replies"].is_a? Hash
+            fail "unknown type child['kind']: #{child["kind"]}" unless child["kind"] == "t1"
+            e << [child["data"]["name"], child["data"]]
+          end
+        end
+        f[ json(:get, "/comments/#{article}", depth: 100500, limit: 100500).tap do |t|
+          fail "smth weird about /comments/<id> response" unless t.size == 2
+        end[1] ]
+      end
+    end
+
     private
 
     def token
