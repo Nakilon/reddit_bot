@@ -67,26 +67,6 @@ module RedditBot
         thing_id: thing_id
     end
 
-    # def each_new_post &block
-    #   # Enumerator.new do |e|
-    #   json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
-    #     fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
-    #     block.call post["data"]
-    #   end
-    # end
-
-    def each_new_post_with_top_level_comments
-      json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
-        fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
-        t = json :get, "/comments/#{post["data"]["id"]}", depth: 1, limit: 100500#, sort: "top"
-        fail "smth weird about /comments/<id> response" unless t.size == 2
-        yield post["data"], t[1]["data"]["children"].map{ |child|
-          fail "unknown type child['kind']: #{child["kind"]}" unless child["kind"] == "t1"
-          child["data"]
-        }.to_enum
-      end
-    end
-
     def set_post_flair post, link_flair_css_class, link_flair_text
       puts "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post}'"
       json :post, "/api/selectflair",
@@ -106,6 +86,18 @@ module RedditBot
         text: text,
       ).tap do |result|
         fail result["json"]["errors"].to_s unless result["json"]["errors"].empty?
+      end
+    end
+
+    def each_new_post_with_top_level_comments
+      json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
+        fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
+        t = json :get, "/comments/#{post["data"]["id"]}", depth: 1, limit: 100500#, sort: "top"
+        fail "smth weird about /comments/<id> response" unless t.size == 2
+        yield post["data"], t[1]["data"]["children"].map{ |child|
+          fail "unknown type child['kind']: #{child["kind"]}" unless child["kind"] == "t1"
+          child["data"]
+        }.to_enum
       end
     end
 
