@@ -1,0 +1,19 @@
+PATH
+  remote: ../..
+  specs:
+    reddit_bot (1.1.2)
+      json
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    json (1.8.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  reddit_bot!
+
+BUNDLED WITH
+   1.11.2
