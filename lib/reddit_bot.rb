@@ -8,12 +8,15 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.3"
+  VERSION = "1.1.3" # :nodoc:
 
   class Bot
 
+    # bot's Reddit username; set via constructor parameter secrets[:login]
     attr_reader :name
 
+    # [secrets] +Hash+ with keys :client_id, :client_secret, :password: and :login
+    # [kwargs] keyword params may include :ignore_captcha that is true by default and :subreddit for clever methods
     def initialize secrets, **kwargs
       @secrets = secrets.values_at *%i{ client_id client_secret password login }
       @name = secrets[:login]
@@ -22,24 +25,21 @@ module RedditBot
       @subreddit = kwargs[:subreddit]
     end
 
-    # attr_accessor :token_cached
-    # attr_accessor :username
-    # attr_accessor :iden_and_captcha
-    # attr_accessor :ignore_captcha
-    # attr_accessor :secrets
-
-    def json mtd, url, _form = []
+    # [mtd] +Symbol+ :get or :post
+    # [path] +String+ an API method
+    # [_form] +Array+ or +Hash+ API method params
+    def json mtd, path, _form = []
       form = Hash[_form]
-      response = JSON.parse resp_with_token mtd, url, form.merge({api_type: "json"})
+      response = JSON.parse resp_with_token mtd, path, form.merge({api_type: "json"})
       if response.is_a?(Hash) && response["json"] # for example, flairlist.json and {"error": 403} do not have it
-        puts "ERROR OCCURED on #{[mtd, url]}" unless response["json"]["errors"].empty?
+        puts "ERROR OCCURED on #{[mtd, path]}" unless response["json"]["errors"].empty?
         # pp response["json"]
         response["json"]["errors"].each do |error, description|
           puts "error: #{[error, description]}"
           case error
           when "ALREADY_SUB" ; puts "was rejected by moderator if you didn't see in dups"
           when "BAD_CAPTCHA" ; update_captcha
-            json mtd, url, form.merger( {
+            json mtd, path, form.merger( {
               iden: @iden_and_captcha[0],
               captcha: @iden_and_captcha[1],
             } ) unless @ignore_captcha
@@ -50,6 +50,9 @@ module RedditBot
       response
     end
 
+    # [subreddit] +String+ subreddit name without "/r" prefix
+    # [page] +String+ page name without "/wiki/" prefix
+    # [text] :nodoc:
     def wiki_edit subreddit, page, text
       puts "editing wiki page '/r/#{subreddit}/wiki/#{page}'"
       json :post,
@@ -59,6 +62,8 @@ module RedditBot
       # ["previous", result["data"]["children"].last["id"]],
     end
 
+    # [reason] :nodoc:
+    # [thing_id] +String+ fullname of a "link, commenr or message"
     def report reason, thing_id
       puts "reporting '#{thing_id}'"
       json :post, "/api/report",
@@ -67,8 +72,11 @@ module RedditBot
         thing_id: thing_id
     end
 
+    # [post] JSON object of a post of self.post
+    # [link_flair_css_class] :nodoc:
+    # [link_flair_text] :nodoc:
     def set_post_flair post, link_flair_css_class, link_flair_text
-      puts "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post}'"
+      puts "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post["name"]}'"
       json :post, "/api/selectflair",
         link: post["name"],
         text: link_flair_text,
@@ -79,6 +87,8 @@ module RedditBot
         }["flair_template_id"]
     end
 
+    # [thing_id] +String+ fullname of a post (or self.post?), comment (and private message?)
+    # [text] :nodoc:
     def leave_a_comment thing_id, text
       puts "leaving a comment on '#{thing_id}'"
       json(:post, "/api/comment",
@@ -89,6 +99,7 @@ module RedditBot
       end
     end
 
+    # :yields: JSON objects: ["data"] part of post or self.post, top level comment (["children"] element)
     def each_new_post_with_top_level_comments
       json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
         fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
@@ -101,6 +112,7 @@ module RedditBot
       end
     end
 
+    # [article] +String+ ID36 of a post or self.post
     def each_comment_of_the_post_thread article
       Enumerator.new do |e|
         f = lambda do |smth|
@@ -145,9 +157,9 @@ module RedditBot
       @iden_and_captcha = [iden, gets.strip]
     end
 
-    def resp_with_token mtd, url, form
+    def resp_with_token mtd, path, form
       nil until _ = catch(:"401") do
-        reddit_resp mtd, "https://oauth.reddit.com" + url, form, [
+        reddit_resp mtd, "https://oauth.reddit.com" + path, form, [
           ["Authorization", "bearer #{token}"],
           ["User-Agent", "bot/#{@username}/0.0.0 by /u/nakilon"],
         ], nil # base auth
