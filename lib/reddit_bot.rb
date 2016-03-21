@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.3" # :nodoc:
+  VERSION = "1.1.4" # :nodoc:
 
   class Bot
 
@@ -77,12 +77,11 @@ module RedditBot
     # [link_flair_text] :nodoc:
     def set_post_flair post, link_flair_css_class, link_flair_text
       puts "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post["name"]}'"
+      return puts "possibly not enough permissions for /r/#{@subreddit}/api/flairselector" if {"error"=>403} == @flairselector_choices ||= json(:post, "/r/#{@subreddit}/api/flairselector", link: post["name"])
       json :post, "/api/selectflair",
         link: post["name"],
         text: link_flair_text,
-        flair_template_id: (@flairselector_choices ||=
-          json :post, "/r/#{@subreddit}/api/flairselector", link: post["name"]
-        )["choices"].find{ |i| i["flair_css_class"] == link_flair_css_class }.tap{ |flair|
+        flair_template_id: @flairselector_choices["choices"].find{ |i| i["flair_css_class"] == link_flair_css_class }.tap{ |flair|
           fail "can't find '#{link_flair_css_class}' flair class at https://www.reddit.com/r/#{@subreddit}/about/flair/#link_templates" unless flair
         }["flair_template_id"]
     end
@@ -189,7 +188,7 @@ module RedditBot
           @token_cached = nil # maybe just update_captcha?
           throw :"401"
         when "403"
-          puts "access denied: #{response.body}"
+          puts "access denied: #{response.body} when requesting: #{args}"
           sleep 5
           # throw :"403"
         when "200"
