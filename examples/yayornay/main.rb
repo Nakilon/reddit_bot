@@ -24,9 +24,11 @@ loop do
     proper_text = "#{(100 * yay / total).round}% Yay"
     next if [proper_class, proper_text] == [post["link_flair_css_class"], post["link_flair_text"]]
     puts "setting #{[proper_class, proper_text]} to #{post["name"]}"
-    {"json"=>{"errors"=>[]}} == _ = BOT.set_post_flair(
-      post, proper_class, proper_text
-    ) or fail _.inspect
+    if _ = BOT.set_post_flair(post, proper_class, proper_text)
+      fail _.inspect unless _ = {"json"=>{"errors"=>[]}}
+    else
+      # 403
+    end
   end
 
   puts "END LOOP #{Time.now}"
