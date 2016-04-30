@@ -21,8 +21,9 @@ The [examples folder](examples) includes:
 * mlgtv -- bot that updates sidebar with currently streaming twitch channels
 * pokemon_trading -- bot that sets flair to user according to request submitted via PM
 * oneplus -- bot that removes and modmails about links to 1080x1920 images
+* wallpaper -- bot that reports images with dimensions not the same as in title
 * yayornay -- bot that flairs posts according to voting in top level comments
-* largeimages -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
+* largeimagesreview -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
   It calculates quality of x-posts from different subreddits based on mods activity (remove/approve).  
   For example, this shows that it would be ok to ignore /r/pics from now:
 

@@ -229,8 +229,8 @@ module RedditBot
       end
       response = begin
         http.request request
-      rescue Net::ReadTimeout, Errno::EPIPE, EOFError
-        puts "ERROR: Net::ReadTimeout"
+      rescue Net::ReadTimeout, Errno::EPIPE, EOFError, SocketError
+        puts "ERROR: network"
         retry
       end
       puts %w{
