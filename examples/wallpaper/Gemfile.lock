@@ -1,0 +1,19 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.3.8)
+    fastimage (1.7.0)
+      addressable (~> 2.3, >= 2.3.5)
+    json (1.8.3)
+    reddit_bot (1.1.5)
+      json
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  fastimage (= 1.7.0)
+  reddit_bot (~> 1.1.5)
+
+BUNDLED WITH
+   1.11.2
