@@ -1,4 +1,5 @@
 require_relative File.join "..", "boilerplate"
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 
 # SUBREDDIT = "test___________"
 SUBREDDIT = "iostroubleshooting"
@@ -10,7 +11,7 @@ loop do
   AWSStatus::touch
   catch :loop do
 
-    existing = RedditBot.json(:get, "/r/#{SUBREDDIT}/api/flairlist")["users"]
+    existing = BOT.json(:get, "/r/#{SUBREDDIT}/api/flairlist")["users"]
     begin
       JSON.parse(DownloadWithRetry::download_with_retry("#{File.read "gas.url"}sheet_name=Bot&spreadsheet_id=10UzXUbawBgXLQkxXDMz28Qcx3IQPjwG9nByd_d8y31I", &:read))
     rescue JSON::ParserError
@@ -25,7 +26,7 @@ loop do
     end.compact.each_slice(50) do |slice|
       CSV(load = ""){ |csv| slice.each{ |record| csv << record } }
       puts load
-      RedditBot.json(:post, "/r/#{SUBREDDIT}/api/flaircsv", [["flair_csv", load]]).each do |report|
+      BOT.json(:post, "/r/#{SUBREDDIT}/api/flaircsv", [["flair_csv", load]]).each do |report|
         pp report unless report.values_at("errors", "ok", "warnings") == [{}, true, {}]
       end
     end
