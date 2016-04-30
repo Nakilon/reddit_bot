@@ -8,13 +8,15 @@ end
 
 
 require_relative File.join "..", "boilerplate"
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
+
 SUBREDDIT = "largeimages"
 
 table = cache.call do
-  RedditBot.json(:get, "/r/#{SUBREDDIT}/about/log", [["limit", 500]])["data"]["children"].map do |child|
+  BOT.json(:get, "/r/#{SUBREDDIT}/about/log", [["limit", 10]])["data"]["children"].map do |child|
     fail child unless child["kind"] == "modaction"
     next unless %w{ removelink approvelink }.include? child["data"]["action"]
-    title = RedditBot.json(:get, "/api/info", [["id", child["data"]["target_fullname"]]])["data"]["children"][0]["data"]["title"]
+    title = BOT.json(:get, "/api/info", [["id", child["data"]["target_fullname"]]])["data"]["children"][0]["data"]["title"]
     [child["data"]["action"], title[/(?<=^\[)\d+x\d+/], title[/[^\/]+$/]]
   end.compact
 end

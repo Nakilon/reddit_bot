@@ -1,15 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    json (1.8.3)
     mll (2.2.1)
-    reddit_bot (0.1.0)
+    reddit_bot (1.1.5)
+      json
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   mll
-  reddit_bot
+  reddit_bot (= 1.1.5)
 
 BUNDLED WITH
    1.11.2
