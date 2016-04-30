@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.4" # :nodoc:
+  VERSION = "1.1.5" # :nodoc:
 
   class Bot
 
@@ -136,7 +136,9 @@ module RedditBot
           grant_type: "password",
           username: @username = @secrets[3],
           password: @secrets[2],
-        }, {}, [@secrets[0], @secrets[1]]
+        }, {
+          "User-Agent" => "bot/#{@username}/0.0.0 by /u/nakilon",
+        }, [@secrets[0], @secrets[1]]
       unless @token_cached = response["access_token"]
         fail "bot isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
         fail response.inspect
@@ -158,10 +160,10 @@ module RedditBot
 
     def resp_with_token mtd, path, form
       nil until _ = catch(:"401") do
-        reddit_resp mtd, "https://oauth.reddit.com" + path, form, [
-          ["Authorization", "bearer #{token}"],
-          ["User-Agent", "bot/#{@username}/0.0.0 by /u/nakilon"],
-        ], nil # base auth
+        reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
+          "Authorization" => "bearer #{token}",
+          "User-Agent" => "bot/#{@username}/0.0.0 by /u/nakilon",
+        }
       end
       _
     end
@@ -202,7 +204,7 @@ module RedditBot
       response.body
     end
 
-    def _resp mtd, url, form, headers, base_auth
+    def _resp mtd, url, form, headers, base_auth = nil
       uri = URI.parse url
       request = if mtd == :get
         uri.query = URI.encode_www_form form # wtf OpenSSL::SSL::SSLError
