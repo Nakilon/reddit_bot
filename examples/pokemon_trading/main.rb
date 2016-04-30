@@ -1,6 +1,5 @@
 ﻿require_relative File.join "..", "boilerplate"
-
-BOT = RedditBot::Bot.new YAML.load(File.read "secrets"), ignore_captcha: true
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 
 loop do
   AWSStatus::touch

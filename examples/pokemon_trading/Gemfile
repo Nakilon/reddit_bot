@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
-if ENV["LOGNAME"] == "nakilon"
-  gem "reddit_bot", "~>1.0", path: File.join("..", "..")
-else
-  gem "reddit_bot", "~>1.0"
-end
+# if ENV["LOGNAME"] == "nakilon"
+#   gem "reddit_bot", "~>1.1.5", path: File.join("..", "..")
+# else
+  gem "reddit_bot", "~>1.1.5"
+# end
