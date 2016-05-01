@@ -26,11 +26,9 @@ loop do
     names.zip(flairs).drop(1).map(&:flatten).each_slice(50) do |slice|
       CSV(load = "") do |csv|
         slice.each do |user, text|
-          if existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
-            puts "skip"
-          else
-            csv << [user, text, CSS_CLASS]
-          end
+          user.strip!
+          text.strip!
+          csv << [user, text, CSS_CLASS] unless existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
         end
       end
       BOT.json(:post, "/r/#{SUBREDDIT}/api/flaircsv", [["flair_csv", load]]).each do |report|
