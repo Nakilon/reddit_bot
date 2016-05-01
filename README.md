@@ -17,8 +17,9 @@ Python (and so PRAW) sucks.
 The [examples folder](examples) includes:
 
 * sexypizza -- bot that updates wiki page with current flairs statistics
-* ion -- bot that flairs posts when some specifically flaired user comments there
 * mlgtv -- bot that updates sidebar with currently streaming twitch channels
+* flairmotron -- bot that flairs users according to Google Spreadsheet
+* ion -- bot that flairs posts when some specifically flaired user comments there
 * pokemon_trading -- bot that sets flair to user according to request submitted via PM
 * iostroubleshooting -- bot that applies flairs to posts (subreddit seems to be suspended)
 * oneplus -- bot that removes and modmails about links to 1080x1920 images
