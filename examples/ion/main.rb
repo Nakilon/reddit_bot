@@ -14,7 +14,7 @@ loop do
     DownloadWithRetry::download_with_retry("https://www.reddit.com/r/#{SUBREDDIT}/comments.json")
   )["data"]["children"].each do |comment|
     id = comment["data"]["link_id"][3..-1]
-    next puts "skip" unless DEVELOPER_CLASS == commenter_flair = comment["data"]["author_flair_css_class"]
+    next 'puts "skip"' unless DEVELOPER_CLASS == commenter_flair = comment["data"]["author_flair_css_class"]
     puts "https://reddit.com/r/#{SUBREDDIT}/comments/#{id}/#{comment["data"]["id"]} '#{commenter_flair}'"
     flairselector = BOT.json :post, "/api/flairselector", { link: comment["data"]["link_id"] }
     existing_flair_class = flairselector["current"]["flair_css_class"]
