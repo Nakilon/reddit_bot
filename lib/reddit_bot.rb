@@ -229,7 +229,7 @@ module RedditBot
       end
       response = begin
         http.request request
-      rescue Net::ReadTimeout, Errno::EPIPE, EOFError, SocketError
+      rescue Net::ReadTimeout, Errno::EPIPE, EOFError, SocketError, Zlib::BufError
         puts "ERROR: network"
         retry
       end
