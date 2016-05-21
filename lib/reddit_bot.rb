@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.5" # :nodoc:
+  VERSION = "1.1.6" # :nodoc:
 
   class Bot
 
