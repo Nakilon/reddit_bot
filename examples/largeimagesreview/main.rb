@@ -23,10 +23,21 @@ end
 
 report = table.group_by(&:last).sort_by{ |_, group| -group.size }.map do |sub, group|
   good = (group.group_by(&:first)["approvelink"] || []).size
-  [sub, "Total: #{group.size}", "Quality: #{good * 100 / group.size}%"]
+  [
+    sub, "Total: #{group.size}",
+    "Quality: #{good * 100 / group.size}%",
+    group.sort_by do |_, resolution, |
+      x, y = resolution.scan(/\d+/).map(&:to_i)
+      x * y
+    end.map do |status, |
+      {"approvelink"=>?✅, "removelink"=>?⛔}[status] || ??
+    end.join,
+  ]
 end
 
-
-require "mll"
-
-puts MLL::grid[report.take(20), spacings: [3, 0]]
+widths = report.transpose.map{ |column| column.map(&:size).max }
+report.each do |row|
+  puts [row, widths, %i{ center ljust ljust ljust }].transpose.map{ |string, width, alignment|
+    " #{string.send(alignment, width)} "
+  }.join
+end

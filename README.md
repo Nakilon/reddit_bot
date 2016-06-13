@@ -27,7 +27,7 @@ The [examples folder](examples) includes:
 * yayornay -- bot that flairs posts according to voting in top level comments
 * largeimagesreview -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
   It calculates quality of x-posts from different subreddits based on mods activity (remove/approve).  
-  For example, this shows that it would be ok to ignore /r/pics from now:
+  For example, this showed that it would be ok to ignore /r/pics from now:
 
              pics            Total: 98     Quality: 19%  
           wallpapers         Total: 69     Quality: 52%  
@@ -39,6 +39,22 @@ The [examples folder](examples) includes:
            SkyPorn           Total: 11     Quality: 45%  
            carporn           Total: 11     Quality: 45%  
       InfrastructurePorn     Total: 9      Quality: 77%  
+
+  Later version of this script also shows remove/approve statuses sorted by linked image resolution:
+
+        EarthPorn      Total: 23  Quality: 82%   ✅⛔✅✅✅✅⛔✅✅✅✅✅⛔⛔✅✅✅✅✅✅✅✅✅  
+         FoodPorn      Total: 5   Quality: 0%    ⛔⛔⛔⛔⛔                   
+         carporn       Total: 4   Quality: 0%    ⛔⛔⛔⛔                    
+         CityPorn      Total: 4   Quality: 100%  ✅✅✅✅                    
+        spaceporn      Total: 4   Quality: 100%  ✅✅✅✅                    
+         MapPorn       Total: 4   Quality: 50%   ✅⛔✅⛔                    
+      BotanicalPorn    Total: 3   Quality: 66%   ✅✅⛔                     
+       CemeteryPorn    Total: 2   Quality: 0%    ⛔⛔                      
+       MilitaryPorn    Total: 2   Quality: 50%   ✅⛔                      
+       DessertPorn     Total: 2   Quality: 50%   ⛔✅                      
+           pic         Total: 2   Quality: 100%  ✅✅                      
+     ArchitecturePorn  Total: 2   Quality: 50%   ✅⛔                      
+      AbandonedPorn    Total: 2   Quality: 100%  ✅✅                      
 
 You obviously can't run these examples as is, because they have some dependencies that are not in this repo. Like `secrets.yaml` file for authorization of the following format:
 
