@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-if ENV["LOGNAME"] == "nakilon"
+if ENV["DEV"]
   gem "reddit_bot", path: "../.."
 else
   gem "reddit_bot", "~>1.1.0"
