@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.6" # :nodoc:
+  VERSION = "1.1.7" # :nodoc:
 
   class Bot
 
@@ -191,7 +191,8 @@ module RedditBot
           throw :"401"
         when "403"
           puts "access denied: #{response.body} when requesting: #{args}"
-          sleep 5
+          sleep 300
+          redo
           # throw :"403"
         when "200"
           "ok"
@@ -229,7 +230,7 @@ module RedditBot
       end
       response = begin
         http.request request
-      rescue Net::ReadTimeout, Errno::EPIPE, EOFError, SocketError, Zlib::BufError
+      rescue Net::ReadTimeout, Errno::EPIPE, EOFError, SocketError, Zlib::BufError, OpenSSL::SSL::SSLError
         puts "ERROR: network"
         retry
       end
