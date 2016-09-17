@@ -1,4 +1,4 @@
-require_relative File.join "..", "boilerplate"
+require_relative File.join "../boilerplate"
 
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 
@@ -36,8 +36,12 @@ loop do
       end
 
       require "cgi"
+      # to update access_token:
+      # 0. see 'client_id' here https://www.twitch.tv/settings/connections and 'client_secret' from local ./readme file
+      # 1. get 'code' by visiting in browser: https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=*******&redirect_uri=http://www.example.com/unused/redirect/uri&scope=channel_read channel_feed_read
+      # 2. NetHTTPUtils.request_data("https://api.twitch.tv/kraken/oauth2/token", :post, form: {client_id: "*******", client_secret: "*****", grant_type: "authorization_code", redirect_uri: "http://www.example.com/unused/redirect/uri", code: "*******"})
       JSON.parse(DownloadWithRetry::download_with_retry(
-        "https://api.twitch.tv/kraken/streams?game=#{CGI::escape "Call of Duty: Black Ops III"}&access_token=#{File.read "twitch.token"}&channel=TyreeLegal,Phizzurp,TheFEARS,CMPLXX,Methodz,Blfire,Tylerfelo,Sender_cw,Diabolic_tv,MJChino,Clayster,Enable,Attach,Zoomaaa,John,ReplaysTV,SpacelyTV,ColeChanTV,SaintsRF,Proofy,Whea7s,ParasiteTV,Ricky,Nameless,Mirx1,Formal,Karma,Scumperjumper,Crimsix,Slacked,Octane,Aqua,Nagafen,Faccento,Jkap,Aches,Teepee,Sharp,Neslo,Goon_jar,TheoryCOD,SteveMochilaCanle,Silly,Merk,Studyy,K1lla93,Burns,Dedo,Swanny,Tommey,DylDaly,Gotaga,QwikerThanU,TCM_Moose,Themarkyb,Maven,MattMrX,CourageJD,Happyy97,Revan,PacmanianDevil,Loonnny,BriceyHD,TeeCM,Senderxz,Zoomaa"
+        "https://api.twitch.tv/kraken/streams?game=#{CGI::escape "Call of Duty: Black Ops III"}&access_token=#{File.read("twitch.token").strip}&client_id=#{File.read("client.id").strip}&channel=TyreeLegal,Phizzurp,TheFEARS,CMPLXX,Methodz,Blfire,Tylerfelo,Sender_cw,Diabolic_tv,MJChino,Clayster,Enable,Attach,Zoomaaa,John,ReplaysTV,SpacelyTV,ColeChanTV,SaintsRF,Proofy,Whea7s,ParasiteTV,Ricky,Nameless,Mirx1,Formal,Karma,Scumperjumper,Crimsix,Slacked,Octane,Aqua,Nagafen,Faccento,Jkap,Aches,Teepee,Sharp,Neslo,Goon_jar,TheoryCOD,SteveMochilaCanle,Silly,Merk,Studyy,K1lla93,Burns,Dedo,Swanny,Tommey,DylDaly,Gotaga,QwikerThanU,TCM_Moose,Themarkyb,Maven,MattMrX,CourageJD,Happyy97,Revan,PacmanianDevil,Loonnny,BriceyHD,TeeCM,Senderxz,Zoomaa"
       ))["streams"].each do |channel|
         list << "* [](#twitch) [](#live) [**#{
           channel["channel"]["display_name"]

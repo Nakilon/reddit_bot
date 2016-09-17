@@ -9,7 +9,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  reddit_bot (~> 1.1.7)
+  reddit_bot (~> 1.1.5)
 
 BUNDLED WITH
-   1.11.2
+   1.12.5

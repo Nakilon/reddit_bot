@@ -223,14 +223,14 @@ module RedditBot
           use_ssl: uri.scheme == "https",
           verify_mode: OpenSSL::SSL::VERIFY_NONE,
           open_timeout: 300
-      rescue Errno::ECONNRESET, OpenSSL::SSL::SSLError, Net::OpenTimeout, SocketError => e
+      rescue OpenSSL::SSL::SSLError, SocketError, Errno::ECONNRESET, Net::OpenTimeout => e
         puts "ERROR: #{e.class}: #{e}"
         sleep 5
         retry
       end
       response = begin
         http.request request
-      rescue Net::ReadTimeout, Errno::EPIPE, EOFError, SocketError, Zlib::BufError, OpenSSL::SSL::SSLError
+      rescue OpenSSL::SSL::SSLError, SocketError, Net::ReadTimeout, Errno::EPIPE, EOFError, Zlib::BufError
         puts "ERROR: network"
         retry
       end
