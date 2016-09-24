@@ -79,6 +79,10 @@ probably Gemfile:
 TODO: Write usage instructions here  
 TODO: manual on how to create bots with Reddit web interface and run via bash console
 
+To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
+
+    $ bundle update reddit_bot
+
 #### Contributing and License
 
 Bug reports and pull requests are welcome.
