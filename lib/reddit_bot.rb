@@ -98,6 +98,36 @@ module RedditBot
       end
     end
 
+    # :yields: JSON objects: ["data"] part of post or self.post
+    def new_posts caching = false
+      cache = lambda do |id, &block|
+        next block.call unless caching
+        require "fileutils"
+        FileUtils.mkdir_p "cache"
+        filename = "cache/#{Digest::MD5.hexdigest id.inspect}"
+        next YAML.load File.read filename if File.exist? filename
+        block.call.tap do |data|
+          File.write filename, YAML.dump(data)
+        end
+      end
+      Enumerator.new do |e|
+        after = {}
+        loop do
+          args = [:get, "/r/#{@subreddit}/new", {limit: 100}.merge(after)]
+          result = cache.call(args){ json *args }
+          fail if result.keys != %w{ kind data }
+          fail if result["kind"] != "Listing"
+          fail if result["data"].keys != %w{ modhash children after before }
+          result["data"]["children"].each do |post|
+            fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
+            e << post["data"]
+          end
+          break unless marker = result["data"]["after"]
+          after = {after: marker}
+        end
+      end
+    end
+
     # :yields: JSON objects: ["data"] part of post or self.post, top level comment (["children"] element)
     def each_new_post_with_top_level_comments
       json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
