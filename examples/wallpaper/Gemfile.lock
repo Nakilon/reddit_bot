@@ -4,8 +4,8 @@ GEM
     addressable (2.3.8)
     fastimage (1.7.0)
       addressable (~> 2.3, >= 2.3.5)
-    json (1.8.3)
-    reddit_bot (1.1.5)
+    json (2.0.2)
+    reddit_bot (1.1.8)
       json
 
 PLATFORMS
@@ -16,4 +16,4 @@ DEPENDENCIES
   reddit_bot (~> 1.1.5)
 
 BUNDLED WITH
-   1.11.2
+   1.13.1
