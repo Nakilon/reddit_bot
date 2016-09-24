@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.7" # :nodoc:
+  VERSION = "1.1.8" # :nodoc:
 
   class Bot
 
@@ -218,12 +218,12 @@ module RedditBot
       # puts request.path
       # pp request.to_hash
       # puts request.body
-      http = begin # I hope this doesn't need retry (Get|Post).new
+      http = begin
         Net::HTTP.start uri.host,
           use_ssl: uri.scheme == "https",
           verify_mode: OpenSSL::SSL::VERIFY_NONE,
           open_timeout: 300
-      rescue OpenSSL::SSL::SSLError, SocketError, Errno::ECONNRESET, Net::OpenTimeout => e
+      rescue OpenSSL::SSL::SSLError, SocketError, Errno::ECONNRESET, Net::OpenTimeout, Errno::ETIMEDOUT => e
         puts "ERROR: #{e.class}: #{e}"
         sleep 5
         retry
