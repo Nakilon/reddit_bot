@@ -21,7 +21,7 @@ loop do
           name: msg["data"]["author"],
           text: {
             "casualpokemontrades" => "#{id} | #{name}",
-            "relaxedpokemontrades" => "#{name} #{id}",
+            # "relaxedpokemontrades" => "#{name} #{id}",
           }[msg["data"]["subject"]],
           css_class: css_class,
         }.tap{ |h| puts "setting up flair at /r/#{msg["data"]["subject"]}: #{h}" }
