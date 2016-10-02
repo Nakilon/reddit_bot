@@ -9,7 +9,7 @@ loop do
     # next unless msg["data"]["author"] == "nakilon" if ENV["LOGNAME"] == "nakilon"
     next puts "bad destination: #{msg["data"]["dest"]}" unless msg["data"]["dest"] == "CPTFlairBot3"
     case msg["data"]["subject"]
-    when "casualpokemontrades", "relaxedpokemontrades"
+    when "casualpokemontrades"#, "relaxedpokemontrades"
       unless /^(?<name>\S+)\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>\S+)$/ =~ msg["data"]["body"]
         puts "invalid message for #{msg["data"]["subject"]}: %p" % msg["data"]["body"] if ENV["LOGNAME"] == "nakilon"
         # puts "marking invalid message as read: %p" % msg["data"]["body"]
@@ -21,7 +21,7 @@ loop do
           name: msg["data"]["author"],
           text: {
             "casualpokemontrades" => "#{id} | #{name}",
-            # "relaxedpokemontrades" => "#{name} #{id}",
+            "relaxedpokemontrades" => "#{name} #{id}",
           }[msg["data"]["subject"]],
           css_class: css_class,
         }.tap{ |h| puts "setting up flair at /r/#{msg["data"]["subject"]}: #{h}" }
