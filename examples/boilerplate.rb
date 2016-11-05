@@ -1,7 +1,7 @@
 STDOUT.sync = true
 require "pp"
 
-require "net_http_utils"
+require "net_http_utils" if Gem.loaded_specs.include? "net_http_utils"
 
 if ENV["DEV"]
   require_relative "../lib/reddit_bot"
