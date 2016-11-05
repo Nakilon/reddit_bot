@@ -1,3 +1,9 @@
+GIT
+  remote: https://gist.github.com/97549ceb58d21e1fcbc0e6cdaf92fce8.git
+  revision: 54c47ab3f9665f3e35a8e94fdd267e3743c736a9
+  specs:
+    net_http_utils (0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -9,7 +15,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  net_http_utils (= 0)!
   reddit_bot (~> 1.1.5)
 
 BUNDLED WITH
-   1.12.5
+   1.13.1
