@@ -37,14 +37,20 @@ loop do
       # 0. see 'client_id' here https://www.twitch.tv/settings/connections and 'client_secret' from local ./readme file
       # 1. get 'code' by visiting in browser: https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=*******&redirect_uri=http://www.example.com/unused/redirect/uri&scope=channel_read channel_feed_read
       # 2. NetHTTPUtils.request_data("https://api.twitch.tv/kraken/oauth2/token", :post, form: {client_id: "*******", client_secret: "*****", grant_type: "authorization_code", redirect_uri: "http://www.example.com/unused/redirect/uri", code: "*******"})
-      JSON.parse(
-        NetHTTPUtils.request_data "https://api.twitch.tv/kraken/streams?game=#{CGI::escape "Call of Duty: Infinite Warfare"}&access_token=#{File.read("twitch.token").strip}&client_id=#{File.read("client.id").strip}&channel=Ricky,ACHES,Lacefield,Clayster,Enable,Zoomaa,Attach,TheFEARS,PHiZZURP,MiRx1,SaintsRF,StuDyy,SpaceLyTV,NAMELESS,Scumperjumper,FORMAL,Crimsix,Karma,Loony,Slacked,Octane,MJChino,Diabolic_TV,ImTheIvy,Senderxz,Jkap,John,SlasheRAL,Apathy,ColtHavok,MikeSwarley,ParasiteTV,TyreeLegal,Silly,Blfire,methodz,TwiZzyTV,Mochila,Remy,Xotic16,AquA,Faccento,Nagafen,Tylerfelo,TheoryCoD,ColeChanTV,happyy97,goonjar,Burns,Dedo,Neslo,TeeCM,K1lla93,NeLsoNNaTeR,ProoFy,Whea7s,MBoZe,Merk,Nadeshot,ReeP,Sharp,TeePee,Braaain2015,Nolsonn,QwiKeRTHaNu,Zedenyer1,Jurd,Tommey,Swanny,MadCatEU,Rated_EU1,BsportJoshh,Sy_Vortex,TheMarkyB,Peatie95,urbandm,TreiZer0,iDqvee,Tojor,MethodZ_TV,Gotaga,WailersWL,TCM_Moose,RampageSkrapz,Reedy,fighta71,Swiftazor,BacabecNZ,Zeuss_Gaming,Hopeyy,GuydraCOD,mattmrx,Maven,CouRageJD,Revan,BriceyHD,Benson,PHILWHI7"
-      )["streams"].each do |channel|
-        list << "* [](#twitch) [](#live) [**#{
-          channel["channel"]["display_name"]
-        }**](#{
-          channel["channel"]["url"]
-        })"
+      [
+        "Call of Duty: Infinite Warfare",
+        "Call of Duty: Modern Warfare Remastered",
+        "Call of Duty 4: Modern Warfare",
+      ].each do |game|
+        JSON.parse(
+          NetHTTPUtils.request_data "https://api.twitch.tv/kraken/streams?game=#{CGI::escape game}&access_token=#{File.read("twitch.token").strip}&client_id=#{File.read("client.id").strip}&channel=Ricky,ACHES,Lacefield,Clayster,Enable,Zoomaa,Attach,TheFEARS,PHiZZURP,MiRx1,SaintsRF,StuDyy,SpaceLyTV,NAMELESS,Scumperjumper,FORMAL,Crimsix,Karma,Loony,Slacked,Octane,MJChino,Diabolic_TV,ImTheIvy,Senderxz,Jkap,John,SlasheRAL,Apathy,ColtHavok,MikeSwarley,ParasiteTV,TyreeLegal,Silly,Blfire,methodz,TwiZzyTV,Mochila,Remy,Xotic16,AquA,Faccento,Nagafen,Tylerfelo,TheoryCoD,ColeChanTV,happyy97,goonjar,Burns,Dedo,Neslo,TeeCM,K1lla93,NeLsoNNaTeR,ProoFy,Whea7s,MBoZe,Merk,Nadeshot,ReeP,Sharp,TeePee,Braaain2015,Nolsonn,QwiKeRTHaNu,Zedenyer1,Jurd,Tommey,Swanny,MadCatEU,Rated_EU1,BsportJoshh,Sy_Vortex,TheMarkyB,Peatie95,urbandm,TreiZer0,iDqvee,Tojor,MethodZ_TV,Gotaga,WailersWL,TCM_Moose,RampageSkrapz,Reedy,fighta71,Swiftazor,BacabecNZ,Zeuss_Gaming,Hopeyy,GuydraCOD,mattmrx,Maven,CouRageJD,Revan,BriceyHD,Benson,PHILWHI7"
+        )["streams"].each do |channel|
+          list << "* [](#twitch) [](#live) [**#{
+            channel["channel"]["display_name"]
+          }**](#{
+            channel["channel"]["url"]
+          })"
+        end
       end
 
     end.join("  \n") + "\n"
