@@ -1,20 +1,19 @@
 ﻿require_relative "../boilerplate"
 
-BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true#, subreddit: SUBREDDIT
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 SUBREDDIT = "wallpaper"
 
-if ENV["LOGNAME"] == "nakilon"
+if Gem::Platform.local.os == "darwin"
   require_relative "../../../../dimensioner/get_dimensions"
 else
-  require_relative File.join Dir.home, "dimensioner/get_dimensions"
+  require_relative "#{Dir.home}/get_dimensions"
 end
 
 checked = []
 loop do
-  AWSStatus::touch
+  Hearthbeat.beat "u_wallpaperpedantbot_r_#{SUBREDDIT}", 70 unless Gem::Platform.local.os == "darwin"
   puts "LOOP #{Time.now}"
 
-  # _ = DownloadWithRetry::download_with_retry("https://www.reddit.com/r/#{SUBREDDIT}.json?sort=new&restrict_sr=on&t=hour") \
   BOT.json(:get, "/r/#{SUBREDDIT}/new")["data"]["children"].each do |post|
     id, url, title, subreddit = post["data"].values_at(*%w{ id url title subreddit })
     next if checked.include? id
