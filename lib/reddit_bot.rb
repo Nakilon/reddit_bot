@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.1.8" # :nodoc:
+  VERSION = "1.2.0" # :nodoc:
 
   class Bot
 
@@ -50,17 +50,17 @@ module RedditBot
       response
     end
 
-    # [subreddit] +String+ subreddit name without "/r" prefix
-    # [page] +String+ page name without "/wiki/" prefix
-    # [text] :nodoc:
-    def wiki_edit subreddit, page, text
-      puts "editing wiki page '/r/#{subreddit}/wiki/#{page}'"
-      json :post,
-        "/r/#{subreddit}/api/wiki/edit",
-        page: page,
-        content: text
-      # ["previous", result["data"]["children"].last["id"]],
-    end
+    # # [subreddit] +String+ subreddit name without "/r" prefix
+    # # [page] +String+ page name without "/wiki/" prefix
+    # # [text] :nodoc:
+    # def wiki_edit subreddit, page, text
+    #   puts "editing wiki page '/r/#{subreddit}/wiki/#{page}'"
+    #   json :post,
+    #     "/r/#{subreddit}/api/wiki/edit",
+    #     page: page,
+    #     content: text
+    #   # ["previous", result["data"]["children"].last["id"]],
+    # end
 
     # [reason] :nodoc:
     # [thing_id] +String+ fullname of a "link, commenr or message"

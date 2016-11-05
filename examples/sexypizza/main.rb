@@ -18,9 +18,17 @@ loop do
       sort_by{ |_, group| -group.size }.
       map{ |flair, group| "#{flair} | #{group.size}" }.
       join("\n")
-  puts text
 
-  p BOT.wiki_edit SUBREDDIT, "toppings", text
+  if text != BOT.json(:get, "/r/#{SUBREDDIT}/wiki/toppings")["data"]["content_md"]
+    puts "editing wiki page '/r/#{SUBREDDIT}/wiki/toppings'"
+    pp text
+    p json :post,
+      "/r/#{SUBREDDIT}/api/wiki/edit",
+      page: "toppings",
+      content: text
+  else
+    puts "nothing to change"
+  end
 
   sleep 3600
 end
