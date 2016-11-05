@@ -269,7 +269,7 @@ module RedditBot
         x-ratelimit-used
         x-ratelimit-reset
       }.map{ |key| "#{key}=#{response.to_hash[key]}" }.join ", " \
-        if ENV["LOGNAME"] == "nakilon"
+        if Gem::Platform.local.os == "darwin"
       # if response.to_hash["x-ratelimit-remaining"]
       #   p response.to_hash["x-ratelimit-remaining"][0]
       #   fail response.to_hash["x-ratelimit-remaining"][0]
