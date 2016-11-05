@@ -1,19 +1,17 @@
 require_relative "../boilerplate"
 
-BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true#, subreddit: SUBREDDIT
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 SUBREDDIT = "CouncilOfRicks"
 
 CSS_CLASS = "blueflair"
 
-# require "open-uri"
-# require "json"
 require "csv"
 
 loop do
-  AWSStatus::touch
+  Hearthbeat.beat "u_FlairMoTron_r_CouncilOfRicks", 310 unless Gem::Platform.local.os == "darwin"
 
   names, flairs = begin
-    JSON.parse DownloadWithRetry::download_with_retry File.read "gas.url"
+    JSON.parse NetHTTPUtils.request_data File.read "gas.url"
   rescue JSON::ParserError
     puts "smth wrong with GAS script"
     sleep 60
@@ -21,6 +19,7 @@ loop do
   end
 
   existing = BOT.json(:get, "/r/#{SUBREDDIT}/api/flairlist", limit: 1000)["users"]
+  fail if existing.size >= 1000
 
   if names.size == flairs.size
     names.zip(flairs).drop(1).map(&:flatten).each_slice(50) do |slice|

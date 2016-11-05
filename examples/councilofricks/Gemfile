@@ -1,3 +1,4 @@
 source "https://rubygems.org"
 
 gem "reddit_bot", "~>1.1.5"
+gem "net_http_utils", ?0, gist: "97549ceb58d21e1fcbc0e6cdaf92fce8"
