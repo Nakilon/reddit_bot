@@ -5,7 +5,7 @@ BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: tr
 SUBREDDIT = "codcompetitive"
 
 loop do
-  AWSStatus::touch
+  Hearthbeat.beat "/r/CoDCompetitive", 70 unless Gem::Platform.local.os == "darwin"
   catch :loop do
 
     text = " Live Streams\n\n" + [].tap do |list|
