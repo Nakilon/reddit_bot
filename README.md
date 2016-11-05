@@ -17,13 +17,12 @@ Python (and so PRAW) sucks.
 The [examples folder](examples) includes:
 
 * sexypizza -- bot that updates wiki page with current flairs statistics
-* mlgtv -- bot that updates sidebar with currently streaming twitch channels
-* flairmotron -- bot that flairs users according to Google Spreadsheet
 * devflairbot -- bot that flairs posts when some specifically flaired user comments there
-* pokemon_trading -- bot that sets flair to user according to request submitted via PM
-* iostroubleshooting -- bot that applies flairs to posts (subreddit seems to be suspended)
-* oneplus -- bot that removes and modmails about links to 1080x1920 images
+* mlgtv -- bot that updates sidebar with currently streaming twitch channels
+* councilofricks -- bot that flairs users according to Google Spreadsheet
 * wallpaper -- bot that reports images with dimensions not the same as in title
+* pokemon_trading -- bot that sets flair to user according to request submitted via PM
+* oneplus -- bot that removes and modmails about links to 1080x1920 images
 * yayornay -- bot that flairs posts according to voting in top level comments
 * largeimagesreview -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
   It calculates quality of x-posts from different subreddits based on mods activity (remove/approve).  
