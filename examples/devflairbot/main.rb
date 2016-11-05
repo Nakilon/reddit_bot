@@ -1,25 +1,24 @@
 ﻿require_relative "../boilerplate"
 
-BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true#, subreddit: SUBREDDIT
-
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 
 loop do
-  AWSStatus::touch
+  Hearthbeat.beat "u_DevFlairBot_r_ion_r_survivetheculling", 70 unless Gem::Platform.local.os == "darwin"
   puts "LOOP #{Time.now}"
 
   [
     ["ion", "Developer"],
     ["survivetheculling", "Developer"],
   ].each do |subreddit, developer_class|
-    puts subreddit
+    puts "sub: #{subreddit}"
 
     JSON.parse(
-      DownloadWithRetry::download_with_retry("https://www.reddit.com/r/#{subreddit}/comments.json")
+      NetHTTPUtils.request_data "https://www.reddit.com/r/#{subreddit}/comments.json"
     )["data"]["children"].each do |comment|
       id = comment["data"]["link_id"][3..-1]
       commenter_flair = comment["data"]["author_flair_css_class"]
-      puts commenter_flair if commenter_flair
-      next 'puts "skip"' unless developer_class == commenter_flair
+      # puts "flair: #{commenter_flair}" if commenter_flair
+      next unless developer_class == commenter_flair
       puts "https://reddit.com/r/#{subreddit}/comments/#{id}/#{comment["data"]["id"]} '#{commenter_flair}'"
       flairselector = BOT.json :post, "/api/flairselector", { link: comment["data"]["link_id"] }
       existing_flair_class = flairselector["current"]["flair_css_class"]
