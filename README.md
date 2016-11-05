@@ -21,7 +21,7 @@ The [examples folder](examples) includes:
 * mlgtv -- bot that updates sidebar with currently streaming twitch channels
 * councilofricks -- bot that flairs users according to Google Spreadsheet
 * wallpaper -- bot that reports images with dimensions not the same as in title
-* pokemon_trading -- bot that sets flair to user according to request submitted via PM
+* cptflairbot3 -- bot that sets flair to user according to request submitted via PM
 * oneplus -- bot that removes and modmails about links to 1080x1920 images
 * yayornay -- bot that flairs posts according to voting in top level comments
 * largeimagesreview -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
