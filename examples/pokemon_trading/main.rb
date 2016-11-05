@@ -2,18 +2,17 @@
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 
 loop do
-  AWSStatus::touch
+  Hearthbeat.beat "u_CPTFlairBot3_r_casualpokemontrades", 70 unless Gem::Platform.local.os == "darwin"
 
   unread = BOT.json :get, "/message/unread"
   unread["data"]["children"].each do |msg|
-    # next unless msg["data"]["author"] == "nakilon" if ENV["LOGNAME"] == "nakilon"
     next puts "bad destination: #{msg["data"]["dest"]}" unless msg["data"]["dest"] == "CPTFlairBot3"
     case msg["data"]["subject"]
-    when "casualpokemontrades"#, "relaxedpokemontrades"
+    when "casualpokemontrades"
       unless /^(?<name>\S+)\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>\S+)$/ =~ msg["data"]["body"]
-        puts "invalid message for #{msg["data"]["subject"]}: %p" % msg["data"]["body"] if ENV["LOGNAME"] == "nakilon"
+        puts "invalid message for #{msg["data"]["subject"]}: %p" % msg["data"]["body"] if Gem::Platform.local.os == "darwin"
         # puts "marking invalid message as read: %p" % msg["data"]["body"]
-        # BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless ENV["LOGNAME"] == "nakilon"
+        # BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless Gem::Platform.local.os == "darwin"
         next
       end
       begin
@@ -39,6 +38,6 @@ loop do
     break # just for a case
   end
 
-  puts "END LOOP #{Time.now}" if ENV["LOGNAME"] == "nakilon"
+  puts "END LOOP #{Time.now}" if Gem::Platform.local.os == "darwin"
   sleep 60
 end
