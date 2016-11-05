@@ -3,7 +3,7 @@
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 
 loop do
-  Hearthbeat.beat "u_DevFlairBot_r_ion_r_survivetheculling", 70 unless Gem::Platform.local.os == "darwin"
+  Hearthbeat.beat "u_DevFlairBot_r_ion_r_survivetheculling", 130 unless Gem::Platform.local.os == "darwin"
   puts "LOOP #{Time.now}"
 
   [
@@ -48,5 +48,5 @@ loop do
   end
 
   puts "END LOOP #{Time.now}"
-  sleep 60
+  sleep 120
 end
