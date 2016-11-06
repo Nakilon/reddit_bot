@@ -1,13 +1,10 @@
 require_relative "../boilerplate"
 
-# SUBREDDIT = "test___________"
 SUBREDDIT = "yayornay"
-
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true, subreddit: SUBREDDIT
 
-
 loop do
-  AWSStatus::touch
+  Hearthbeat.beat "u_gotfan247_r_yayornay", 310 unless Gem::Platform.local.os == "darwin"
   puts "LOOP #{Time.now}"
 
   BOT.each_new_post_with_top_level_comments do |post, comments|
@@ -17,7 +14,7 @@ loop do
       yay |= [comment["author"]] if comment["body"][/\A\s*yay/i]
       nay |= [comment["author"]] if comment["body"][/\A\s*nay/i]
     end
-    p [post["id"], yay, nay] if ENV["LOGNAME"] == "nakilon"
+    p [post["id"], yay, nay] if Gem::Platform.local.os == "darwin"
     yay, nay = [(yay - nay).size, (nay - yay).size]
     next if 0 == total = yay + nay
     proper_class = yay > nay ? "yay" : yay < nay ? "nay" : "none"
