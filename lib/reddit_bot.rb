@@ -276,7 +276,7 @@ module RedditBot
       # end
       fail response.to_hash["x-ratelimit-remaining"][0] \
       if response.to_hash["x-ratelimit-remaining"] &&
-         response.to_hash["x-ratelimit-remaining"][0].size <= 2
+         response.to_hash["x-ratelimit-remaining"][0].size < 5
 
       # if response.code == "401"
       #   puts request.path
