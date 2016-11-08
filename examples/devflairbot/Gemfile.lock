@@ -1,6 +1,6 @@
 GIT
   remote: https://gist.github.com/97549ceb58d21e1fcbc0e6cdaf92fce8.git
-  revision: 54c47ab3f9665f3e35a8e94fdd267e3743c736a9
+  revision: c9cb0b77bff6d7b456b9c959685871656e60bd8b
   specs:
     net_http_utils (0)
 
