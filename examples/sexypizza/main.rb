@@ -22,7 +22,7 @@ loop do
   if text != BOT.json(:get, "/r/#{SUBREDDIT}/wiki/toppings")["data"]["content_md"]
     puts "editing wiki page '/r/#{SUBREDDIT}/wiki/toppings'"
     pp text
-    p json :post,
+    p BOT.json :post,
       "/r/#{SUBREDDIT}/api/wiki/edit",
       page: "toppings",
       content: text
