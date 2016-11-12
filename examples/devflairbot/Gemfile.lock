@@ -1,6 +1,7 @@
 GIT
   remote: https://gist.github.com/97549ceb58d21e1fcbc0e6cdaf92fce8.git
   revision: c9cb0b77bff6d7b456b9c959685871656e60bd8b
+  ref: c9cb0b7
   specs:
     net_http_utils (0)
 
@@ -19,4 +20,4 @@ DEPENDENCIES
   reddit_bot (~> 1.1.5)
 
 BUNDLED WITH
-   1.13.1
+   1.13.5
