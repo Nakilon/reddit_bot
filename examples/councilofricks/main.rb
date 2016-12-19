@@ -11,7 +11,7 @@ loop do
   Hearthbeat.beat "u_FlairMoTron_r_CouncilOfRicks", 310 unless Gem::Platform.local.os == "darwin"
 
   names, flairs = begin
-    JSON.parse NetHTTPUtils.request_data File.read "gas.url"
+    catch(:"404"){ JSON.parse NetHTTPUtils.request_data File.read "gas.url" } or raise(JSON::ParserError)
   rescue JSON::ParserError
     puts "smth wrong with GAS script"
     sleep 60
