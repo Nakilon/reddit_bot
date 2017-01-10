@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.2.0" # :nodoc:
+  VERSION = "1.2.1" # :nodoc:
 
   class Bot
 
@@ -253,7 +253,7 @@ module RedditBot
           use_ssl: uri.scheme == "https",
           verify_mode: OpenSSL::SSL::VERIFY_NONE,
           open_timeout: 300
-      rescue OpenSSL::SSL::SSLError, SocketError, Errno::ECONNRESET, Net::OpenTimeout, Errno::ETIMEDOUT => e
+      rescue OpenSSL::SSL::SSLError, SocketError, Errno::ECONNRESET, Net::OpenTimeout, Errno::ETIMEDOUT, Errno::EPIPE => e
         puts "ERROR: #{e.class}: #{e}"
         sleep 5
         retry
