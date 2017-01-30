@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.2.1" # :nodoc:
+  VERSION = "1.2.2" # :nodoc:
 
   class Bot
 
@@ -260,8 +260,9 @@ module RedditBot
       end
       response = begin
         http.request request
-      rescue OpenSSL::SSL::SSLError, SocketError, Net::ReadTimeout, Errno::EPIPE, EOFError, Zlib::BufError
-        puts "ERROR: network"
+      rescue OpenSSL::SSL::SSLError, SocketError, Net::ReadTimeout, Errno::EPIPE, EOFError, Zlib::BufError, Errno::ECONNRESET => e
+        puts "ERROR: #{e}"
+        sleep 5
         retry
       end
       puts %w{
