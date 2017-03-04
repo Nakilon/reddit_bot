@@ -77,7 +77,7 @@ loop do
       puts "!!! can't parse sidebar !!!"
       throw :loop
     end
-    next puts "nothing to change" if prefix + text + postfix == settings["description"]
+    next puts "nothing to change" if prefix + text + postfix == CGI.unescapeHTML(settings["description"])
 
     puts "updating sidebar..."
     settings["description"] = prefix + text + postfix
