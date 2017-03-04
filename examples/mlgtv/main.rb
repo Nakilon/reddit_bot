@@ -72,7 +72,7 @@ loop do
     settings["allow_top"] = settings["allow_top"]
     settings.delete "default_set"
 
-    prefix, postfix = settings["description"].split(/(?<=\n#####)\s*Live Streams.+?(?=\n#+)/im)
+    prefix, postfix = CGI.unescapeHTML(settings["description"]).split(/(?<=\n#####)\s*Live Streams.+?(?=\n#+)/im)
     unless postfix
       puts "!!! can't parse sidebar !!!"
       throw :loop
