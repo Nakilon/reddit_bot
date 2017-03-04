@@ -12,6 +12,7 @@ loop do
     nay = []
     comments.each do |comment|
       yay |= [comment["author"]] if comment["body"][/\A\s*yay/i]
+      yay |= [comment["author"]] if comment["body"][/\A\s*yea/i]
       nay |= [comment["author"]] if comment["body"][/\A\s*nay/i]
     end
     p [post["id"], yay, nay] if Gem::Platform.local.os == "darwin"
