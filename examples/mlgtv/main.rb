@@ -43,7 +43,10 @@ loop do
         "Call of Duty 4: Modern Warfare",
       ].each do |game|
         (begin
-          JSON.parse NetHTTPUtils.request_data "https://api.twitch.tv/kraken/streams?game=#{CGI::escape game}&access_token=#{File.read("twitch.token").strip}&client_id=#{File.read("client.id").strip}&channel=Ricky,ACHES,Lacefield,Clayster,Enable,Zoomaa,Attach,TheFEARS,PHiZZURP,MiRx1,SaintsRF,StuDyy,SpaceLyTV,NAMELESS,Scump,FORMAL,Crimsix,Karma,Loony,Slacked,Octane,MJChino,Diabolic_TV,ImTheIvy,Senderxz,Jkap,John,SlasheRAL,Apathy,ColtHavok,MikeSwarley,ParasiteTV,TyreeLegal,Silly,Blfire,methodz,TwiZzyTV,Mochila,Remy,Xotic16,AquA,Faccento,Nagafen,Tylerfelo,TheoryCoD,ColeChanTV,happyy97,goonjar,Burns,Dedo,Neslo,TeeCM,K1lla93,NeLsoNNaTeR,ProoFy,Whea7s,MBoZe,Merk,Nadeshot,ReeP,Sharp,TeePee,Braaain2015,Nolsonn,QwiKeRTHaNu,Zedenyer1,Jurd,Tommey,Swanny,MadCatEU,Rated_EU1,BsportJoshh,Sy_Vortex,TheMarkyB,Peatie95,urbandm,TreiZer0,iDqvee,Tojor,MethodZ_TV,Gotaga,WailersWL,TCM_Moose,RampageSkrapz,Reedy,fighta71,Swiftazor,BacabecNZ,Zeuss_Gaming,Hopeyy,GuydraCOD,mattmrx,Maven,CouRageJD,Revan,BriceyHD,Benson,PHILWHI7"
+          begin
+            t = NetHTTPUtils.get_response "https://api.twitch.tv/kraken/streams?game=#{CGI::escape game}&access_token=#{File.read("twitch.token").strip}&client_id=#{File.read("client.id").strip}&channel=Ricky,ACHES,Lacefield,Clayster,Enable,Zoomaa,Attach,TheFEARS,PHiZZURP,MiRx1,SaintsRF,StuDyy,SpaceLyTV,NAMELESS,Scump,FORMAL,Crimsix,Karma,Loony,Slacked,Octane,MJChino,Diabolic_TV,ImTheIvy,Senderxz,Jkap,John,SlasheRAL,Apathy,ColtHavok,MikeSwarley,ParasiteTV,TyreeLegal,Silly,Blfire,methodz,TwiZzyTV,Mochila,Remy,Xotic16,AquA,Faccento,Nagafen,Tylerfelo,TheoryCoD,ColeChanTV,happyy97,goonjar,Burns,Dedo,Neslo,TeeCM,K1lla93,NeLsoNNaTeR,ProoFy,Whea7s,MBoZe,Merk,Nadeshot,ReeP,Sharp,TeePee,Braaain2015,Nolsonn,QwiKeRTHaNu,Zedenyer1,Jurd,Tommey,Swanny,MadCatEU,Rated_EU1,BsportJoshh,Sy_Vortex,TheMarkyB,Peatie95,urbandm,TreiZer0,iDqvee,Tojor,MethodZ_TV,Gotaga,WailersWL,TCM_Moose,RampageSkrapz,Reedy,fighta71,Swiftazor,BacabecNZ,Zeuss_Gaming,Hopeyy,GuydraCOD,mattmrx,Maven,CouRageJD,Revan,BriceyHD,Benson,PHILWHI7"
+          end while t.code == 500
+          JSON.parse t.body
         rescue JSON::ParserError
           puts "JSON::ParserError"
           sleep 60
