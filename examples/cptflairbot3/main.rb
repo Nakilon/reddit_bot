@@ -1,5 +1,5 @@
-﻿require_relative File.join "..", "boilerplate"
-BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
+﻿require_relative "../boilerplate"
+BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
 
 loop do
   Hearthbeat.beat "u_CPTFlairBot3_r_casualpokemontrades", 70 unless Gem::Platform.local.os == "darwin"
