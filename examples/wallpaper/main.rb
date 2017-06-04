@@ -1,6 +1,6 @@
 ﻿require_relative "../boilerplate"
 
-BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
+BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
 SUBREDDIT = "wallpaper"
 
 if Gem::Platform.local.os == "darwin"
