@@ -1,7 +1,3 @@
 source "https://rubygems.org"
 
-if ENV["DEV"]
-  gem "reddit_bot", path: "../.."
-else
-  gem "reddit_bot", "~>1.1.0"
-end
+gem "reddit_bot", "~>1.3.0"
