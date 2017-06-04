@@ -8,7 +8,7 @@ require "json"
 
 
 module RedditBot
-  VERSION = "1.2.2" # :nodoc:
+  VERSION = "1.3.0" # :nodoc:
 
   class Bot
 
@@ -16,12 +16,12 @@ module RedditBot
     attr_reader :name
 
     # [secrets] +Hash+ with keys :client_id, :client_secret, :password: and :login
-    # [kwargs] keyword params may include :ignore_captcha that is true by default and :subreddit for clever methods
+    # [kwargs] keyword params may include :subreddit for clever methods
     def initialize secrets, **kwargs
       @secrets = secrets.values_at *%i{ client_id client_secret password login }
       @name = secrets[:login]
-      @ignore_captcha = true
-      @ignore_captcha = kwargs[:ignore_captcha] if kwargs.has_key?(:ignore_captcha)
+      # @ignore_captcha = true
+      # @ignore_captcha = kwargs[:ignore_captcha] if kwargs.has_key?(:ignore_captcha)
       @subreddit = kwargs[:subreddit]
     end
 
@@ -38,11 +38,11 @@ module RedditBot
           puts "error: #{[error, description]}"
           case error
           when "ALREADY_SUB" ; puts "was rejected by moderator if you didn't see in dups"
-          when "BAD_CAPTCHA" ; update_captcha
-            json mtd, path, form.merger( {
-              iden: @iden_and_captcha[0],
-              captcha: @iden_and_captcha[1],
-            } ) unless @ignore_captcha
+          # when "BAD_CAPTCHA" ; update_captcha
+          #   json mtd, path, form.merger( {
+          #     iden: @iden_and_captcha[0],
+          #     captcha: @iden_and_captcha[1],
+          #   } ) unless @ignore_captcha
           else ; fail error
           end
         end
@@ -174,19 +174,19 @@ module RedditBot
         fail response.inspect
       end
       puts "new token is: #{@token_cached}"
-      update_captcha if "true" == resp_with_token(:get, "/api/needs_captcha", {})
+      # update_captcha if "true" == resp_with_token(:get, "/api/needs_captcha", {})
       @token_cached
     end
 
-    def update_captcha
-      return if @ignore_captcha
-      pp iden_json = json(:post, "/api/new_captcha")
-      iden = iden_json["json"]["data"]["iden"]
-      # return @iden_and_captcha = [iden, "\n"] if @ignore_captcha
-      # pp resp_with_token(:get, "/captcha/#{iden_json["json"]["data"]["iden"]}", {})
-      puts "CAPTCHA: https://reddit.com/captcha/#{iden}"
-      @iden_and_captcha = [iden, gets.strip]
-    end
+    # def update_captcha
+    #   return if @ignore_captcha
+    #   pp iden_json = json(:post, "/api/new_captcha")
+    #   iden = iden_json["json"]["data"]["iden"]
+    #   # return @iden_and_captcha = [iden, "\n"] if @ignore_captcha
+    #   # pp resp_with_token(:get, "/captcha/#{iden_json["json"]["data"]["iden"]}", {})
+    #   puts "CAPTCHA: https://reddit.com/captcha/#{iden}"
+    #   @iden_and_captcha = [iden, gets.strip]
+    # end
 
     def resp_with_token mtd, path, form
       nil until _ = catch(:"401") do

@@ -7,11 +7,7 @@ else
   require_relative "net_http_utils"
 end
 
-if ENV["DEV"]
-  require_relative "../lib/reddit_bot"
-else
-  require "reddit_bot"
-end
+require "reddit_bot"
 
 require_relative "#{Dir.home}/beat" unless Gem::Platform.local.os == "darwin"
 
