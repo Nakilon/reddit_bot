@@ -9,10 +9,14 @@ loop do
     next puts "bad destination: #{msg["data"]["dest"]}" unless msg["data"]["dest"] == "CPTFlairBot3"
     case msg["data"]["subject"]
     when "casualpokemontrades"
-      unless /^(?<name>\S+)\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>\S+)$/ =~ msg["data"]["body"]
+      unless /^(?<name>\S+( \S+)*) ?\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>\S+)$/ =~ msg["data"]["body"]
         puts "invalid message for #{msg["data"]["subject"]}: %p" % msg["data"]["body"] if Gem::Platform.local.os == "darwin"
         # puts "marking invalid message as read: %p" % msg["data"]["body"]
         # BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless Gem::Platform.local.os == "darwin"
+        next
+      end
+      if name.size > 50
+        puts "too large name: %p" % name if Gem::Platform.local.os == "darwin"
         next
       end
       begin
