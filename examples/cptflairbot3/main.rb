@@ -2,7 +2,7 @@
 BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
 
 require "gcplogger"
-logger = GCPLogger.logger "casualpokemontrades"
+logger = GCPLogger.logger "cptflairbot3"
 
 loop do
   Hearthbeat.beat "u_CPTFlairBot3_r_casualpokemontrades", 70 if Google::Cloud.env.compute_engine?
@@ -30,7 +30,21 @@ loop do
             "relaxedpokemontrades" => "#{name} #{id}",
           }[msg["data"]["subject"]],
           css_class: css_class,
-        }.tap{ |h| logger.warn "setting up flair at /r/#{msg["data"]["subject"]}: #{h}" }
+        }.tap{ |h|
+          timeout = 0
+          begin
+            logger.warn h.merge( {
+              messaged_at: Time.at(msg["data"]["created_utc"]),
+              processed_at: Time.now,
+            } ), {
+              subreddit: msg["data"]["subject"],
+            }
+          rescue Google::Cloud::UnavailableError => e
+            logger.info "retrying in #{timeout += 1} seconds because of #{e}"
+            sleep timeout
+            retry
+          end
+        }
       rescue RuntimeError => e
         if e.to_s == "BAD_FLAIR_TARGET"
           logger.error "#{e.to_s}: '#{msg["data"]["author"]}'"

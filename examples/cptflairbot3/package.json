@@ -1,0 +1,6 @@
+{
+  "main": "app.js",
+  "dependencies": {
+    "@google-cloud/storage": "^1.2.1"
+  }
+}
