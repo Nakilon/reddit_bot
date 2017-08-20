@@ -70,6 +70,7 @@ loop do
           list << "* [](#twitch) [](#live) #{
             "[](##{ {
               "Call of Duty: Infinite Warfare" => "codiw",
+              "Call of Duty: Modern Warfare Remastered" => "cod4",
               "Call of Duty 4: Modern Warfare" => "cod4",
             }[channel["game"]] }) "
           }[**#{
