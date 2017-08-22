@@ -24,21 +24,24 @@ loop do
   if names.size != flairs.size
     puts "columns are different by length -- probably someone is editing the Spreadsheet"
   else
-    names.zip(flairs).drop(1).map(&:flatten).each_slice(50) do |slice|
-      CSV(load = "") do |csv|
-        slice.each do |user, text|
+    names.zip(flairs).drop(1).map(&:flatten).map do |user, text|
           user = user.to_s.strip
-          next puts "skipped invalid user: #{user}" unless user[/\A[a-z\d]+\z/i]
+          next unless user[/\A[a-z-_\d]+\z/i]
           text = text.to_s.strip
-          csv << [user, text, CSS_CLASS] unless existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
-        end
+          next if existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
+          [user, text, CSS_CLASS]
+      end.compact.each_slice(50) do |slice|
+      CSV(load = "") do |csv|
+        slice.each &csv.method(:<<)
       end
       BOT.json(:post, "/r/#{SUBREDDIT}/api/flaircsv", flair_csv: load).each do |report|
         unless report.values_at("errors", "ok", "warnings") == [{}, true, {}]
           pp report
-          abort
+          abort "wrong keys" unless report.keys.sort == %w{ errors ok status warnings }
+          abort "wrong values" unless report.values_at(*%w{ ok status warnings }) == [false, "skipped", {}]
+          abort "wrong error keys" unless report["errors"].keys == %w{ user }
+          abort "wrong error values" unless user = report["errors"]["user"][/\Aunable to resolve user `([A-Za-z-_\d]+)', ignoring\z/, 1]
         end
-      end
       end
     end
   end
