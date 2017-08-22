@@ -28,6 +28,7 @@ loop do
       CSV(load = "") do |csv|
         slice.each do |user, text|
           user = user.to_s.strip
+          next puts "skipped invalid user: #{user}" unless user[/\A[a-z\d]+\z/i]
           text = text.to_s.strip
           csv << [user, text, CSS_CLASS] unless existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
         end
