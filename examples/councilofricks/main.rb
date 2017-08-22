@@ -26,13 +26,13 @@ loop do
     puts "columns are different by length -- probably someone is editing the Spreadsheet"
   else
     names.zip(flairs).drop(1).map(&:flatten).map do |user, text|
-          user = user.to_s.strip
-          next unless user[/\A[a-z-_\d]+\z/i]
-          text = text.to_s.strip
-          next puts "ignored #{user}" if ignored.include? user
-          next if existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
-          [user, text, CSS_CLASS]
-      end.compact.each_slice(50) do |slice|
+      user = user.to_s.strip
+      next unless user[/\A[a-z-_\d]+\z/i]
+      text = text.to_s.strip
+      next puts "ignored #{user}" if ignored.include? user
+      next if existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
+      [user, text, CSS_CLASS]
+    end.compact.each_slice(50) do |slice|
       CSV(load = "") do |csv|
         slice.each &csv.method(:<<)
       end
