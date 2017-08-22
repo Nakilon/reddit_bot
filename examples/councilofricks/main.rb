@@ -21,7 +21,9 @@ loop do
   existing = BOT.json(:get, "/r/#{SUBREDDIT}/api/flairlist", limit: 1000)["users"]
   fail if existing.size >= 1000
 
-  if names.size == flairs.size
+  if names.size != flairs.size
+    puts "columns are different by length -- probably someone is editing the Spreadsheet"
+  else
     names.zip(flairs).drop(1).map(&:flatten).each_slice(50) do |slice|
       CSV(load = "") do |csv|
         slice.each do |user, text|
@@ -30,12 +32,14 @@ loop do
           csv << [user, text, CSS_CLASS] unless existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
         end
       end
-      BOT.json(:post, "/r/#{SUBREDDIT}/api/flaircsv", [["flair_csv", load]]).each do |report|
-        pp report unless report.values_at("errors", "ok", "warnings") == [{}, true, {}]
+      BOT.json(:post, "/r/#{SUBREDDIT}/api/flaircsv", flair_csv: load).each do |report|
+        unless report.values_at("errors", "ok", "warnings") == [{}, true, {}]
+          pp report
+          abort
+        end
+      end
       end
     end
-  else
-    puts "columns are different by length"
   end
 
   sleep 300
