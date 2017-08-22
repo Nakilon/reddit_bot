@@ -7,6 +7,7 @@ CSS_CLASS = "blueflair"
 
 require "csv"
 
+ignored = []
 loop do
   Hearthbeat.beat "u_FlairMoTron_r_CouncilOfRicks", 310 unless Gem::Platform.local.os == "darwin"
 
@@ -28,6 +29,7 @@ loop do
           user = user.to_s.strip
           next unless user[/\A[a-z-_\d]+\z/i]
           text = text.to_s.strip
+          next puts "ignored #{user}" if ignored.include? user
           next if existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
           [user, text, CSS_CLASS]
       end.compact.each_slice(50) do |slice|
@@ -41,6 +43,7 @@ loop do
           abort "wrong values" unless report.values_at(*%w{ ok status warnings }) == [false, "skipped", {}]
           abort "wrong error keys" unless report["errors"].keys == %w{ user }
           abort "wrong error values" unless user = report["errors"]["user"][/\Aunable to resolve user `([A-Za-z-_\d]+)', ignoring\z/, 1]
+          ignored.push p user
         end
       end
     end
