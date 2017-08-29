@@ -43,7 +43,7 @@ loop do
           abort "wrong values" unless report.values_at(*%w{ ok status warnings }) == [false, "skipped", {}]
           abort "wrong error keys" unless report["errors"].keys == %w{ user }
           abort "wrong error values" unless user = report["errors"]["user"][/\Aunable to resolve user `([A-Za-z-_\d]+)', ignoring\z/, 1]
-          ignored.push p user
+          ignored |= [user]
         end
       end
     end
