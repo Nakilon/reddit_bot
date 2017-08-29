@@ -52,11 +52,20 @@ loop do
       # 0. see 'client_id' here https://www.twitch.tv/settings/connections and 'client_secret' from local ./readme file
       # 1. get 'code' by visiting in browser: https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=*******&redirect_uri=http://www.example.com/unused/redirect/uri&scope=channel_read channel_feed_read
       # 2. NetHTTPUtils.request_data("https://api.twitch.tv/kraken/oauth2/token", :post, form: {client_id: "*******", client_secret: "*****", grant_type: "authorization_code", redirect_uri: "http://www.example.com/unused/redirect/uri", code: "*******"})
-      [
-        "Call of Duty: Infinite Warfare",
-        "Call of Duty: Modern Warfare Remastered",
-        "Call of Duty 4: Modern Warfare",
-      ].each do |game|
+      {
+        "Call of Duty: Infinite Warfare"          => "codiw",
+        "Call of Duty: Modern Warfare Remastered" => "cod4",
+        "Call of Duty 4: Modern Warfare"          => "cod4",
+        "Call of Duty: Modern Warfare 3"          => "codmw3",
+        "Call of Duty: Black Ops"                 => "codbo",
+        "Call of Duty: Black Ops II"              => "codbo2",
+        "Call of Duty: Black Ops III"             => "codbo3",
+        "Call of Duty: Advanced Warfare"          => "codaw",
+        "Call of Duty: Ghosts"                    => "codghosts",
+        "Call of Duty: World at War"              => "codwaw",
+        "Call of Duty: WWII"                      => "codwwii",
+        "Modern Warfare 2"                        => "codmw2",
+      }.each do |game, css|
         (begin
           begin
             t = NetHTTPUtils.get_response "https://api.twitch.tv/kraken/streams?game=#{CGI::escape game}&access_token=#{File.read("twitch.token").strip}&client_id=#{File.read("client.id").strip}&channel=#{File.read("channels.txt").split.join ?,}"
@@ -68,11 +77,7 @@ loop do
           retry
         end["streams"] || []).each do |channel|
           list << "* [](#twitch) [](#live) #{
-            "[](##{ {
-              "Call of Duty: Infinite Warfare" => "codiw",
-              "Call of Duty: Modern Warfare Remastered" => "cod4",
-              "Call of Duty 4: Modern Warfare" => "cod4",
-            }[channel["game"]] }) "
+            "[](##{css}) "
           }[**#{
             channel["channel"]["display_name"]
           }**](#{
@@ -109,5 +114,5 @@ loop do
     fail _.inspect if _ != {"json"=>{"errors"=>[]}} && !(_["json"]["errors"].map(&:first) - ["BAD_CAPTCHA"]).empty?
 
   end
-  sleep 60
+  sleep 300
 end
