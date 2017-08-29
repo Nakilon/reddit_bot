@@ -47,11 +47,40 @@ loop do
         })"
       end
 
-      require "cgi"
       # to update access_token:
       # 0. see 'client_id' here https://www.twitch.tv/settings/connections and 'client_secret' from local ./readme file
       # 1. get 'code' by visiting in browser: https://api.twitch.tv/kraken/oauth2/authorize?response_type=code&client_id=*******&redirect_uri=http://www.example.com/unused/redirect/uri&scope=channel_read channel_feed_read
       # 2. NetHTTPUtils.request_data("https://api.twitch.tv/kraken/oauth2/token", :post, form: {client_id: "*******", client_secret: "*****", grant_type: "authorization_code", redirect_uri: "http://www.example.com/unused/redirect/uri", code: "*******"})
+      twitch = lambda do |url|
+        max = 1000
+        data_key = "top"
+        next_key = "_links"
+
+        request = lambda do |url, acc|
+          uri = URI.parse url
+          query = Hash[URI.decode_www_form uri.query || ""]
+          # query.merge!({ "limit" => max }) if max
+          uri.query = URI.encode_www_form query.merge( {
+            "access_token" => File.read("twitch.token").strip,
+            "client_id" => File.read("client.id").strip,
+          } )
+          json = JSON.parse NetHTTPUtils.request_data uri.to_s
+          unless json[data_key]
+            pp json
+            fail
+          end
+          acc = acc + json[data_key]
+          next acc.take max if max && max <= acc.size
+          request[json[next_key]["next"], acc]
+        end
+
+        request[url, []]
+      end
+      # ? absent on twitch ? "Call of Duty: Modern Warfare 2" => "codmw2"
+      # t = twitch["https://api.twitch.tv/kraken/games/top?limit=100"].map{ |hash| fail hash.keys.to_s unless hash.keys == %w{ game viewers channels }; hash.values.first["name"] }
+      # pp t.grep("/call of duty/i")
+      # pp t.grep("/warfare/i")
+      # ? absent in css    ? "Call of Duty: United Offensive"
       {
         "Call of Duty: Infinite Warfare"          => "codiw",
         "Call of Duty: Modern Warfare Remastered" => "cod4",
