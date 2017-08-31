@@ -33,11 +33,11 @@ loop do
           "[](##{ {
             "Call of Duty: Modern Warfare 2" => "codmw2",
             "Call of Duty: Modern Warfare 3" => "codmw3",
-            "Call of Duty: Black Ops" => "codbo",
+            "Call of Duty: Black Ops" => "codbo12",
             "Call of Duty: Black Ops II" => "codbo2",
             "Call of Duty: Black Ops III" => "codbo3",
             "Call of Duty: Advanced Warfare" => "codaw",
-            "Call of Duty: Ghosts" => "codghosts",
+            "Call of Duty: Ghosts" => "codghosts2",
             "Call of Duty: Infinite Warfare" => "codiw",
           }[game["name"]] }) " if game
         }[**#{
