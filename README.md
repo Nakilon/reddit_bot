@@ -5,8 +5,8 @@
 
 #### What
 
-This library provides an easy way to run bots and scripts that use Reddit API.
-I (@nakilon) currently run near 10 bots with it.
+This library provides an easy way to run bots and scripts that use Reddit API.  
+I ([/u/nakilon](https://reddit.com/u/nakilon)) currently run near 10 bots with it.
 
 #### Why
 
@@ -20,8 +20,9 @@ The [examples folder](examples) includes:
 * devflairbot -- bot that flairs posts when some specifically flaired user comments there
 * mlgtv -- bot that updates sidebar with currently streaming twitch channels
 * councilofricks -- bot that flairs users according to Google Spreadsheet
-* wallpaper -- bot that reports images with dimensions not the same as in title
-* cptflairbot3 -- bot that sets flair to user according to request submitted via PM
+* wallpaper -- bot that reports images with dimensions being not the same as in title
+* cptflairbot3 -- bot that sets user flair according to request submitted via web form  
+  also publishes its activily log here http://nakilon.pro/log.htm via Google Cloud Platform automations
 * oneplus -- bot that removes and modmails about links to 1080x1920 images
 * yayornay -- bot that flairs posts according to voting in top level comments
 * largeimagesreview -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
@@ -70,12 +71,12 @@ helloworld.rb:
 
     require "reddit_bot"
 
-probably Gemfile:
+or via Gemfile:
 
     source "https://rubygems.org"
     gem "reddit_bot"
 
-TODO: Write usage instructions here  
+TODO: write more usage instructions here  
 TODO: manual on how to create bots with Reddit web interface and run via bash console
 
 To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
@@ -84,5 +85,5 @@ To update the gem version in Gemfile.lock when using Gemfile like this: `gem "re
 
 #### Contributing and License
 
-Bug reports and pull requests are welcome.
+Bug reports and pull requests are welcome.  
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
