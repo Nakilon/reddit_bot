@@ -33,7 +33,7 @@ loop do
       next if existing.include?( {"user"=>user, "flair_text"=>text, "flair_css_class"=>CSS_CLASS} )
       [user, text, CSS_CLASS]
     end.compact.each_slice(50) do |slice|
-      CSV(load = "") do |csv|
+      load = CSV.generate do |csv|
         slice.each &csv.method(:<<)
       end
       BOT.json(:post, "/r/#{SUBREDDIT}/api/flaircsv", flair_csv: load).each do |report|
