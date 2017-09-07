@@ -25,6 +25,7 @@ The [examples folder](examples) includes:
   also publishes its activily log here http://nakilon.pro/log.htm via Google Cloud Platform automations
 * oneplus -- bot that removes and modmails about links to 1080x1920 images
 * yayornay -- bot that flairs posts according to voting in top level comments
+* realtimewwii -- bot that posts tweets to a subreddit from a Twitter user timeline
 * largeimagesreview -- useful script for [subreddit /r/largeimages](https://reddit.com/r/largeimages/top)  
   It calculates quality of x-posts from different subreddits based on mods activity (remove/approve).  
   For example, this showed that it would be ok to ignore /r/pics from now:
