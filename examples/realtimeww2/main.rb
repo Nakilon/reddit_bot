@@ -8,7 +8,7 @@ TWITTER_ACCESS_TOKEN = JSON.load(
 )["access_token"]
 
 SUBREDDIT = "RealTimeWW2_TEST"
-BOT = RedditBot::Bot.new YAML.load(File.read "../nakibot.secrets.yaml"), subreddit: SUBREDDIT
+BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDDIT
 
 TWITTER = "RealTimeWWII"
 loop do
