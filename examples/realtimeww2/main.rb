@@ -35,7 +35,9 @@ loop do
       title: tweet["full_text"].sub(/ https:\/\/t\.co\/[0-9a-zA-Z]{10}\z/, ""),
     }
     pp result
-    fail unless result["json"]["errors"].empty?
+    next if result["json"]["errors"].empty?
+    fail unless result["json"]["errors"].map(&:first) == ["ALREADY_SUB"]
+    puts "ALREADY_SUB error for #{tweet["id"]}"
   end
 
   puts "END LOOP #{Time.now}"
