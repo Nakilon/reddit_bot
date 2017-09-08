@@ -32,7 +32,7 @@ loop do
       kind: "link",
       url: "https://twitter.com/#{TWITTER}/status/#{tweet["id"]}",
       sr: SUBREDDIT,
-      title: tweet["full_text"].sub(/ https:\/\/t\.co\/[0-9a-zA-Z]{10}\z/, ""),
+      title: CGI::unescapeHTML(tweet["full_text"]).sub(/ https:\/\/t\.co\/[0-9a-zA-Z]{10}\z/, ""),
     }
     pp result
     next if result["json"]["errors"].empty?
