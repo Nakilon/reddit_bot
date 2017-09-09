@@ -14,19 +14,19 @@ TWITTER = "RealTimeWWII"
 tweet2text = lambda do |tweet|
   text = CGI::unescapeHTML(tweet["full_text"]).sub(/ https:\/\/t\.co\/[0-9a-zA-Z]{10}\z/, "")
   contains_media = false
-    up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
-    text.concat "\n\n^- #{
-      up[tweet["user"]["name"]]
-    } [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [#{
-      up[Date.parse(tweet["created_at"]).strftime "%B %-d, %Y"]
-    }](https://twitter.com/#{TWITTER}/status/#{tweet["id"]})"
-    if tweet["entities"]["media"]
-      contains_media = true
-      text.concat "\n\nMedia"
-      tweet["entities"]["media"].each_with_index do |media, i|
-        text.concat "\n\n* [Image #{i + 1}](#{media["media_url_https"]})"
-      end
+  up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
+  text.concat "\n\n^- #{
+    up[tweet["user"]["name"]]
+  } [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [#{
+    up[Date.parse(tweet["created_at"]).strftime "%B %-d, %Y"]
+  }](https://twitter.com/#{TWITTER}/status/#{tweet["id"]})"
+  if tweet["entities"]["media"]
+    contains_media = true
+    text.concat "\n\nMedia"
+    tweet["entities"]["media"].each_with_index do |media, i|
+      text.concat "\n\n* [Image #{i + 1}](#{media["media_url_https"]})"
     end
+  end
   [text, contains_media]
 end
 test = "The Polish government & military high command is now evacuating Warsaw for Brest, 120 miles east: German armies are too close to the capital\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@RealTimeWWII\\)](https://twitter.com/RealTimeWWII) ^| [^September ^7, ^2017](https://twitter.com/RealTimeWWII/status/905764294687633408)\n\nMedia\n\n* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)"
