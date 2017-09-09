@@ -18,7 +18,9 @@ loop do
   fail "no tweets found in subreddit" if id.zero? unless %w{ RealTimeWW2_TEST }.include? SUBREDDIT
 
   JSON.load( NetHTTPUtils.request_data("https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=#{TWITTER}&count=200&tweet_mode=extended",
-      header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }) do |res|
+    header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
+  ) do |res|
+    next unless res.key? "x-rate-limit-remaining"
     remaining = res.fetch("x-rate-limit-remaining").to_i
     next if 100 < remaining
     t = (res.fetch("x-rate-limit-reset").to_i - Time.now.to_i + 1).fdiv remaining
