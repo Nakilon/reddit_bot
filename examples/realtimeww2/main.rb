@@ -39,7 +39,8 @@ loop do
   end.to_i
   fail "no tweets found in subreddit" if id.zero? unless %w{ RealTimeWW2_TEST }.include? SUBREDDIT
 
-  JSON.load( NetHTTPUtils.request_data("https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=#{TWITTER}&count=200&tweet_mode=extended",
+  JSON.load( NetHTTPUtils.request_data(
+    "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=#{TWITTER}&count=100&tweet_mode=extended",
     header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
   ) do |res|
     next unless res.key? "x-rate-limit-remaining"
