@@ -12,24 +12,23 @@ BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDD
 
 TWITTER = "RealTimeWWII"
 tweet2text = lambda do |tweet|
-  text = CGI::unescapeHTML(tweet["full_text"]).sub(/ https:\/\/t\.co\/[0-9a-zA-Z]{10}\z/, "")
+  text = ""
   contains_media = false
   up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
-  text.concat "\n\n^- #{
+  if tweet["entities"]["media"]
+    contains_media = true
+    tweet["entities"]["media"].each_with_index do |media, i|
+      text.concat "* [Image #{i + 1}](#{media["media_url_https"]})\n\n"
+    end
+  end
+  text.concat "^- #{
     up[tweet["user"]["name"]]
   } [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [#{
     up[Date.parse(tweet["created_at"]).strftime "%B %-d, %Y"]
   }](https://twitter.com/#{TWITTER}/status/#{tweet["id"]})"
-  if tweet["entities"]["media"]
-    contains_media = true
-    text.concat "\n\nMedia"
-    tweet["entities"]["media"].each_with_index do |media, i|
-      text.concat "\n\n* [Image #{i + 1}](#{media["media_url_https"]})"
-    end
-  end
   [text, contains_media]
 end
-test = "The Polish government & military high command is now evacuating Warsaw for Brest, 120 miles east: German armies are too close to the capital\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@RealTimeWWII\\)](https://twitter.com/RealTimeWWII) ^| [^September ^7, ^2017](https://twitter.com/RealTimeWWII/status/905764294687633408)\n\nMedia\n\n* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)"
+test = "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@RealTimeWWII\\)](https://twitter.com/RealTimeWWII) ^| [^September ^7, ^2017](https://twitter.com/RealTimeWWII/status/905764294687633408)"
 unless test == temp = ( tweet2text.call JSON.load NetHTTPUtils.request_data(
   "https://api.twitter.com/1.1/statuses/show.json?id=905764294687633408&tweet_mode=extended",
   header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
