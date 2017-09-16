@@ -1,8 +1,8 @@
 STDOUT.sync = true
 require "pp"
 
-if Gem.loaded_specs.include? "net_http_utils"
-  require "net_http_utils"
+if Gem.loaded_specs.include? "nethttputils"
+  require "nethttputils"
 else
   require_relative "net_http_utils"
 end
