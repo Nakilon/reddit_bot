@@ -30,10 +30,15 @@ tweet2text = lambda do |tweet|
   [text, contains_media]
 end
 test = "The Polish government & military high command is now evacuating Warsaw for Brest, 120 miles east: German armies are too close to the capital\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@RealTimeWWII\\)](https://twitter.com/RealTimeWWII) ^| [^September ^7, ^2017](https://twitter.com/RealTimeWWII/status/905764294687633408)\n\nMedia\n\n* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)"
-fail unless test == ( tweet2text.call JSON.load NetHTTPUtils.request_data(
+unless test == temp = ( tweet2text.call JSON.load NetHTTPUtils.request_data(
   "https://api.twitter.com/1.1/statuses/show.json?id=905764294687633408&tweet_mode=extended",
   header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
 ) ).first
+  puts "expected:\n#{test.inspect}"
+  puts "got:\n#{temp.inspect}"
+  abort "FORMATTING ERROR"
+end
+abort "OK" if ENV["TEST"]
 
 loop do
   id = BOT.new_posts.find do |post|
