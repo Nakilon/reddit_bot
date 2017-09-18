@@ -7,7 +7,7 @@ TWITTER_ACCESS_TOKEN = JSON.load(
     form: {grant_type: :client_credentials}
 )["access_token"]
 
-SUBREDDIT = "RealTimeWW2_TEST"
+SUBREDDIT = "RealTimeWW2"
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDDIT
 
 TWITTER = "RealTimeWWII"
@@ -28,7 +28,7 @@ tweet2text = lambda do |tweet|
   }](https://twitter.com/#{TWITTER}/status/#{tweet["id"]})"
   [text, contains_media]
 end
-test = "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@RealTimeWWII\\)](https://twitter.com/RealTimeWWII) ^| [^September ^7, ^2017](https://twitter.com/RealTimeWWII/status/905764294687633408)"
+test = "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^September ^7, ^2017](https://twitter.com/#{TWITTER}/status/905764294687633408)"
 unless test == temp = ( tweet2text.call JSON.load NetHTTPUtils.request_data(
   "https://api.twitter.com/1.1/statuses/show.json?id=905764294687633408&tweet_mode=extended",
   header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
