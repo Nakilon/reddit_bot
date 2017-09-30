@@ -9,7 +9,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     json (2.1.0)
-    reddit_bot (1.3.0)
+    reddit_bot (1.3.1)
       json
 
 PLATFORMS
@@ -20,4 +20,4 @@ DEPENDENCIES
   reddit_bot
 
 BUNDLED WITH
-   1.13.1
+   1.15.4
