@@ -1,15 +1,12 @@
 STDOUT.sync = true
-
 require "pp"
 
 require "net/http"
 require "openssl"
 require "json"
 
-
+require_relative "reddit_bot/version"
 module RedditBot
-  VERSION = "1.3.0" # :nodoc:
-
   class Bot
 
     # bot's Reddit username; set via constructor parameter secrets[:login]
@@ -170,7 +167,7 @@ module RedditBot
           "User-Agent" => "bot/#{@username}/0.0.0 by /u/nakilon",
         }, [@secrets[0], @secrets[1]]
       unless @token_cached = response["access_token"]
-        fail "bot isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
+        fail "bot #{@username} isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
         fail response.inspect
       end
       puts "new token is: #{@token_cached}"
@@ -289,5 +286,4 @@ module RedditBot
     end
 
   end
-
 end

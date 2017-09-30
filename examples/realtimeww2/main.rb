@@ -39,6 +39,7 @@ unless test == temp = ( tweet2text.call JSON.load NetHTTPUtils.request_data(
 end
 abort "OK" if ENV["TEST"]
 
+require "cgi"
 loop do
   id = BOT.new_posts.find do |post|
     /\(https:\/\/twitter\.com\/#{TWITTER}\/status\/(\d{18,})\)/i =~ post["selftext"] and break $1
