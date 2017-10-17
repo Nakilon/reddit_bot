@@ -42,7 +42,7 @@ end
   [915208866408824832, "For 1st time, RAF planes dropping propaganda leaflets on Berlin itself, entitled \"Germans: these are your leaders!\"",                          "* [Image 1](https://pbs.twimg.com/media/DLN5jJ-XkAEUz9M.jpg)\n\n* [Link 1](https://www.psywar.org/product_1939EH158.php)\n\n"  "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^3, ^2017](https://twitter.com/#{TWITTER}/status/915208866408824832)"],
   [914577848891006978, "\"In Poland, Russia pursued a cold policy of selfinterest. But clearly necessary for Russia… against Nazi menace.\"",                            "* [Link 1](https://www.youtube.com/watch?v=ygmP5A3n2JA)\n\n"                                                                   "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^1, ^2017](https://twitter.com/#{TWITTER}/status/914577848891006978)"],
 ].each do |id, title_, text_|
-  title, text, _ = tweet2titleNtext[ JSON.load NetHTTPUtils.request_data(
+  title, text, contains_media = tweet2titleNtext[ JSON.load NetHTTPUtils.request_data(
     "https://api.twitter.com/1.1/statuses/show.json?id=#{id}&tweet_mode=extended",
     header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
   ) ]
@@ -55,6 +55,16 @@ end
     puts "expected:\n#{text_.inspect}"
     puts "got:\n#{text.inspect}"
     abort "TEXT FORMATTING ERROR"
+  end
+  if ENV["TEST_POST"]
+    pp BOT.json :post, "/api/submit", {
+      sr: "RealTimeWW2_TEST",
+      kind: "self",
+      title: title,
+      text: text,
+    }.tap{ |h| h.merge!({ flair_id: BOT.json(:get, "/r/RealTimeWW2_TEST/api/link_flair").find{ |flair|
+      flair["text"] == "Contains Media"
+    }["id"] }) if contains_media }
   end
 end
 abort "OK" if ENV["TEST"]
@@ -82,7 +92,6 @@ loop do
   end ).reverse_each do |tweet|
     next if tweet["id"] <= id
     # next unless tweet["id"] == 905724018996772865    # two media files
-    # tweet["entities"]["urls"].first["url"],
     title, text, contains_media = tweet2titleNtext[tweet]
     result = BOT.json :post, "/api/submit", {
       sr: SUBREDDIT,
