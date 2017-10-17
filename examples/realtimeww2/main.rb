@@ -12,11 +12,11 @@ BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDD
 TWITTER = "RealTimeWWII"
 
 tweet2titleNtext = lambda do |tweet|
-  # pp tweet
+  pp tweet if Gem::Platform.local.os == "darwin"
   text = ""
   contains_media = false
   up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
-  if tweet["extended_entities"]["media"]
+  if tweet["extended_entities"] && tweet["extended_entities"]["media"]
     contains_media = true
     tweet["extended_entities"]["media"].each_with_index do |media, i|
       text.concat "* [Image #{i + 1}](#{media["media_url_https"]})\n\n"
