@@ -9,15 +9,16 @@ TWITTER_ACCESS_TOKEN = JSON.load(
 
 SUBREDDIT = "RealTimeWW2"
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDDIT
-
 TWITTER = "RealTimeWWII"
+
 tweet2text = lambda do |tweet|
+  # pp tweet
   text = ""
   contains_media = false
   up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
-  if tweet["entities"]["media"]
+  if tweet["extended_entities"]["media"]
     contains_media = true
-    tweet["entities"]["media"].each_with_index do |media, i|
+    tweet["extended_entities"]["media"].each_with_index do |media, i|
       text.concat "* [Image #{i + 1}](#{media["media_url_https"]})\n\n"
     end
   end
@@ -28,14 +29,18 @@ tweet2text = lambda do |tweet|
   }](https://twitter.com/#{TWITTER}/status/#{tweet["id"]})"
   [text, contains_media]
 end
-test = "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^September ^7, ^2017](https://twitter.com/#{TWITTER}/status/905764294687633408)"
-unless test == temp = ( tweet2text.call JSON.load NetHTTPUtils.request_data(
-  "https://api.twitter.com/1.1/statuses/show.json?id=905764294687633408&tweet_mode=extended",
-  header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
-) ).first
-  puts "expected:\n#{test.inspect}"
-  puts "got:\n#{temp.inspect}"
-  abort "FORMATTING ERROR"
+[
+  [905764294687633408, "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n"                                                              "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^September ^7, ^2017](https://twitter.com/#{TWITTER}/status/905764294687633408)"],
+  [915534673471733760, "* [Image 1](https://pbs.twimg.com/media/DLSh2J9W4AACcOG.jpg)\n\n* [Image 2](https://pbs.twimg.com/media/DLSh4sKX0AEBaXq.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^4, ^2017](https://twitter.com/#{TWITTER}/status/915534673471733760)"],
+].each do |id, test|
+  unless test == temp = ( tweet2text.call JSON.load NetHTTPUtils.request_data(
+    "https://api.twitter.com/1.1/statuses/show.json?id=#{id}&tweet_mode=extended",
+    header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
+  ) ).first
+    puts "expected:\n#{test.inspect}"
+    puts "got:\n#{temp.inspect}"
+    abort "FORMATTING ERROR"
+  end
 end
 abort "OK" if ENV["TEST"]
 
