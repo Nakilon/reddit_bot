@@ -22,6 +22,12 @@ tweet2titleNtext = lambda do |tweet|
       text.concat "* [Image #{i + 1}](#{media["media_url_https"]})\n\n"
     end
   end
+  if tweet["entities"]["urls"]
+    contains_media = true
+    tweet["entities"]["urls"].each_with_index do |url, i|
+      text.concat "* [Link #{i + 1}](#{url["expanded_url"]})\n\n"
+    end
+  end
   text.concat "^- #{
     up[tweet["user"]["name"]]
   } [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [#{
@@ -33,7 +39,8 @@ end
 [
   [905764294687633408, "The Polish government & military high command is now evacuating Warsaw for Brest, 120 miles east: German armies are too close to the capital",   "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n"                                                              "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^September ^7, ^2017](https://twitter.com/#{TWITTER}/status/905764294687633408)"],
   [915534673471733760, "In east Poland (now Soviet Ukraine) industry & farms to be collectivised, political parties banned, aristocrats & capitalists \"re-educated\".", "* [Image 1](https://pbs.twimg.com/media/DLSh2J9W4AACcOG.jpg)\n\n* [Image 2](https://pbs.twimg.com/media/DLSh4sKX0AEBaXq.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^4, ^2017](https://twitter.com/#{TWITTER}/status/915534673471733760)"],
-  [915208866408824832, "For 1st time, RAF planes dropping propaganda leaflets on Berlin itself, entitled \"Germans: these are your leaders!\"",                          "* [Image 1](https://pbs.twimg.com/media/DLN5jJ-XkAEUz9M.jpg)\n\n"                                                              "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^3, ^2017](https://twitter.com/#{TWITTER}/status/915208866408824832)"],
+  [915208866408824832, "For 1st time, RAF planes dropping propaganda leaflets on Berlin itself, entitled \"Germans: these are your leaders!\"",                          "* [Image 1](https://pbs.twimg.com/media/DLN5jJ-XkAEUz9M.jpg)\n\n* [Link 1](https://www.psywar.org/product_1939EH158.php)\n\n"  "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^3, ^2017](https://twitter.com/#{TWITTER}/status/915208866408824832)"],
+  [914577848891006978, "\"In Poland, Russia pursued a cold policy of selfinterest. But clearly necessary for Russia… against Nazi menace.\"",                            "* [Link 1](https://www.youtube.com/watch?v=ygmP5A3n2JA)\n\n"                                                                   "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^1, ^2017](https://twitter.com/#{TWITTER}/status/914577848891006978)"],
 ].each do |id, title_, text_|
   title, text, _ = tweet2titleNtext[ JSON.load NetHTTPUtils.request_data(
     "https://api.twitter.com/1.1/statuses/show.json?id=#{id}&tweet_mode=extended",
