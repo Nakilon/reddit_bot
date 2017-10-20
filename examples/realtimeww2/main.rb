@@ -100,7 +100,10 @@ loop do
       text: text,
     }.tap{ |h| h.merge!({ flair_id: flair["id"] }) if contains_media }
     pp result
-    next if result["json"]["errors"].empty?
+    if result["json"]["errors"].empty?
+      abort if ENV["ONCE"]
+      next
+    end
     fail unless result["json"]["errors"].map(&:first) == ["ALREADY_SUB"]
     puts "ALREADY_SUB error for #{tweet["id"]}"
   end
