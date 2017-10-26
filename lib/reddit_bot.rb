@@ -5,6 +5,8 @@ require "net/http"
 require "openssl"
 require "json"
 
+require "nethttputils"
+
 require_relative "reddit_bot/version"
 module RedditBot
   class Bot
@@ -234,35 +236,7 @@ module RedditBot
     end
 
     def _resp mtd, url, form, headers, base_auth = nil
-      uri = URI.parse url
-      request = if mtd == :get
-        uri.query = URI.encode_www_form form # wtf OpenSSL::SSL::SSLError
-        Net::HTTP::Get.new(uri)
-      else
-        Net::HTTP::Post.new(uri).tap{ |r| r.set_form_data form }
-      end
-      request.basic_auth *base_auth if base_auth
-      headers.each{ |k, v| request[k] = v }
-      # puts request.path
-      # pp request.to_hash
-      # puts request.body
-      http = begin
-        Net::HTTP.start uri.host,
-          use_ssl: uri.scheme == "https",
-          verify_mode: OpenSSL::SSL::VERIFY_NONE,
-          open_timeout: 300
-      rescue OpenSSL::SSL::SSLError, SocketError, Errno::ECONNRESET, Net::OpenTimeout, Errno::ETIMEDOUT, Errno::EPIPE => e
-        puts "ERROR: #{e.class}: #{e}"
-        sleep 5
-        retry
-      end
-      response = begin
-        http.request request
-      rescue OpenSSL::SSL::SSLError, SocketError, Net::ReadTimeout, Errno::EPIPE, EOFError, Zlib::BufError, Errno::ECONNRESET => e
-        puts "ERROR: #{e}"
-        sleep 5
-        retry
-      end
+      response = NetHTTPUtils.get_response url, mtd, form: form, header: headers, auth: base_auth
       puts %w{
         x-ratelimit-remaining
         x-ratelimit-used
