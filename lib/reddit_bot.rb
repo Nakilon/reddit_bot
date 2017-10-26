@@ -96,7 +96,7 @@ module RedditBot
     end
 
     # :yields: JSON objects: ["data"] part of post or self.post
-    def new_posts caching = false
+    def new_posts subreddit = nil, caching = false
       cache = lambda do |id, &block|
         next block.call unless caching
         require "fileutils"
@@ -110,7 +110,7 @@ module RedditBot
       Enumerator.new do |e|
         after = {}
         loop do
-          args = [:get, "/r/#{@subreddit}/new", {limit: 100}.merge(after)]
+          args = [:get, "/#{subreddit || @subreddit || fail}/new", {limit: 100}.merge(after)]
           result = cache.call(args){ json *args }
           fail if result.keys != %w{ kind data }
           fail if result["kind"] != "Listing"
@@ -186,6 +186,7 @@ module RedditBot
     # end
 
     def resp_with_token mtd, path, form
+      fail unless path.start_with? ?/
       nil until _ = catch(:"401") do
         reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
           "Authorization" => "bearer #{token}",
@@ -275,13 +276,6 @@ module RedditBot
       fail response.to_hash["x-ratelimit-remaining"][0] \
       if response.to_hash["x-ratelimit-remaining"] &&
          response.to_hash["x-ratelimit-remaining"][0].size < 5
-
-      # if response.code == "401"
-      #   puts request.path
-      #   puts request.body
-      #   pp request.to_hash
-      # end
-
       response
     end
 
