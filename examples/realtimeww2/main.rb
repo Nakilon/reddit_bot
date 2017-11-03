@@ -12,17 +12,17 @@ BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDD
 TWITTER = "RealTimeWWII"
 
 tweet2titleNtext = lambda do |tweet|
-  # pp tweet if Gem::Platform.local.os == "darwin"
+  pp tweet if ENV["TEST"]
   text = ""
   contains_media = false
   up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
-  if tweet["extended_entities"] && tweet["extended_entities"]["media"]
+  if tweet["extended_entities"] && !tweet["extended_entities"]["media"].empty?
     contains_media = true
     tweet["extended_entities"]["media"].each_with_index do |media, i|
       text.concat "* [Image #{i + 1}](#{media["media_url_https"]})\n\n"
     end
   end
-  if tweet["entities"]["urls"]
+  if !tweet["entities"]["urls"].empty?
     contains_media = true
     tweet["entities"]["urls"].each_with_index do |url, i|
       text.concat "* [Link #{i + 1}](#{url["expanded_url"]})\n\n"
@@ -37,15 +37,21 @@ tweet2titleNtext = lambda do |tweet|
   [CGI::unescapeHTML(tweet["full_text"]).sub(/( https:\/\/t\.co\/[0-9a-zA-Z]{10})*\z/, ""), text, contains_media]
 end
 [
-  [905764294687633408, "The Polish government & military high command is now evacuating Warsaw for Brest, 120 miles east: German armies are too close to the capital",   "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n"                                                              "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^September ^7, ^2017](https://twitter.com/#{TWITTER}/status/905764294687633408)"],
-  [915534673471733760, "In east Poland (now Soviet Ukraine) industry & farms to be collectivised, political parties banned, aristocrats & capitalists \"re-educated\".", "* [Image 1](https://pbs.twimg.com/media/DLSh2J9W4AACcOG.jpg)\n\n* [Image 2](https://pbs.twimg.com/media/DLSh4sKX0AEBaXq.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^4, ^2017](https://twitter.com/#{TWITTER}/status/915534673471733760)"],
-  [915208866408824832, "For 1st time, RAF planes dropping propaganda leaflets on Berlin itself, entitled \"Germans: these are your leaders!\"",                          "* [Image 1](https://pbs.twimg.com/media/DLN5jJ-XkAEUz9M.jpg)\n\n* [Link 1](https://www.psywar.org/product_1939EH158.php)\n\n"  "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^3, ^2017](https://twitter.com/#{TWITTER}/status/915208866408824832)"],
-  [914577848891006978, "\"In Poland, Russia pursued a cold policy of selfinterest. But clearly necessary for Russia… against Nazi menace.\"",                            "* [Link 1](https://www.youtube.com/watch?v=ygmP5A3n2JA)\n\n"                                                                   "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| ""[^October ^1, ^2017](https://twitter.com/#{TWITTER}/status/914577848891006978)"],
-].each do |id, title_, text_|
+  [905764294687633408,  true, "The Polish government & military high command is now evacuating Warsaw for Brest, 120 miles east: German armies are too close to the capital",   "* [Image 1](https://pbs.twimg.com/media/DJHq71BXYAA6KJ0.jpg)\n\n"                                                              "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^""September ^7, ^2017](https://twitter.com/#{TWITTER}/status/905764294687633408)"],
+  [915534673471733760,  true, "In east Poland (now Soviet Ukraine) industry & farms to be collectivised, political parties banned, aristocrats & capitalists \"re-educated\".", "* [Image 1](https://pbs.twimg.com/media/DLSh2J9W4AACcOG.jpg)\n\n* [Image 2](https://pbs.twimg.com/media/DLSh4sKX0AEBaXq.jpg)\n\n^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^"  "October ^4, ^2017](https://twitter.com/#{TWITTER}/status/915534673471733760)"],
+  [915208866408824832,  true, "For 1st time, RAF planes dropping propaganda leaflets on Berlin itself, entitled \"Germans: these are your leaders!\"",                          "* [Image 1](https://pbs.twimg.com/media/DLN5jJ-XkAEUz9M.jpg)\n\n* [Link 1](https://www.psywar.org/product_1939EH158.php)\n\n"  "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^"  "October ^3, ^2017](https://twitter.com/#{TWITTER}/status/915208866408824832)"],
+  [914577848891006978,  true, "\"In Poland, Russia pursued a cold policy of selfinterest. But clearly necessary for Russia… against Nazi menace.\"",                            "* [Link 1](https://www.youtube.com/watch?v=ygmP5A3n2JA)\n\n"                                                                   "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^"  "October ^1, ^2017](https://twitter.com/#{TWITTER}/status/914577848891006978)"],
+  [926581977372942336, false, "Finland rejects Soviet demand to surrender land near Leningrad & give Red Navy base in Hanko; Soviets now claim Finns' manner \"warlike\".",                                                                                                                                     "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^" "November ^3, ^2017](https://twitter.com/#{TWITTER}/status/926581977372942336)"],
+].each do |id, contains_media_, title_, text_|
   title, text, contains_media = tweet2titleNtext[ JSON.load NetHTTPUtils.request_data(
     "https://api.twitter.com/1.1/statuses/show.json?id=#{id}&tweet_mode=extended",
     header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
   ) ]
+  unless contains_media_ == contains_media
+    puts "expected: #{contains_media_}"
+    puts "got: #{contains_media}"
+    abort "CONTAINS_MEDIA ERROR"
+  end
   unless title_ == title
     puts "expected:\n#{title_.inspect}"
     puts "got:\n#{title.inspect}"
