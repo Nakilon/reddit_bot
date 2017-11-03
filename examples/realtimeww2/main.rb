@@ -12,7 +12,7 @@ BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDD
 TWITTER = "RealTimeWWII"
 
 tweet2titleNtext = lambda do |tweet|
-  pp tweet if Gem::Platform.local.os == "darwin"
+  # pp tweet if Gem::Platform.local.os == "darwin"
   text = ""
   contains_media = false
   up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
@@ -79,16 +79,23 @@ loop do
     flair["text"] == "Contains Media"
   end
 
-  JSON.load( NetHTTPUtils.request_data(
-    "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=#{TWITTER}&count=200&tweet_mode=extended",
-    header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
-  ) do |res|
-    next unless res.key? "x-rate-limit-remaining"
-    remaining = res.fetch("x-rate-limit-remaining").to_i
-    next if 100 < remaining
-    t = (res.fetch("x-rate-limit-reset").to_i - Time.now.to_i + 1).fdiv remaining
-    puts "sleep #{t}"
-    sleep t
+  timeout = 0
+  JSON.load( begin
+    NetHTTPUtils.request_data(
+      "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=#{TWITTER}&count=200&tweet_mode=extended",
+      header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
+    ) do |res|
+      next unless res.key? "x-rate-limit-remaining"
+      remaining = res.fetch("x-rate-limit-remaining").to_i
+      next if 100 < remaining
+      t = (res.fetch("x-rate-limit-reset").to_i - Time.now.to_i + 1).fdiv remaining
+      puts "sleep #{t}"
+      sleep t
+    end
+  rescue NetHTTPUtils::Error => e
+    fail if e.code != 500
+    sleep(timeout += 1)
+    retry
   end ).reverse_each do |tweet|
     next if tweet["id"] <= id
     # next unless tweet["id"] == 905724018996772865    # two media files
