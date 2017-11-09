@@ -96,6 +96,7 @@ loop do
         "Modern Warfare 2"                        => "codmw2",
       }.each do |game, css|
         (begin
+          require "cgi"
           begin
             t = NetHTTPUtils.get_response "https://api.twitch.tv/kraken/streams?game=#{CGI::escape game}&access_token=#{File.read("twitch.token").strip}&client_id=#{File.read("client.id").strip}&channel=#{File.read("channels.txt").split.join ?,}"
           end while t.code == 500
