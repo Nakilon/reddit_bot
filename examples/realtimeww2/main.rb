@@ -99,7 +99,7 @@ loop do
       sleep t
     end
   rescue NetHTTPUtils::Error => e
-    fail if e.code != 500
+    fail if e.code != 503
     sleep(timeout += 1)
     retry
   end ).reverse_each do |tweet|
