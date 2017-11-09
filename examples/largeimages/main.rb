@@ -117,6 +117,7 @@ loop do
       # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
       # puts "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on"
       resolution = "[#{width}x#{height}]"
+      require "cgi"
       next puts "already submitted #{resolution} #{id}: '#{url}'" unless
         Gem::Platform.local.os == "darwin" ||
         (JSON.parse NetHTTPUtils.request_data "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on", header: ["User-Agent", "ajsdjasdasd"])["data"]["children"].empty?
