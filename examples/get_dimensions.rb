@@ -5,6 +5,12 @@ require "imgur2array"
 require "fastimage"
 
 module GetDimensions
+  class Error < RuntimeError
+    def initialize body
+      # Module.nesting[1].logger.error body
+      super "GetDimensions error: #{body}"
+    end
+  end
 
   def self.get_dimensions url
       fail "env var missing -- IMGUR_CLIENT_ID" unless ENV["IMGUR_CLIENT_ID"]
@@ -18,9 +24,9 @@ module GetDimensions
         %r{^https?://www\.reddit\.com/},
         %r{^http://vimeo\.com/},
       ].any?{ |r| r =~ url }
-      fi = -> url { _ = FastImage.size url; [*_, url] if _ }
+      fi = -> url { _ = FastImage.size url; _ ? [*_, url] : fail }
       [
-        ->_{ fi[_] },
+        ->_{ _ = FastImage.size url; [*_, url] if _ },
         ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
           dimensions = Imgur::imgur_to_array _
           [
@@ -37,9 +43,9 @@ module GetDimensions
             format: "json",
             nojsoncallback: 1,
           }
+          raise Error.new "404 for #{_}" if json == {"stat"=>"fail", "code"=>1, "message"=>"Photo not found"}
           if json["stat"] != "ok"
-            pp [json, _]
-            nil
+            fail [json, _].inspect
           else
             json["sizes"]["size"].map do |_|
               x, y, u = _.values_at("width", "height", "source")
@@ -63,6 +69,7 @@ module GetDimensions
             consumer_key: ENV["_500PX_CONSUMER_KEY"],
           } )["photo"].values_at("width", "height", "image_url")
         end },
+        ->_{ fi[_] },
       ].lazy.map{ |_| _[url] }.find{ |_| _ }
   end
 end
@@ -94,9 +101,17 @@ if $0 == __FILE__
   ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/v2?client_application_id=18857&webp=true&sig=c0d31cf9395d7849fbcce612ca9909225ec16fd293a7f460ea15d9e6a6c34257"]],
 ].each do |input, expectation|
   puts "testing #{input}"
+  if expectation == GetDimensions::Error
+    begin
+      GetDimensions::get_dimensions input
+      fail
+    rescue GetDimensions::Error
+    end
+  else
   abort "unable to inspect #{input}" unless result = GetDimensions::get_dimensions(input)
   abort "#{input} :: #{result.inspect} != #{expectation.inspect}" if result != expectation
     # (result.is_a?(Array) ? result[0, 3] : result) != expectation
+  end
 end
 
   puts "OK #{__FILE__}"
