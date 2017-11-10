@@ -13,64 +13,64 @@ module GetDimensions
   end
 
   def self.get_dimensions url
-      fail "env var missing -- IMGUR_CLIENT_ID" unless ENV["IMGUR_CLIENT_ID"]
-      fail "env var missing -- FLICKR_API_KEY" unless ENV["FLICKR_API_KEY"]
-      fail "env var missing -- _500PX_CONSUMER_KEY" unless ENV["_500PX_CONSUMER_KEY"]
+    fail "env var missing -- IMGUR_CLIENT_ID" unless ENV["IMGUR_CLIENT_ID"]
+    fail "env var missing -- FLICKR_API_KEY" unless ENV["FLICKR_API_KEY"]
+    fail "env var missing -- _500PX_CONSUMER_KEY" unless ENV["_500PX_CONSUMER_KEY"]
 
-      return :skipped if [
-        %r{^https://www\.youtube\.com/},
-        %r{^http://gfycat\.com/},
-        %r{^https?://(i\.)?imgur\.com/.+\.gifv$},
-        %r{^https?://www\.reddit\.com/},
-        %r{^http://vimeo\.com/},
-      ].any?{ |r| r =~ url }
-      fi = -> url { _ = FastImage.size url; _ ? [*_, url] : fail }
-      [
-        ->_{ _ = FastImage.size url; [*_, url] if _ },
-        ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
-          dimensions = Imgur::imgur_to_array _
-          [
-            *dimensions.max_by{ |u, x, y| x * y }.rotate(1),
-            *dimensions.map(&:first),
-          ]
-        end },
-        ->_{ if %r{^https://www\.flickr\.com/photos/[^/]+/(?<id>[^/]+)} =~ _ ||
-                %r{^https://flic\.kr/p/(?<id>[^/]+)$} =~ _
-          json = JSON.parse NetHTTPUtils.request_data "https://api.flickr.com/services/rest/", form: {
-            method: "flickr.photos.getSizes",
-            api_key: ENV["FLICKR_API_KEY"],
-            photo_id: id,
-            format: "json",
-            nojsoncallback: 1,
-          }
-          raise Error.new "404 for #{_}" if json == {"stat"=>"fail", "code"=>1, "message"=>"Photo not found"}
-          if json["stat"] != "ok"
-            fail [json, _].inspect
-          else
-            json["sizes"]["size"].map do |_|
-              x, y, u = _.values_at("width", "height", "source")
-              [x.to_i, y.to_i, u]
-            end.max_by{ |x, y, u| x * y }
-          end
-        end },
-        ->_{ if %r{https?://[^.]+.wiki[mp]edia\.org/wiki(/[^/]+)*/(?<id>File:.+)} =~ _
-          _ = JSON.parse NetHTTPUtils.request_data "https://commons.wikimedia.org/w/api.php", form: {
-            format: "json",
-            action: "query",
-            prop: "imageinfo",
-            iiprop: "url",
-            titles: id,
-          }
-          fi[_["query"]["pages"].values.first["imageinfo"].first["url"]]
-        end },
-        ->_{ if %r{^https://500px\.com/photo/(?<id>[^/]+)/[^/]+$} =~ _
-          (JSON.parse NetHTTPUtils.request_data "https://api.500px.com/v1/photos/#{id}", form: {
-            image_size: 2048,
-            consumer_key: ENV["_500PX_CONSUMER_KEY"],
-          } )["photo"].values_at("width", "height", "image_url")
-        end },
-        ->_{ fi[_] },
-      ].lazy.map{ |_| _[url] }.find{ |_| _ }
+    return :skipped if [
+      %r{^https://www\.youtube\.com/},
+      %r{^http://gfycat\.com/},
+      %r{^https?://(i\.)?imgur\.com/.+\.gifv$},
+      %r{^https?://www\.reddit\.com/},
+      %r{^http://vimeo\.com/},
+    ].any?{ |r| r =~ url }
+    fi = -> url { _ = FastImage.size url; _ ? [*_, url] : fail }
+    [
+      ->_{ _ = FastImage.size url; [*_, url] if _ },
+      ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
+        dimensions = Imgur::imgur_to_array _
+        [
+          *dimensions.max_by{ |u, x, y| x * y }.rotate(1),
+          *dimensions.map(&:first),
+        ]
+      end },
+      ->_{ if %r{^https://www\.flickr\.com/photos/[^/]+/(?<id>[^/]+)} =~ _ ||
+              %r{^https://flic\.kr/p/(?<id>[^/]+)$} =~ _
+        json = JSON.parse NetHTTPUtils.request_data "https://api.flickr.com/services/rest/", form: {
+          method: "flickr.photos.getSizes",
+          api_key: ENV["FLICKR_API_KEY"],
+          photo_id: id,
+          format: "json",
+          nojsoncallback: 1,
+        }
+        raise Error.new "404 for #{_}" if json == {"stat"=>"fail", "code"=>1, "message"=>"Photo not found"}
+        if json["stat"] != "ok"
+          fail [json, _].inspect
+        else
+          json["sizes"]["size"].map do |_|
+            x, y, u = _.values_at("width", "height", "source")
+            [x.to_i, y.to_i, u]
+          end.max_by{ |x, y, u| x * y }
+        end
+      end },
+      ->_{ if %r{https?://[^.]+.wiki[mp]edia\.org/wiki(/[^/]+)*/(?<id>File:.+)} =~ _
+        _ = JSON.parse NetHTTPUtils.request_data "https://commons.wikimedia.org/w/api.php", form: {
+          format: "json",
+          action: "query",
+          prop: "imageinfo",
+          iiprop: "url",
+          titles: id,
+        }
+        fi[_["query"]["pages"].values.first["imageinfo"].first["url"]]
+      end },
+      ->_{ if %r{^https://500px\.com/photo/(?<id>[^/]+)/[^/]+$} =~ _
+        (JSON.parse NetHTTPUtils.request_data "https://api.500px.com/v1/photos/#{id}", form: {
+          image_size: 2048,
+          consumer_key: ENV["_500PX_CONSUMER_KEY"],
+        } )["photo"].values_at("width", "height", "image_url")
+      end },
+      ->_{ fi[_] },
+    ].lazy.map{ |_| _[url] }.find{ |_| _ }
   end
 end
 
@@ -108,9 +108,8 @@ if $0 == __FILE__
     rescue GetDimensions::Error
     end
   else
-  abort "unable to inspect #{input}" unless result = GetDimensions::get_dimensions(input)
-  abort "#{input} :: #{result.inspect} != #{expectation.inspect}" if result != expectation
-    # (result.is_a?(Array) ? result[0, 3] : result) != expectation
+    abort "unable to inspect #{input}" unless result = GetDimensions::get_dimensions(input)
+    abort "#{input} :: #{result.inspect} != #{expectation.inspect}" if result != expectation
   end
 end
 
