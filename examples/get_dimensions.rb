@@ -5,10 +5,16 @@ require "imgur2array"
 require "fastimage"
 
 module GetDimensions
-  class Error < RuntimeError
-    def initialize body
-      # Module.nesting[1].logger.error body
-      super "GetDimensions error: #{body}"
+  class Error404 < RuntimeError
+    def initialize url
+      # Module.nesting[1].logger.error url
+      super "GetDimensions NotFound error for #{url}"
+    end
+  end
+  class ErrorUnknown < RuntimeError
+    def initialize url
+      # Module.nesting[1].logger.error url
+      super "GetDimensions UnknownURL error for #{url}"
     end
   end
 
@@ -24,9 +30,15 @@ module GetDimensions
       %r{^https?://www\.reddit\.com/},
       %r{^http://vimeo\.com/},
     ].any?{ |r| r =~ url }
-    fi = -> url { _ = FastImage.size url; _ ? [*_, url] : fail }
+    fi = lambda do |url|
+      _ = FastImage.size url
+      _ ? [*_, url] : fail
+    end
     [
-      ->_{ _ = FastImage.size url; [*_, url] if _ },
+      ->_{
+        _ = FastImage.size url
+        [*_, url] if _
+      },
       ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
         dimensions = Imgur::imgur_to_array _
         [
@@ -43,7 +55,7 @@ module GetDimensions
           format: "json",
           nojsoncallback: 1,
         }
-        raise Error.new "404 for #{_}" if json == {"stat"=>"fail", "code"=>1, "message"=>"Photo not found"}
+        raise Error404.new _ if json == {"stat"=>"fail", "code"=>1, "message"=>"Photo not found"}
         if json["stat"] != "ok"
           fail [json, _].inspect
         else
@@ -69,7 +81,7 @@ module GetDimensions
           consumer_key: ENV["_500PX_CONSUMER_KEY"],
         } )["photo"].values_at("width", "height", "image_url")
       end },
-      ->_{ fi[_] },
+      ->_{ raise ErrorUnknown.new _ },
     ].lazy.map{ |_| _[url] }.find{ |_| _ }
   end
 end
@@ -79,6 +91,7 @@ if $0 == __FILE__
   puts "self testing..."
 
 [
+  ["http://example.com", GetDimensions::ErrorUnknown],
   ["http://i.imgur.com/7xcxxkR.gifv", :skipped],
   ["http://imgur.com/HQHBBBD", [1024, 768, "https://i.imgur.com/HQHBBBD.jpg",
                                            "https://i.imgur.com/HQHBBBD.jpg"]],
@@ -86,12 +99,12 @@ if $0 == __FILE__
                                             "https://i.imgur.com/Yunpxnx.jpg",
                                             "https://i.imgur.com/3afw2aF.jpg",
                                             "https://i.imgur.com/2epn2nT.jpg"]],
-  ["https://www.flickr.com/photos/tomas-/17220613278/", GetDimensions::Error],
-  ["https://www.flickr.com/photos/16936123@N07/18835195572", GetDimensions::Error],
+  ["https://www.flickr.com/photos/tomas-/17220613278/", GetDimensions::Error404],
+  ["https://www.flickr.com/photos/16936123@N07/18835195572", GetDimensions::Error404],
   ["https://www.flickr.com/photos/44133687@N00/17380073505/", [3000, 2000, "https://farm8.staticflickr.com/7757/17380073505_ed5178cc6a_o.jpg"]],                            # trailing slash
-  ["https://www.flickr.com/photos/jacob_schmidt/18414267018/in/album-72157654235845651/", GetDimensions::Error],                                                            # username in-album
+  ["https://www.flickr.com/photos/jacob_schmidt/18414267018/in/album-72157654235845651/", GetDimensions::Error404],                                                            # username in-album
   ["https://www.flickr.com/photos/tommygi/5291099420/in/dateposted-public/", [1600, 1062, "https://farm6.staticflickr.com/5249/5291099420_3bf8f43326_o.jpg"]],              # username in-public
-  ["https://www.flickr.com/photos/132249412@N02/18593786659/in/album-72157654521569061/", GetDimensions::Error],
+  ["https://www.flickr.com/photos/132249412@N02/18593786659/in/album-72157654521569061/", GetDimensions::Error404],
   ["https://www.flickr.com/photos/130019700@N03/18848891351/in/dateposted-public/", [4621, 3081, "https://farm4.staticflickr.com/3796/18848891351_f751b35aeb_o.jpg"]],      # userid   in-public
   ["https://www.flickr.com/photos/frank3/3778768209/in/photolist-6KVb92-eCDTCr-ur8K-7qbL5z-c71afh-c6YvXW-7mHG2L-c71ak9-c71aTq-c71azf-c71aq5-ur8Q-6F6YkR-eCDZsD-eCEakg-eCE6DK-4ymYku-7ubEt-51rUuc-buujQE-ur8x-9fuNu7-6uVeiK-qrmcC6-ur8D-eCEbei-eCDY9P-eCEhCk-eCE5a2-eCH457-eCHrcq-eCEdZ4-eCH6Sd-c71b5o-c71auE-eCHa8m-eCDSbz-eCH1dC-eCEg3v-7JZ4rh-9KwxYL-6KV9yR-9tUSbU-p4UKp7-eCHfwS-6KVbAH-5FrdbP-eeQ39v-eeQ1UR-4jHAGN", [1024, 681, "https://farm3.staticflickr.com/2499/3778768209_280f82abab_b.jpg"]],
   ["https://www.flickr.com/photos/patricksloan/18230541413/sizes/l", [2048, 491, "https://farm6.staticflickr.com/5572/18230541413_fec4783d79_k.jpg"]],
@@ -101,11 +114,11 @@ if $0 == __FILE__
   ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/v2?client_application_id=18857&webp=true&sig=c0d31cf9395d7849fbcce612ca9909225ec16fd293a7f460ea15d9e6a6c34257"]],
 ].each do |input, expectation|
   puts "testing #{input}"
-  if expectation == GetDimensions::Error
+  if expectation.is_a? Class
     begin
       GetDimensions::get_dimensions input
       fail
-    rescue GetDimensions::Error
+    rescue expectation
     end
   else
     abort "unable to inspect #{input}" unless result = GetDimensions::get_dimensions(input)
@@ -116,6 +129,10 @@ end
   puts "OK #{__FILE__}"
   exit
 end
+
+
+
+
 
 
 __END__
