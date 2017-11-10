@@ -5,8 +5,8 @@ require "imgur2array"
 require "fastimage"
 
 module GetDimensions
-  class << self
-    def get_dimensions url
+
+  def self.get_dimensions url
       fail "env var missing -- IMGUR_CLIENT_ID" unless ENV["IMGUR_CLIENT_ID"]
       fail "env var missing -- FLICKR_API_KEY" unless ENV["FLICKR_API_KEY"]
       fail "env var missing -- _500PX_CONSUMER_KEY" unless ENV["_500PX_CONSUMER_KEY"]
@@ -22,23 +22,21 @@ module GetDimensions
       [
         ->_{ fi[_] },
         ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
-puts "AAAAAA"
-            data = Imgur::imgur_to_array _
-              dimensions = data.map do |u, x, y|
-                [x, y, u]
-              end
-              [
-                *dimensions.max_by{ |x, y, u| x * y },
-                *dimensions.map{ |x, y, u| u }
-              ]
+          dimensions = Imgur::imgur_to_array _
+          [
+            *dimensions.max_by{ |u, x, y| x * y }.rotate(1),
+            *dimensions.map(&:first),
+          ]
         end },
         ->_{ if %r{^https://www\.flickr\.com/photos/[^/]+/(?<id>[^/]+)} =~ _ ||
                 %r{^https://flic\.kr/p/(?<id>[^/]+)$} =~ _
-          json = JSON.parse NetHTTPUtils.request_data \
-            "https://api.flickr.com/services/rest/?"\
-            "method=flickr.photos.getSizes&"\
-            "api_key=#{ENV["FLICKR_API_KEY"]}&"\
-            "photo_id=#{id}&format=json&nojsoncallback=1"
+          json = JSON.parse NetHTTPUtils.request_data "https://api.flickr.com/services/rest/", form: {
+            method: "flickr.photos.getSizes",
+            api_key: ENV["FLICKR_API_KEY"],
+            photo_id: id,
+            format: "json",
+            nojsoncallback: 1,
+          }
           if json["stat"] != "ok"
             pp [json, _]
             nil
@@ -50,19 +48,22 @@ puts "AAAAAA"
           end
         end },
         ->_{ if %r{https?://[^.]+.wiki[mp]edia\.org/wiki(/[^/]+)*/(?<id>File:.+)} =~ _
-          _ = JSON.parse NetHTTPUtils.request_data \
-            "https://commons.wikimedia.org/w/api.php?"\
-            "format=json&action=query&prop=imageinfo&iiprop=url&titles=#{id}"
+          _ = JSON.parse NetHTTPUtils.request_data "https://commons.wikimedia.org/w/api.php", form: {
+            format: "json",
+            action: "query",
+            prop: "imageinfo",
+            iiprop: "url",
+            titles: id,
+          }
           fi[_["query"]["pages"].values.first["imageinfo"].first["url"]]
         end },
         ->_{ if %r{^https://500px\.com/photo/(?<id>[^/]+)/[^/]+$} =~ _
-          (JSON.parse NetHTTPUtils.request_data(
-            "https://api.500px.com/v1/photos/#{id}?image_size=2048&"\
-            "consumer_key=#{ENV["_500PX_CONSUMER_KEY"]}"
-          ) )["photo"].values_at("width", "height", "image_url")
+          (JSON.parse NetHTTPUtils.request_data "https://api.500px.com/v1/photos/#{id}", form: {
+            image_size: 2048,
+            consumer_key: ENV["_500PX_CONSUMER_KEY"],
+          } )["photo"].values_at("width", "height", "image_url")
         end },
       ].lazy.map{ |_| _[url] }.find{ |_| _ }
-    end
   end
 end
 
@@ -78,19 +79,19 @@ if $0 == __FILE__
                                             "https://i.imgur.com/Yunpxnx.jpg",
                                             "https://i.imgur.com/3afw2aF.jpg",
                                             "https://i.imgur.com/2epn2nT.jpg"]],
-  # ["https://www.flickr.com/photos/tomas-/17220613278/", [3400, 2131, "https://farm9.staticflickr.com/8856/17220613278_e0999bfec4_o.png"]],
-  # ["https://www.flickr.com/photos/16936123@N07/18835195572", [640, 480, "https://farm4.staticflickr.com/3758/18835195572_d048e6d148_z.jpg"]],
-  # ["https://www.flickr.com/photos/44133687@N00/17380073505/", [3000, 2000, "https://farm8.staticflickr.com/7757/17380073505_ed5178cc6a_o.jpg"]], # trailing slash
-  # ["https://www.flickr.com/photos/jacob_schmidt/18414267018/in/album-72157654235845651/", [2048, 1365, "https://farm9.staticflickr.com/8840/18414267018_c260e69066_k.jpg"]], # username in-album
-  # ["https://www.flickr.com/photos/tommygi/5291099420/in/dateposted-public/", [1600, 1062, "https://farm6.staticflickr.com/5249/5291099420_3bf8f43326_o.jpg"]],              # username in-public
-  # # ["https://www.flickr.com/photos/132249412@N02/18593786659/in/album-72157654521569061/", nil],   # 404 # {"stat"=>"fail", "code"=>1, "message"=>"Photo not found"}
-  # ["https://www.flickr.com/photos/130019700@N03/18848891351/in/dateposted-public/", [4621, 3081, "https://farm4.staticflickr.com/3796/18848891351_f751b35aeb_o.jpg"]],       # userid   in-public
-  # ["https://www.flickr.com/photos/frank3/3778768209/in/photolist-6KVb92-eCDTCr-ur8K-7qbL5z-c71afh-c6YvXW-7mHG2L-c71ak9-c71aTq-c71azf-c71aq5-ur8Q-6F6YkR-eCDZsD-eCEakg-eCE6DK-4ymYku-7ubEt-51rUuc-buujQE-ur8x-9fuNu7-6uVeiK-qrmcC6-ur8D-eCEbei-eCDY9P-eCEhCk-eCE5a2-eCH457-eCHrcq-eCEdZ4-eCH6Sd-c71b5o-c71auE-eCHa8m-eCDSbz-eCH1dC-eCEg3v-7JZ4rh-9KwxYL-6KV9yR-9tUSbU-p4UKp7-eCHfwS-6KVbAH-5FrdbP-eeQ39v-eeQ1UR-4jHAGN", [1024, 681, "https://farm3.staticflickr.com/2499/3778768209_280f82abab_b.jpg"]],
-  # ["https://www.flickr.com/photos/patricksloan/18230541413/sizes/l", [2048, 491, "https://farm6.staticflickr.com/5572/18230541413_fec4783d79_k.jpg"]],
-  # ["https://flic.kr/p/vPvCWJ", [2048, 1365, "https://farm1.staticflickr.com/507/19572004110_d44d1b4ead_k.jpg"]],
-  # ["https://en.wikipedia.org/wiki/Prostitution_by_country#/media/File:Prostitution_laws_of_the_world.PNG", [1427, 628, "https://upload.wikimedia.org/wikipedia/commons/e/e8/Prostitution_laws_of_the_world.PNG"]],
-  # ["http://commons.wikimedia.org/wiki/File:Eduard_Bohlen_anagoria.jpg", [4367, 2928, "https://upload.wikimedia.org/wikipedia/commons/0/0d/Eduard_Bohlen_anagoria.jpg"]],
-  # ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/9ea66d9acaf36d78224f141110ea23f2"]],
+  ["https://www.flickr.com/photos/tomas-/17220613278/", GetDimensions::Error],
+  ["https://www.flickr.com/photos/16936123@N07/18835195572", GetDimensions::Error],
+  ["https://www.flickr.com/photos/44133687@N00/17380073505/", [3000, 2000, "https://farm8.staticflickr.com/7757/17380073505_ed5178cc6a_o.jpg"]],                            # trailing slash
+  ["https://www.flickr.com/photos/jacob_schmidt/18414267018/in/album-72157654235845651/", GetDimensions::Error],                                                            # username in-album
+  ["https://www.flickr.com/photos/tommygi/5291099420/in/dateposted-public/", [1600, 1062, "https://farm6.staticflickr.com/5249/5291099420_3bf8f43326_o.jpg"]],              # username in-public
+  ["https://www.flickr.com/photos/132249412@N02/18593786659/in/album-72157654521569061/", GetDimensions::Error],
+  ["https://www.flickr.com/photos/130019700@N03/18848891351/in/dateposted-public/", [4621, 3081, "https://farm4.staticflickr.com/3796/18848891351_f751b35aeb_o.jpg"]],      # userid   in-public
+  ["https://www.flickr.com/photos/frank3/3778768209/in/photolist-6KVb92-eCDTCr-ur8K-7qbL5z-c71afh-c6YvXW-7mHG2L-c71ak9-c71aTq-c71azf-c71aq5-ur8Q-6F6YkR-eCDZsD-eCEakg-eCE6DK-4ymYku-7ubEt-51rUuc-buujQE-ur8x-9fuNu7-6uVeiK-qrmcC6-ur8D-eCEbei-eCDY9P-eCEhCk-eCE5a2-eCH457-eCHrcq-eCEdZ4-eCH6Sd-c71b5o-c71auE-eCHa8m-eCDSbz-eCH1dC-eCEg3v-7JZ4rh-9KwxYL-6KV9yR-9tUSbU-p4UKp7-eCHfwS-6KVbAH-5FrdbP-eeQ39v-eeQ1UR-4jHAGN", [1024, 681, "https://farm3.staticflickr.com/2499/3778768209_280f82abab_b.jpg"]],
+  ["https://www.flickr.com/photos/patricksloan/18230541413/sizes/l", [2048, 491, "https://farm6.staticflickr.com/5572/18230541413_fec4783d79_k.jpg"]],
+  ["https://flic.kr/p/vPvCWJ", [2048, 1365, "https://farm1.staticflickr.com/507/19572004110_d44d1b4ead_k.jpg"]],
+  ["https://en.wikipedia.org/wiki/Prostitution_by_country#/media/File:Prostitution_laws_of_the_world.PNG", [1427, 628, "https://upload.wikimedia.org/wikipedia/commons/e/e8/Prostitution_laws_of_the_world.PNG"]],
+  ["http://commons.wikimedia.org/wiki/File:Eduard_Bohlen_anagoria.jpg", [4367, 2928, "https://upload.wikimedia.org/wikipedia/commons/0/0d/Eduard_Bohlen_anagoria.jpg"]],
+  ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/v2?client_application_id=18857&webp=true&sig=c0d31cf9395d7849fbcce612ca9909225ec16fd293a7f460ea15d9e6a6c34257"]],
 ].each do |input, expectation|
   puts "testing #{input}"
   abort "unable to inspect #{input}" unless result = GetDimensions::get_dimensions(input)
