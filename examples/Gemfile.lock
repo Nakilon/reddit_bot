@@ -1,0 +1,35 @@
+GIT
+  remote: git@github.com:Nakilon/imgur2array.git
+  revision: d210a3f9f537659a4830615db4261cc450ceb44f
+  tag: v0.0.1.0
+  specs:
+    imgur2array (0.0.1.0)
+
+GIT
+  remote: git@github.com:Nakilon/nethttputils.git
+  revision: 0c5e79842b8e89c12de4f44b2b41aef3e4614216
+  tag: v0.0.2.0
+  specs:
+    nethttputils (0.0.2.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
+    fastimage (1.7.0)
+      addressable (~> 2.3, >= 2.3.5)
+    json (2.1.0)
+    public_suffix (2.0.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  fastimage (= 1.7.0)
+  imgur2array!
+  json
+  nethttputils!
+
+BUNDLED WITH
+   1.16.0
