@@ -42,7 +42,7 @@ module GetDimensions
       ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
         dimensions = Imgur::imgur_to_array _
         [
-          *dimensions.max_by{ |u, x, y| x * y }.rotate(1),
+          *dimensions.max_by{ |u, x, y, t| x * y }.take(3).rotate(1),
           *dimensions.map(&:first),
         ]
       end },
@@ -100,6 +100,9 @@ if $0 == __FILE__
                                             "https://i.imgur.com/Yunpxnx.jpg",
                                             "https://i.imgur.com/3afw2aF.jpg",
                                             "https://i.imgur.com/2epn2nT.jpg"]],
+  # TODO maybe we should do smth else with video -- maybe raise?
+  ["https://imgur.com/9yaMdJq", [720, 404, "https://i.imgur.com/9yaMdJq.mp4",
+                                           "https://i.imgur.com/9yaMdJq.mp4"]],
   ["https://www.flickr.com/photos/tomas-/17220613278/", GetDimensions::Error404],
   ["https://www.flickr.com/photos/16936123@N07/18835195572", GetDimensions::Error404],
   ["https://www.flickr.com/photos/44133687@N00/17380073505/", [3000, 2000, "https://farm8.staticflickr.com/7757/17380073505_ed5178cc6a_o.jpg"]],                            # trailing slash
