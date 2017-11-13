@@ -78,7 +78,8 @@ or via Gemfile:
     gem "reddit_bot"
 
 TODO: write more usage instructions here  
-TODO: manual on how to create bots with Reddit web interface and run via bash console
+TODO: manual on how to create bots with Reddit web interface and run via bash console  
+TODO: about NetHTTPUtils dependency
 
 To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
 
