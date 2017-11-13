@@ -106,7 +106,7 @@ if $0 == __FILE__
   ["https://imgur.com/9yaMdJq", [720, 404, "https://i.imgur.com/9yaMdJq.mp4",
                                            "https://i.imgur.com/9yaMdJq.mp4"]],
   ["http://imgur.com/gallery/dCQprEq/new", [5760, 3840, "https://i.imgur.com/dCQprEq.jpg",
-                                                        "https://i.imgur.com/dCQprEq.jpg"]]
+                                                        "https://i.imgur.com/dCQprEq.jpg"]],
   ["https://www.flickr.com/photos/tomas-/17220613278/", GetDimensions::Error404],
   ["https://www.flickr.com/photos/16936123@N07/18835195572", GetDimensions::Error404],
   ["https://www.flickr.com/photos/44133687@N00/17380073505/", [3000, 2000, "https://farm8.staticflickr.com/7757/17380073505_ed5178cc6a_o.jpg"]],                            # trailing slash
