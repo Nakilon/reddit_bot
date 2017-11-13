@@ -28,10 +28,11 @@ module GetDimensions
     return :skipped if [
       %r{^https://www\.youtube\.com/},
       %r{^http://gfycat\.com/},
-      %r{^https?://(i\.)?imgur\.com/.+\.gifv$},
+      %r{^https?://(i\.)?imgur\.com/.+\.gifv$}, # TODO: o'rly?!
       %r{^https?://www\.reddit\.com/},
       %r{^http://vimeo\.com/},
     ].any?{ |r| r =~ url }
+    return :skipped if %w{ minus com } == URI(url).host.split(?.).last(2)
     fi = lambda do |url|
       _ = FastImage.size url
       _ ? [*_, url] : fail
@@ -94,6 +95,7 @@ if $0 == __FILE__
   puts "self testing..."
 
 [
+  ["http://minus.com/lkP3hgRJd9npi", :skipped],
   ["http://example.com", GetDimensions::ErrorUnknown],
   ["http://i.imgur.com/7xcxxkR.gifv", :skipped],
   ["http://imgur.com/HQHBBBD", [1024, 768, "https://i.imgur.com/HQHBBBD.jpg",
@@ -120,7 +122,7 @@ if $0 == __FILE__
   ["https://en.wikipedia.org/wiki/Prostitution_by_country#/media/File:Prostitution_laws_of_the_world.PNG", [1427, 628, "https://upload.wikimedia.org/wikipedia/commons/e/e8/Prostitution_laws_of_the_world.PNG"]],
   ["http://commons.wikimedia.org/wiki/File:Eduard_Bohlen_anagoria.jpg", [4367, 2928, "https://upload.wikimedia.org/wikipedia/commons/0/0d/Eduard_Bohlen_anagoria.jpg"]],
   ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/v2?client_application_id=18857&webp=true&sig=c0d31cf9395d7849fbcce612ca9909225ec16fd293a7f460ea15d9e6a6c34257"]],
-  ["https://i.redd.it/si758zk7r5xz.jpg", GetDimensions::Error404]
+  ["https://i.redd.it/si758zk7r5xz.jpg", GetDimensions::Error404],
 ].each do |input, expectation|
   puts "testing #{input}"
   if expectation.is_a? Class
