@@ -79,7 +79,7 @@ or via Gemfile:
 
 TODO: write more usage instructions here  
 TODO: manual on how to create bots with Reddit web interface and run via bash console  
-TODO: about NetHTTPUtils dependency
+TODO: about NetHTTPUtils dependency; and that get_rersponse returns String code not Integer like request_data
 
 To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
 

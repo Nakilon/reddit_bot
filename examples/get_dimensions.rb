@@ -81,6 +81,7 @@ module GetDimensions
           consumer_key: ENV["_500PX_CONSUMER_KEY"],
         } )["photo"].values_at("width", "height", "image_url")
       end },
+      ->_{ raise Error404.new _ if "404" == NetHTTPUtils.get_response(_).code },
       ->_{ raise ErrorUnknown.new _ },
     ].lazy.map{ |_| _[url] }.find{ |_| _ }
   end
@@ -112,6 +113,7 @@ if $0 == __FILE__
   ["https://en.wikipedia.org/wiki/Prostitution_by_country#/media/File:Prostitution_laws_of_the_world.PNG", [1427, 628, "https://upload.wikimedia.org/wikipedia/commons/e/e8/Prostitution_laws_of_the_world.PNG"]],
   ["http://commons.wikimedia.org/wiki/File:Eduard_Bohlen_anagoria.jpg", [4367, 2928, "https://upload.wikimedia.org/wikipedia/commons/0/0d/Eduard_Bohlen_anagoria.jpg"]],
   ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/v2?client_application_id=18857&webp=true&sig=c0d31cf9395d7849fbcce612ca9909225ec16fd293a7f460ea15d9e6a6c34257"]],
+  ["https://i.redd.it/si758zk7r5xz.jpg", GetDimensions::Error404]
 ].each do |input, expectation|
   puts "testing #{input}"
   if expectation.is_a? Class
