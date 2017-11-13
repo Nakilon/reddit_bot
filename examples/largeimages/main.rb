@@ -1,42 +1,6 @@
 ﻿### THIS WAS MY THE VERY FIRST REDDIT BOT
 
-
-# if Gem::Platform.local.os == "darwin"
-#   require_relative "../../../tcpsm/lib/tcp_socket_measurer"
-# else
-#   require_relative "#{Dir.home}/tcp_socket_measurer"
-# end
-
-# %w{
-#   198.41.208.137
-#   198.41.208.138
-#   198.41.208.139
-#   198.41.208.140
-#   198.41.208.141
-#   198.41.208.142
-#   198.41.208.143
-#   198.41.209.136
-#   198.41.209.137
-#   198.41.209.138
-#   198.41.209.139
-#   198.41.209.140
-#   198.41.209.141
-#   198.41.209.142
-#   198.41.209.143
-
-#   151.101.33.140
-#   151.101.32.193
-# }.each do |ip|
-#   TCPSocketMeasurer.known_hosts[ip] = "www.reddit.com"
-# end
-# Thread.new do
-#   loop do
-#     TCPSocketMeasurer.report
-#     puts "next report is in an hour"
-#     sleep 3600
-#   end
-# end
-
+require "nokogiri"
 
 require_relative "../get_dimensions"
 
@@ -62,34 +26,31 @@ checked = []
 loop do
   puts "LOOP #{Time.now}"
 
-  require "nokogiri"
-  Nokogiri::XML(NetHTTPUtils.request_data ENV["FEEDPCBR_URL"]).remove_namespaces!.xpath("feed/entry").each do |entry|
-    pp entry
-    break
-    update_item( {
-      author:    entry.at_xpath("author/name").text,
-      category:  entry.at_xpath("category")["term"],
-      id:        entry.at_xpath("id").text,
-      alternate: entry.at_xpath("link[@rel='alternate']")["href"],
-      via:       entry.at_xpath("link[@rel='via']")["href"],
-      title:     entry.at_xpath("title").text,
-      updated:   Time.parse(entry.at_xpath("updated").text),
-      published: Time.parse(entry.at_xpath("published").text).to_i,
-      score:     entry.at_xpath("summary").text.to_i,
-    }, store)
+  a = Nokogiri::XML(NetHTTPUtils.request_data ENV["FEEDPCBR_URL"]).remove_namespaces!.xpath("feed/entry").map do |entry|
+    [ 5000000, [
+      entry.at_xpath("id").text,
+      entry.at_xpath("link[@rel='via']")["href"],
+      entry.at_xpath("title").text,
+      entry.at_xpath("category")["term"],
+      entry.at_xpath("author/name").text,
+      entry.at_xpath("link[@rel='alternate']")["href"],
+    ] ]
   end
-
-  INCLUDE.each do |sortasub|
-    BOT.new_posts(sortasub).take(100).each do |child|
+  b = INCLUDE.flat_map do |sortasub|
+    BOT.new_posts(sortasub).take(100).map do |child|
       next if child["is_self"]
       next if EXCLUDE.include? child["subreddit"].downcase
-      pp child
-      abort
-    end
+      [ 10000000, child.values_at(
+        *%w{ id url title subreddit author permalink }
+      ).tap{ |_| _.last.prepend "https://www.reddit.com" } ]
+    end.compact
   end
+
+  feed = [*a.take(1), *b.take(1)]
+pp feed
 abort
 
-  [].each do |where|
+  feed.each do |min_resolution, entry|
 
     _ = BOT.json(:get, "/#{where}/new")["data"]["children"].each do |post|
       id, url, title, subreddit = post["data"].values_at(*%w{ id url title subreddit })
