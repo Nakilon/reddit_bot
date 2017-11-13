@@ -4,7 +4,7 @@
 require "nokogiri"
 
 require "gcplogger"
-logger = GCPLogger.logger "feedpcbr"
+logger = GCPLogger.logger "largeimagesbot"
 
 require_relative "../get_dimensions"
 Imgur.logger = logger
