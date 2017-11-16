@@ -32,7 +32,11 @@ module GetDimensions
       %r{^https?://www\.reddit\.com/},
       %r{^http://vimeo\.com/},
     ].any?{ |r| r =~ url }
-    return :skipped if %w{ minus com } == URI(url).host.split(?.).last(2)
+    return :skipped if %w{ minus com } == begin
+      URI url
+    rescue URI::InvalidURIError
+      return :skipped
+    end.host.split(?.).last(2)
     fi = lambda do |url|
       _ = FastImage.size url
       _ ? [*_, url] : fail
