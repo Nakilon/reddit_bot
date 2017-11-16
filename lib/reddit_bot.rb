@@ -236,21 +236,21 @@ module RedditBot
     end
 
     def _resp mtd, url, form, headers, base_auth = nil
-      response = NetHTTPUtils.get_response url, mtd, form: form, header: headers, auth: base_auth
-      puts %w{
-        x-ratelimit-remaining
-        x-ratelimit-used
-        x-ratelimit-reset
-      }.map{ |key| "#{key}=#{response.to_hash[key]}" }.join ", " \
+      NetHTTPUtils.get_response(url, mtd, form: form, header: headers, auth: base_auth).tap do |response|
+        next unless remaining = response.to_hash["x-ratelimit-remaining"]
         if Gem::Platform.local.os == "darwin"
-      # if response.to_hash["x-ratelimit-remaining"]
-      #   p response.to_hash["x-ratelimit-remaining"][0]
-      #   fail response.to_hash["x-ratelimit-remaining"][0]
-      # end
-      fail response.to_hash["x-ratelimit-remaining"][0] \
-      if response.to_hash["x-ratelimit-remaining"] &&
-         response.to_hash["x-ratelimit-remaining"][0].size < 5
-      response
+          puts %w{
+            x-ratelimit-remaining
+            x-ratelimit-used
+            x-ratelimit-reset
+          }.map{ |key| "#{key}=#{response.to_hash[key]}" }.join ", "
+        end
+        fail remaining[0] if remaining[0].size < 4
+        next if remaining[0].size > 4
+        t = (response.to_hash["x-ratelimit-reset"][0].to_f + 1) / remaining[0].to_f + 1
+        puts "sleeping #{t} seconds because of x-ratelimit"
+        sleep t
+      end
     end
 
   end
