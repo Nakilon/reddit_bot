@@ -8,7 +8,7 @@ loop do
 
   [
     ["ion", "Developer"],
-    ["survivetheculling", "Developer"],
+    # ["survivetheculling", "Developer"],
   ].each do |subreddit, developer_class|
     puts "sub: #{subreddit}"
 
