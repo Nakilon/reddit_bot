@@ -247,7 +247,7 @@ module RedditBot
         end
         fail remaining[0] if remaining[0].size < 4
         next if remaining[0].size > 4
-        t = (response.to_hash["x-ratelimit-reset"][0].to_f + 1) / remaining[0].to_f + 1
+        t = (response.to_hash["x-ratelimit-reset"][0].to_f + 1) / [remaining[0].to_f - 10, 1].max + 1
         puts "sleeping #{t} seconds because of x-ratelimit"
         sleep t
       end
