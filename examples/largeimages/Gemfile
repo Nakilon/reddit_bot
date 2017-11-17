@@ -2,7 +2,7 @@
 
 gem "json"
 
-gem "nethttputils", git: "git@github.com:Nakilon/nethttputils.git", tag: "v0.0.2.0"
+gem "nethttputils", git: "git@github.com:Nakilon/nethttputils.git", tag: "v0.0.3.0"
 gem "reddit_bot", "~>1.4.0"
 gem "nokogiri"
 
