@@ -10,13 +10,13 @@ module GetDimensions
   class Error404 < RuntimeError
     def initialize url
       # Module.nesting[1].logger.error url
-      super "GetDimensions NotFound error for #{url}"
+      super "GetDimensions: NotFound error for #{url}"
     end
   end
   class ErrorUnknown < RuntimeError
     def initialize url
       # Module.nesting[1].logger.error url
-      super "GetDimensions UnknownURL error for #{url}"
+      super "GetDimensions: fastimage can't get dimensions for unknown url #{url}"
     end
   end
 
@@ -32,11 +32,14 @@ module GetDimensions
       %r{^https?://www\.reddit\.com/},
       %r{^http://vimeo\.com/},
     ].any?{ |r| r =~ url }
-    return :skipped if %w{ minus com } == begin
+    
+    begin
       URI url
     rescue URI::InvalidURIError
       return :skipped
-    end.host.split(?.).last(2)
+    end
+    # return :skipped if %w{ minus com } == .host.split(?.).last(2)
+
     fi = lambda do |url|
       _ = FastImage.size url
       _ ? [*_, url] : fail
@@ -88,7 +91,13 @@ module GetDimensions
           consumer_key: ENV["_500PX_CONSUMER_KEY"],
         } )["photo"].values_at("width", "height", "image_url")
       end },
-      ->_{ raise Error404.new _ if "404" == NetHTTPUtils.get_response(_).code },
+      ->_{
+        raise Error404.new _ if "404" == begin
+          NetHTTPUtils.get_response _
+        rescue SocketError => e
+          raise Error404.new _
+        end.code
+      },
       ->_{ raise ErrorUnknown.new _ },
     ].lazy.map{ |_| _[url] }.find{ |_| _ }
   end
@@ -99,7 +108,7 @@ if $0 == __FILE__
   puts "self testing..."
 
 [
-  ["http://minus.com/lkP3hgRJd9npi", :skipped],
+  ["http://minus.com/lkP3hgRJd9npi", GetDimensions::Error404],
   ["http://example.com", GetDimensions::ErrorUnknown],
   ["http://i.imgur.com/7xcxxkR.gifv", :skipped],
   ["http://imgur.com/HQHBBBD", [1024, 768, "https://i.imgur.com/HQHBBBD.jpg",
@@ -127,6 +136,7 @@ if $0 == __FILE__
   ["http://commons.wikimedia.org/wiki/File:Eduard_Bohlen_anagoria.jpg", [4367, 2928, "https://upload.wikimedia.org/wikipedia/commons/0/0d/Eduard_Bohlen_anagoria.jpg"]],
   ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/v2?client_application_id=18857&webp=true&sig=c0d31cf9395d7849fbcce612ca9909225ec16fd293a7f460ea15d9e6a6c34257"]],
   ["https://i.redd.it/si758zk7r5xz.jpg", GetDimensions::Error404],
+  ["http://www.cutehalloweencostumeideas.org/wp-content/uploads/2017/10/Niagara-Falls_04.jpg", GetDimensions::Error404],
 ].each do |input, expectation|
   puts "testing #{input}"
   if expectation.is_a? Class
