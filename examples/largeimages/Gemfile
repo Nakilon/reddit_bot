@@ -9,4 +9,4 @@ gem "nokogiri"
 gem "imgur2array", git: "git@github.com:Nakilon/imgur2array.git", tag: "v0.0.2.1"
 gem "fastimage", "1.7.0"
 
-gem "gcplogger", git: "git@github.com:Nakilon/gcplogger.git", tag: "v0.0.1.1"
+gem "gcplogger", git: "git@github.com:Nakilon/gcplogger.git", tag: "v0.0.1.2"
