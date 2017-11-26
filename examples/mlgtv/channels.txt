@@ -28,7 +28,7 @@ SlasheRAL
 Apathy
 ColtHavok
 MikeSwarley
-ParasiteTV
+Parasite
 TyreeLegal
 Silly
 Blfire
@@ -78,6 +78,7 @@ iDqvee
 Tojor
 MethodZ_TV
 Gotaga
+VortexSA
 WailersWL
 TCM_Moose
 skrapzq
@@ -86,6 +87,11 @@ fighta71
 Swiftazor
 BacabecNZ
 Zeuss_Gaming
+NakeeeZe
+BeastnGOD
+Dizmull
+MitchBuZZO
+YKEminence
 Hopeyy
 GuydraCOD
 mattmrx
@@ -95,8 +101,16 @@ Revan
 BriceyHD
 Benson
 PHILWHI7
+CallofDuty
+MLGcod
 MLG
 mlgbravo
+MLGcharlie
+MLG_Delta
+MLG_FR
+MLG_German
+MLG_ITL
+MES
 Multiplay_CoD
 UMGEvents
 GfinityTV
@@ -110,3 +124,4 @@ Vilesyder
 benbance
 JordonGeneral
 dreeall
+CESNLive
