@@ -8,8 +8,8 @@ GIT
 
 GIT
   remote: git@github.com:Nakilon/imgur2array.git
-  revision: fdbc1ce03ea0bba143f625d8414f3b2f97d3dca4
-  tag: v0.0.2.3
+  revision: 36a7186275e99755d97f1b06c9fa823b464f19bc
+  tag: v0.0.2.4
   specs:
     imgur2array (0.0.2.3)
 
