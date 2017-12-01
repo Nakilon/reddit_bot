@@ -1,8 +1,9 @@
 GIT
-  remote: https://gist.github.com/97549ceb58d21e1fcbc0e6cdaf92fce8.git
-  revision: a5728a4745cf4479a3cc4a7742ca54fcb94955ab
+  remote: git@github.com:Nakilon/nethttputils.git
+  revision: 856f3a44f48c314ed3fdcf4532f7a7dd85ec31ef
+  tag: v0.0.3.1
   specs:
-    net_http_utils (0.1)
+    nethttputils (0.0.3.1)
 
 GEM
   remote: https://rubygems.org/
@@ -15,8 +16,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  net_http_utils!
+  nethttputils!
   reddit_bot (~> 1.3.0)
 
 BUNDLED WITH
-   1.13.5
+   1.16.0

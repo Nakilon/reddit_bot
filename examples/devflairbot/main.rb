@@ -12,9 +12,12 @@ loop do
   ].each do |subreddit, developer_class|
     puts "sub: #{subreddit}"
 
-    JSON.parse(
+    JSON.parse( begin
       NetHTTPUtils.request_data "https://www.reddit.com/r/#{subreddit}/comments.json", header: ["User-Agent", "ajsdjasdasd"]
-    )["data"]["children"].each do |comment|
+    rescue NetHTTPUtils::Error => e
+      raise unless e.code == 503
+      retry
+    end )["data"]["children"].each do |comment|
       id = comment["data"]["link_id"][3..-1]
       commenter_flair = comment["data"]["author_flair_css_class"]
       # puts "flair: #{commenter_flair}" if commenter_flair
