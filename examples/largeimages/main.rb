@@ -58,6 +58,7 @@ loop do
       checked << id
       # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
       logger.debug "image url for #{id}: #{url}"
+      next logger.warn "skipped a post by /u/sjhill" if author == "sjhill"
 
       next logger.warn "skipped (GetDimensions :skipped) #{url} from http://redd.it/#{id}" if :skipped == _ = begin
         GetDimensions::get_dimensions url
