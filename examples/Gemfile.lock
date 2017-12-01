@@ -1,9 +1,9 @@
 GIT
   remote: git@github.com:Nakilon/imgur2array.git
-  revision: 70d91ea57bcc5c366fe9407d1e45536ed45e2395
-  tag: v0.0.2.1
+  revision: 36a7186275e99755d97f1b06c9fa823b464f19bc
+  tag: v0.0.2.4
   specs:
-    imgur2array (0.0.2.1)
+    imgur2array (0.0.2.3)
 
 GIT
   remote: git@github.com:Nakilon/nethttputils.git
