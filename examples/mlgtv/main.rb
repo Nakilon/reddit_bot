@@ -17,7 +17,13 @@ loop do
         NetHTTPUtils.request_data("http://www.majorleaguegaming.com/api/games/all")[/\{.+\}/m]
       )["data"]["items"]
       begin
-        JSON.parse NetHTTPUtils.request_data "http://www.majorleaguegaming.com/api/channels/all?fields=name,url,tags,stream_name,game_id"
+        JSON.parse begin
+          NetHTTPUtils.request_data "http://www.majorleaguegaming.com/api/channels/all?fields=name,url,tags,stream_name,game_id"
+        rescue NetHTTPUtils::Error => e
+          fail unless e.code == 404
+          sleep 60
+          retry
+        end
       rescue JSON::ParserError
         puts "JSON::ParserError"
         sleep 60
