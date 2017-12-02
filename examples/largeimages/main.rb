@@ -61,7 +61,7 @@ loop do
       next logger.warn "skipped a post by /u/sjhill" if author == "sjhill"
 
       next logger.warn "skipped (GetDimensions :skipped) #{url} from http://redd.it/#{id}" if :skipped == _ = begin
-        GetDimensions::get_dimensions url
+        GetDimensions::get_dimensions CGI.unescape_html url
       rescue GetDimensions::Error404
         next logger.warn "skipped (GetDimensions::Error404) #{url} from http://redd.it/#{id}"
       rescue GetDimensions::ErrorUnknown
