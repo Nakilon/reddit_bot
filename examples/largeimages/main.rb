@@ -32,7 +32,7 @@ checked = []
 loop do
   logger.warn "LOOP #{Time.now}"
 
-  [ [:source_ultireddit, 5000000, ( Nokogiri::XML(NetHTTPUtils.request_data ENV["FEEDPCBR_URL"]).remove_namespaces!.xpath("feed/entry").map do |entry|
+  [ [:source_ultireddit, 10000000, ( Nokogiri::XML(NetHTTPUtils.request_data ENV["FEEDPCBR_URL"]).remove_namespaces!.xpath("feed/entry").map do |entry|
     [
       entry.at_xpath("id").text,
       entry.at_xpath("link[@rel='via']")["href"],
@@ -42,7 +42,7 @@ loop do
       entry.at_xpath("link[@rel='alternate']")["href"],
     ]
   end ) ],
-    [:source_reddit, 15000000, ( INCLUDE.flat_map do |sortasub|
+    [:source_reddit, 20000000, ( INCLUDE.flat_map do |sortasub|
     BOT.new_posts(sortasub).take(100).map do |child|
       next if child["is_self"]
       next if EXCLUDE.include? child["subreddit"].downcase
