@@ -86,8 +86,8 @@ loop do
         " [#{all_direct_urls.size} images]" if all_direct_urls.size > 1
       } #{
         title.sub(/\s*\[?#{width}\s*[*x×]\s*#{height}\]?\s*/i, " ").
-              gsub(/\s+/, " ").strip.
-              sub(/(.{#{100 - subreddit.size}}).+/, '\1...')
+              sub("[OC]", " ").gsub(/\s+/, " ").strip.
+              gsub(/(?<=.{190 - subreddit.size}).+/, "...")
       } /r/#{subreddit}".
         gsub(/\s+\(\s+\)\s+/, " ")
       logger.warn "new post #{source}: #{url} #{title.inspect}"
