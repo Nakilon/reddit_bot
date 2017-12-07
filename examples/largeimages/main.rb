@@ -24,6 +24,8 @@ INCLUDE = %w{
     r/WQHD_Wallpaper
 
     r/pic
+
+    r/oldmaps
 }
 EXCLUDE = %w{ foodporn powerwashingporn }
 
