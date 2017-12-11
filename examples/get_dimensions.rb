@@ -51,6 +51,7 @@ module GetDimensions
       },
       ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
         raise Error404.new _ unless (dimensions = Imgur::imgur_to_array _)
+        fail _ if dimensions.empty?
         [
           *dimensions.max_by{ |u, x, y, t| x * y }.take(3).rotate(1),
           *dimensions.map(&:first),
