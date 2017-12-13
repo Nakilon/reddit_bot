@@ -1,9 +1,9 @@
 GIT
   remote: git@github.com:Nakilon/gcplogger.git
-  revision: f3e3399c451413264e39ed19f61096e29b68987d
-  tag: v0.0.1.3
+  revision: 409838cfb0cff225bb1c1b7e686cd23f2be910d4
+  tag: v0.0.2.0
   specs:
-    gcplogger (0.0.1.3)
+    gcplogger (0.0.2.0)
       google-cloud-logging
 
 GIT
