@@ -50,7 +50,12 @@ module GetDimensions
         [*_, url] if _
       },
       ->_{ if %w{ imgur com } == URI(_).host.split(?.).last(2)
-        dimensions = Imgur::imgur_to_array _
+        dimensions = begin
+          Imgur::imgur_to_array _
+        rescue Imgur::Error => e
+          raise Error404.new _ if e.to_s.start_with? "Imgur error: bad link pattern"
+          raise
+        end
         raise Error404.new _ if !dimensions || dimensions.empty?
         [
           *dimensions.max_by{ |u, x, y, t| x * y }.take(3).rotate(1),
@@ -138,12 +143,12 @@ if $0 == __FILE__
   ["https://500px.com/photo/112134597/milky-way-by-tom-hall", [4928, 2888, "https://drscdn.500px.org/photo/112134597/m%3D2048_k%3D1_a%3D1/v2?client_application_id=18857&webp=true&sig=c0d31cf9395d7849fbcce612ca9909225ec16fd293a7f460ea15d9e6a6c34257"]],
   ["https://i.redd.it/si758zk7r5xz.jpg", GetDimensions::Error404],
   ["http://www.cutehalloweencostumeideas.org/wp-content/uploads/2017/10/Niagara-Falls_04.jpg", GetDimensions::Error404],
-  ["https://imgur.com/a/GUB13", GetDimensions::Error404],
+  ["https://imgur.com/gallery/YO49F.", GetDimensions::Error404], # expect "Imgur error: bad link pattern"
 ].each do |input, expectation|
   puts "testing #{input}"
   if expectation.is_a? Class
     begin
-      GetDimensions::get_dimensions input
+      p GetDimensions::get_dimensions input
       fail
     rescue expectation
     end
