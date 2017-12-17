@@ -1,14 +1,20 @@
 ﻿### THIS WAS MY THE VERY FIRST REDDIT BOT
 
 
-require "nokogiri"
-
 require "gcplogger"
 logger = GCPLogger.logger "largeimagesbot"
+
+fail("no ENV['ERROR_REPORTING_KEYFILE'] specified") unless ENV["ERROR_REPORTING_KEYFILE"]
+require "google/cloud/error_reporting"
+Google::Cloud::ErrorReporting.configure do |config|
+  config.project_id = (JSON.load File.read ENV["ERROR_REPORTING_KEYFILE"])["project_id"]
+end
+
 
 require_relative "../get_dimensions"
 Imgur.logger = logger
 
+require "nokogiri"
 
 require "../boilerplate"
 BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
@@ -32,7 +38,12 @@ EXCLUDE = %w{ foodporn powerwashingporn }
 checked = []
 
 loop do
-  logger.warn "LOOP #{Time.now}"
+  begin
+    logger.warn "LOOP #{Time.now}"
+  rescue => e
+    Google::Cloud::ErrorReporting.report e
+    raise
+  end
 
   [ [:source_ultireddit, 10000000, ( Nokogiri::XML( begin
         NetHTTPUtils.request_data ENV["FEEDPCBR_URL"]

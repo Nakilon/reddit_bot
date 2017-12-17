@@ -10,3 +10,4 @@ gem "imgur2array", git: "git@github.com:Nakilon/imgur2array.git", tag: "v0.0.2.5
 gem "fastimage", "1.7.0"
 
 gem "gcplogger", git: "git@github.com:Nakilon/gcplogger.git", tag: "v0.0.2.0"
+gem "google-cloud-error_reporting"
