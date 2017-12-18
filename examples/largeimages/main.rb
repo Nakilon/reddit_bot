@@ -41,6 +41,7 @@ loop do
   begin
     logger.warn "LOOP #{Time.now}"
   rescue => e
+    puts "oops"
     Google::Cloud::ErrorReporting.report e
     raise
   end
