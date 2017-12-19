@@ -43,6 +43,7 @@ loop do
   rescue => e
     puts "oops"
     Google::Cloud::ErrorReporting.report e
+    sleep 5
     raise
   end
 
