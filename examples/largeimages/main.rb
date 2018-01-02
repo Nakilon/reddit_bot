@@ -63,7 +63,7 @@ loop do
       entry.at_xpath("link[@rel='alternate']")["href"],
     ]
   end ) ],
-    [:source_reddit, 20000000, ( INCLUDE.flat_map do |sortasub|
+    [:source_reddit, 30000000, ( INCLUDE.flat_map do |sortasub|
     BOT.new_posts(sortasub).take(100).map do |child|
       next if child["is_self"]
       next if EXCLUDE.include? child["subreddit"].downcase
