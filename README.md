@@ -14,6 +14,7 @@ Python (and so PRAW) sucks.
 
 ### Examples
 
+I'm not usually publish every program (since there are thousand of them and adequate programmer knows that publishing everything is like throwing trash on street) but I'll add bots here so you could see how to use the library.  
 The [examples folder](examples) includes:
 
 * **sexypizza** -- bot that updates wiki page with current flairs statistics
