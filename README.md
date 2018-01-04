@@ -3,31 +3,31 @@
 [![Join the chat at https://gitter.im/Nakilon/reddit_bot](https://badges.gitter.im/Nakilon/reddit_bot.svg)](https://gitter.im/Nakilon/reddit_bot)
 [![Gem Version](https://badge.fury.io/rb/reddit_bot.svg)](http://badge.fury.io/rb/reddit_bot)
 
-#### What
+### What
 
 This library provides an easy way to run bots and scripts that use Reddit API.  
 I ([/u/nakilon](https://www.reddit.com/u/nakilon)) currently run near 10 bots with it.
 
-#### Why
+### Why
 
 Python (and so PRAW) sucks.
 
-#### Examples
+### Examples
 
 The [examples folder](examples) includes:
 
-* sexypizza -- bot that updates wiki page with current flairs statistics
-* devflairbot -- bot that flairs posts when some specifically flaired user comments there
-* mlgtv -- bot that updates sidebar with currently streaming twitch channels
-* councilofricks -- bot that flairs users according to Google Spreadsheet
-* wallpaper -- bot that reports images with dimensions being not the same as in title
-* cptflairbot3 -- bot that sets user flair according to request submitted via web form  
+* **sexypizza** -- bot that updates wiki page with current flairs statistics
+* **devflairbot** -- bot that flairs posts when some specifically flaired user comments there
+* **mlgtv** -- bot that updates sidebar with currently streaming twitch channels
+* **councilofricks** -- bot that flairs users according to Google Spreadsheet
+* **wallpaper** -- bot that reports images with dimensions being not the same as in title
+* **cptflairbot3** -- bot that sets user flair according to request submitted via web form  
   also publishes its activily log here http://www.nakilon.pro/casualpokemontrades/log.htm via Google Cloud Platform automations (Apps Script and Functions)
-* oneplus -- bot that removes and modmails about links to 1080x1920 images
-* yayornay -- bot that flairs posts according to voting in top level comments
-* realtimeww2 -- bot that posts tweets to a subreddit from a Twitter user timeline
-* largeimages -- this was my first bot -- it uses two approaches to track the most high resolution photos posted anywhere on Reddit to x-post them to [subreddit /r/largeimages](https://www.reddit.com/r/largeimages)
-* largeimagesreview -- script that was used /r/largeimages to calculates quality of x-posts from different subreddits based on mods activity (remove/approve) so it showed that /r/pics and /r/foodporn should better be excluded:
+* **oneplus** -- bot that removes and modmails about links to 1080x1920 images
+* **yayornay** -- bot that flairs posts according to voting in top level comments
+* **realtimeww2** -- bot that posts tweets to a subreddit from a Twitter user timeline
+* **largeimages** -- this was my first bot -- it uses two approaches to track the most high resolution photos posted anywhere on Reddit to x-post them to [subreddit /r/largeimages](https://www.reddit.com/r/largeimages)
+* **largeimagesreview** -- script that was used /r/largeimages to calculates quality of x-posts from different subreddits based on mods activity (remove/approve) so it showed that /r/pics and /r/foodporn should better be excluded:
 
              pics            Total: 98     Quality: 19%  
           wallpapers         Total: 69     Quality: 52%  
@@ -61,7 +61,7 @@ You obviously can't run these examples as is, because they use some dependencies
     :password: mybotpassword
     :login: MyBotUsername
 
-#### Usage
+### Usage
 
     $ gem install reddit_bot
 
@@ -78,12 +78,12 @@ To update the gem version in Gemfile.lock when using Gemfile like this: `gem "re
 
     $ bundle update reddit_bot
 
-#### Contributing and License
+### Contributing and License
 
 Bug reports and pull requests are welcome.  
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-#### TODO
+### TODO
 
 * write more usage instructions here
 * manual on how to create bots with Reddit web interface and run via bash console
