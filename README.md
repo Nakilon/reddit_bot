@@ -54,25 +54,25 @@ The [examples folder](examples) includes:
       ArchitecturePorn  Total: 2   Quality: 50%   ✅⛔                      
        AbandonedPorn    Total: 2   Quality: 100%  ✅✅                      
 
+### Usage
+
+    $ gem install reddit_bot
+
+or via Gemfile:
+
+    source "https://rubygems.org"
+    gem "reddit_bot"
+
+helloworld.rb:
+
+    require "reddit_bot"
+
 You obviously can't run these examples as is, because they use some dependencies that are not in git repo, like `secrets.yaml` file for Reddit authorization of the following format:
 
     :client_id: Kb9.......6wBw
     :client_secret: Fqo.....................AFI
     :password: mybotpassword
     :login: MyBotUsername
-
-### Usage
-
-    $ gem install reddit_bot
-
-helloworld.rb:
-
-    require "reddit_bot"
-
-or via Gemfile:
-
-    source "https://rubygems.org"
-    gem "reddit_bot"
 
 To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
 
