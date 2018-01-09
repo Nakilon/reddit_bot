@@ -10,17 +10,23 @@ loop do
 
     text = " Live Streams\n\n" + [].tap do |list|
 
-      throw :loop unless statuses = JSON.parse(
+      throw :loop unless statuses = JSON.parse( begin
         NetHTTPUtils.request_data("http://streamapi.majorleaguegaming.com/service/streams/all")[/\{.+\}/m]
-      )["data"]["items"]
+      rescue NetHTTPUtils::Error => e
+        fail unless e.code == 408
+        puts 408
+        sleep 60
+        retry
+      end )["data"]["items"]
       games = JSON.parse(
         NetHTTPUtils.request_data("http://www.majorleaguegaming.com/api/games/all")[/\{.+\}/m]
       )["data"]["items"]
       begin
         JSON.parse begin
-          NetHTTPUtils.request_data "http://www.majorleaguegaming.com/api/channels/all?fields=name,url,tags,stream_name,game_id"
+          NetHTTPUtils.request_data("http://www.majorleaguegaming.com/api/channels/all?fields=name,url,tags,stream_name,game_id")
         rescue NetHTTPUtils::Error => e
           fail unless e.code == 404
+          puts 404
           sleep 60
           retry
         end
