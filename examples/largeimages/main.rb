@@ -50,7 +50,7 @@ loop do
   [ [:source_ultireddit, 10000000, ( Nokogiri::XML( begin
         NetHTTPUtils.request_data ENV["FEEDPCBR_URL"]
       rescue NetHTTPUtils::Error => e
-        raise unless 504 == e.code
+        raise unless [502, 504].include? e.code
         sleep 60
         retry
       end ).remove_namespaces!.xpath("feed/entry").map do |entry|
