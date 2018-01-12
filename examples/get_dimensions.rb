@@ -144,6 +144,7 @@ if $0 == __FILE__
   ["https://i.redd.it/si758zk7r5xz.jpg", GetDimensions::Error404],
   ["http://www.cutehalloweencostumeideas.org/wp-content/uploads/2017/10/Niagara-Falls_04.jpg", GetDimensions::Error404],
   ["https://imgur.com/gallery/YO49F.", GetDimensions::Error404], # expect "Imgur error: bad link pattern"
+  ["https://imgur.com/mM4Dh7Z", GetDimensions::Error404], # redirects to https://i.imgur.com/removed.png
 ].each do |input, expectation|
   puts "testing #{input}"
   if expectation.is_a? Class
