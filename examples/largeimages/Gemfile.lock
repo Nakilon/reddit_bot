@@ -15,10 +15,10 @@ GIT
 
 GIT
   remote: git@github.com:Nakilon/nethttputils.git
-  revision: 6176164114e29567e774f04f5921b7bbec2f7063
-  tag: v0.0.5.2
+  revision: d4a7c5948a14b8f06466e9dee6a9368e9581ed7a
+  tag: v0.0.6.0
   specs:
-    nethttputils (0.0.5.2)
+    nethttputils (0.0.6.0)
 
 GEM
   remote: https://rubygems.org/
