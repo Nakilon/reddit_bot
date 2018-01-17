@@ -81,16 +81,16 @@ loop do
       logger.debug "image url for #{id}: #{url}"
       next logger.warn "skipped a post by /u/sjhill" if author == "sjhill"
 
-      next logger.warn "skipped (GetDimensions :skipped) #{url} from http://redd.it/#{id}" if :skipped == _ = begin
-        GetDimensions::get_dimensions CGI.unescape_html url
-      rescue GetDimensions::Error404
-        next logger.warn "skipped (GetDimensions::Error404) #{url} from http://redd.it/#{id}"
-      rescue GetDimensions::ErrorUnknown
-        next logger.warn "skipped (GetDimensions::ErrorUnknown) #{url} from http://redd.it/#{id}"
+      next logger.warn "skipped (URL2Dimensions :skipped) #{url} from http://redd.it/#{id}" if :skipped == _ = begin
+        URL2Dimensions::get_dimensions CGI.unescape_html url
+      rescue URL2Dimensions::Error404
+        next logger.warn "skipped (URL2Dimensions::Error404) #{url} from http://redd.it/#{id}"
+      rescue URL2Dimensions::ErrorUnknown
+        next logger.warn "skipped (URL2Dimensions::ErrorUnknown) #{url} from http://redd.it/#{id}"
       end
       fail "unable #{url} from http://redd.it/#{id}" unless _
       width, height, best_direct_url, *all_direct_urls = _
-      logger.info "GetDimensions: %p" % [[width, height, best_direct_url, all_direct_urls.size]]
+      logger.info "URL2Dimensions: %p" % [[width, height, best_direct_url, all_direct_urls.size]]
       unless min_resolution <= width * height
         next logger.info "skipped low resolution #{source}"
       end
