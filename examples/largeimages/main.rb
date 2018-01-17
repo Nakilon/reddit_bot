@@ -11,7 +11,7 @@ Google::Cloud::ErrorReporting.configure do |config|
 end
 
 
-require_relative "../get_dimensions"
+require "url2dimensions"
 Imgur.logger = logger
 
 require "nokogiri"

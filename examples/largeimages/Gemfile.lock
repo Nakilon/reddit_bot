@@ -20,6 +20,13 @@ GIT
   specs:
     nethttputils (0.0.6.0)
 
+GIT
+  remote: git@github.com:Nakilon/url2dimensions.git
+  revision: b1786a382f58ec8fdb6a763078fb4e062cf36a04
+  tag: v0.0.0.2
+  specs:
+    url2dimensions (0.0.0.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -94,7 +101,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  fastimage (= 1.7.0)
+  fastimage (~> 1.7.0)
   gcplogger!
   google-cloud-error_reporting
   imgur2array!
@@ -102,6 +109,7 @@ DEPENDENCIES
   nethttputils!
   nokogiri
   reddit_bot (~> 1.4.0)
+  url2dimensions!
 
 BUNDLED WITH
    1.16.0
