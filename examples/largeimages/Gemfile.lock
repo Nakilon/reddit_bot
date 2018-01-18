@@ -8,24 +8,24 @@ GIT
 
 GIT
   remote: git@github.com:Nakilon/imgur2array.git
-  revision: eea2aa8a39d72726318aae8805b66bcddd7acbb6
-  tag: v0.0.2.7
+  revision: 78fdf98f04a1303430365eff47674c699eae3602
+  tag: v0.0.2.8
   specs:
-    imgur2array (0.0.2.7)
+    imgur2array (0.0.2.8)
 
 GIT
   remote: git@github.com:Nakilon/nethttputils.git
-  revision: 6c5d1615ddb2a70b6edc897241abd9e63aebaa20
-  tag: v0.0.7.0
+  revision: 33e9698fe25fa14c826a950e716337b292dca409
+  tag: v0.0.7.1
   specs:
-    nethttputils (0.0.7.0)
+    nethttputils (0.0.7.1)
 
 GIT
   remote: git@github.com:Nakilon/url2dimensions.git
-  revision: b1786a382f58ec8fdb6a763078fb4e062cf36a04
-  tag: v0.0.0.2
+  revision: 696f0acb00a0e476fbccd255aa458ffcec2a34d2
+  tag: v0.0.0.3
   specs:
-    url2dimensions (0.0.0.2)
+    url2dimensions (0.0.0.3)
 
 GEM
   remote: https://rubygems.org/
