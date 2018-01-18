@@ -22,10 +22,10 @@ GIT
 
 GIT
   remote: git@github.com:Nakilon/url2dimensions.git
-  revision: 696f0acb00a0e476fbccd255aa458ffcec2a34d2
-  tag: v0.0.0.3
+  revision: 7364b82617bcdb7fafd5dd2bee268fedefe24074
+  tag: v0.0.0.4
   specs:
-    url2dimensions (0.0.0.3)
+    url2dimensions (0.0.0.4)
 
 GEM
   remote: https://rubygems.org/
