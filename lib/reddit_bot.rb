@@ -1,5 +1,5 @@
 STDOUT.sync = true
-require "pp"
+# require "pp"
 
 require "net/http"
 require "openssl"
@@ -166,7 +166,7 @@ module RedditBot
           username: @username = @secrets[3],
           password: @secrets[2],
         }, {
-          "User-Agent" => "bot/#{@username}/0.0.0 by /u/nakilon",
+          "User-Agent" => "bot/#{@username}/#{RedditBot::VERSION} by /u/nakilon",
         }, [@secrets[0], @secrets[1]]
       unless @token_cached = response["access_token"]
         fail "bot #{@username} isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
@@ -192,7 +192,7 @@ module RedditBot
       nil until _ = catch(:"401") do
         reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
           "Authorization" => "bearer #{token}",
-          "User-Agent" => "bot/#{@username}/0.0.0 by /u/nakilon",
+          "User-Agent" => "bot/#{@username}/#{RedditBot::VERSION} by /u/nakilon",
         }
       end
       _
@@ -205,12 +205,12 @@ module RedditBot
         case response.code
         when "502", "503", "520", "500", "521", "504", "400", "522"
           puts "LOL #{response.code} at #{Time.now}?"
-          pp args
+          p args
           sleep 5
           redo
         when "409"
           puts "Conflict (409)? at #{Time.now}?"
-          pp args
+          p args
           sleep 5
           redo
         when "401"
