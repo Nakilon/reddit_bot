@@ -116,7 +116,7 @@ module RedditBot
           result = cache.call(args){ json *args }
           fail if result.keys != %w{ kind data }
           fail if result["kind"] != "Listing"
-          fail if result["data"].keys != %w{ modhash whitelist_status children after before }
+          fail result["data"].keys.inspect if result["data"].keys != %w{ after dist modhash whitelist_status children before }
           result["data"]["children"].each do |post|
             fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
             e << post["data"]
