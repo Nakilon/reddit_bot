@@ -44,7 +44,8 @@ end
   [926581977372942336, false, "Finland rejects Soviet demand to surrender land near Leningrad & give Red Navy base in Hanko; Soviets now claim Finns' manner \"warlike\".",                                                                                                                                     "^- ^WW2 ^Tweets ^from ^1939 [^\\(@#{TWITTER}\\)](https://twitter.com/#{TWITTER}) ^| [^" "November ^3, ^2017](https://twitter.com/#{TWITTER}/status/926581977372942336)"],
 ].each do |id, contains_media_, title_, text_|
   title, text, contains_media = tweet2titleNtext[ JSON.load NetHTTPUtils.request_data(
-    "https://api.twitter.com/1.1/statuses/show.json?id=#{id}&tweet_mode=extended",
+    "https://api.twitter.com/1.1/statuses/show.json",
+    form: { id: id, tweet_mode: "extended" },
     header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
   ) ]
   unless contains_media_ == contains_media
@@ -88,7 +89,8 @@ loop do
   timeout = 0
   JSON.load( begin
     NetHTTPUtils.request_data(
-      "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=#{TWITTER}&count=200&tweet_mode=extended",
+      "https://api.twitter.com/1.1/statuses/user_timeline.json",
+      form: { screen_name: TWITTER, count: 200, tweet_mode: "extended" },
       header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
     ) do |res|
       next unless res.key? "x-rate-limit-remaining"
