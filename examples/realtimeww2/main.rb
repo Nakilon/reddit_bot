@@ -46,7 +46,7 @@ end
   title, text, contains_media = tweet2titleNtext[ JSON.load NetHTTPUtils.request_data(
     "https://api.twitter.com/1.1/statuses/show.json",
     form: { id: id, tweet_mode: "extended" },
-    header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
+    header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" },
   ) ]
   unless contains_media_ == contains_media
     puts "expected: #{contains_media_}"

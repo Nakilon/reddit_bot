@@ -1,4 +1,4 @@
 source "https://rubygems.org"
 
 gem "reddit_bot", "~>1.5.2"
-gem "nethttputils", git: "git@github.com:Nakilon/nethttputils.git", tag: "v0.1.0.0"
+gem "nethttputils", git: "git@github.com:Nakilon/nethttputils.git", tag: "v0.1.0.1"
