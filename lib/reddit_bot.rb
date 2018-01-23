@@ -112,7 +112,8 @@ module RedditBot
       Enumerator.new do |e|
         after = {}
         loop do
-          args = [:get, "/#{subreddit || @subreddit || fail}/new", {limit: 100}.merge(after)]
+          # TODO maybe force lib user to prepend "r/" to @subreddit constructor?
+          args = [:get, "/#{subreddit || (@subreddit ? "r/#{@subreddit}" : fail)}/new", {limit: 100}.merge(after)]
           result = cache.call(args){ json *args }
           fail if result.keys != %w{ kind data }
           fail if result["kind"] != "Listing"
@@ -206,7 +207,7 @@ module RedditBot
         when "502", "503", "520", "500", "521", "504", "400", "522"
           puts "LOL #{response.code} at #{Time.now}?"
           p args
-          sleep 5
+          sleep 60
           redo
         when "409"
           puts "Conflict (409)? at #{Time.now}?"
