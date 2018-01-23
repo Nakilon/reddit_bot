@@ -37,6 +37,11 @@ EXCLUDE = %w{ foodporn powerwashingporn }
 
 checked = []
 
+search_url = lambda do |url|
+  JSON.load(NetHTTPUtils.request_data "https://www.reddit.com/r/largeimages/search.json", form: {q: "url:#{url}", restrict_sr: "on"}, header: ["User-Agent", "ajsdjasdasd"])["data"]["children"]
+end
+fail unless 1 == search_url["https://i.imgur.com/9JTxtjW.jpg"].size
+
 loop do
   begin
     logger.warn "LOOP #{Time.now}"
@@ -99,8 +104,7 @@ loop do
       resolution = "[#{width}x#{height}]"
       # require "cgi"
       next logger.warn "already submitted #{resolution} #{id}: '#{url}'" unless
-        Gem::Platform.local.os == "darwin" ||
-        (JSON.parse NetHTTPUtils.request_data "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on", header: ["User-Agent", "ajsdjasdasd"])["data"]["children"].empty?
+        Gem::Platform.local.os == "darwin" || search_url[url].empty?
       logger.warn "resolution #{resolution} got from #{id}: #{url}"
       # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
       title = "#{resolution}#{
