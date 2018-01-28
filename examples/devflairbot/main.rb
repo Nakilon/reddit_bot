@@ -3,7 +3,6 @@
 BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
 
 loop do
-  Hearthbeat.beat "u_DevFlairBot_r_ion_r_survivetheculling", 130 unless Gem::Platform.local.os == "darwin"
   puts "LOOP #{Time.now}"
 
   [
@@ -16,6 +15,7 @@ loop do
       NetHTTPUtils.request_data "https://www.reddit.com/r/#{subreddit}/comments.json", header: ["User-Agent", "ajsdjasdasd"]
     rescue NetHTTPUtils::Error => e
       raise unless e.code == 503
+      sleep 60
       retry
     end )["data"]["children"].each do |comment|
       id = comment["data"]["link_id"][3..-1]
