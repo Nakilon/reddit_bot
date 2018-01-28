@@ -130,6 +130,7 @@ module RedditBot
 
     # :yields: JSON objects: ["data"] part of post or self.post, top level comment (["children"] element)
     def each_new_post_with_top_level_comments
+      # TODO add keys assertion like in method above?
       json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
         fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
         t = json :get, "/comments/#{post["data"]["id"]}", depth: 1, limit: 100500#, sort: "top"
@@ -204,7 +205,7 @@ module RedditBot
       tap do
         response = _resp *args
         case response.code
-        when "502", "503", "520", "500", "521", "504", "400", "522"
+        when "502", "503", "520", "500", "521", "504", "400", "522", "504"
           puts "LOL #{response.code} at #{Time.now}?"
           p args
           sleep 60

@@ -1,3 +1,3 @@
 module RedditBot
-  VERSION = "1.5.3" # :nodoc:
+  VERSION = "1.5.4" # :nodoc:
 end
