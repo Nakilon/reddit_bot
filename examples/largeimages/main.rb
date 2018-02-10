@@ -97,7 +97,7 @@ loop do
       width, height, best_direct_url, *all_direct_urls = _
       logger.info "URL2Dimensions: %p" % [[width, height, best_direct_url, all_direct_urls.size]]
       unless min_resolution <= width * height
-        next logger.info "skipped low resolution #{source}"
+        next logger.debug "skipped low resolution #{source}"
       end
       # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
       # puts "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on"
