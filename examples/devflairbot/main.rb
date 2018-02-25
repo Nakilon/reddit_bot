@@ -14,7 +14,7 @@ loop do
     JSON.parse( begin
       NetHTTPUtils.request_data "https://www.reddit.com/r/#{subreddit}/comments.json", header: ["User-Agent", "ajsdjasdasd"]
     rescue NetHTTPUtils::Error => e
-      raise unless [503, 504].inlude? e.code
+      raise unless [503, 504].include? e.code
       sleep 60
       retry
     end )["data"]["children"].each do |comment|
