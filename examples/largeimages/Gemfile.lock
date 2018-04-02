@@ -15,10 +15,10 @@ GIT
 
 GIT
   remote: git@github.com:Nakilon/nethttputils.git
-  revision: c901e523070abbbdb99bbe5471a22288946afa40
-  tag: v0.1.0.2
+  revision: 620051619245a3b0b00447817831c6fb676d3df7
+  tag: v0.1.2.0
   specs:
-    nethttputils (0.1.0.2)
+    nethttputils (0.1.2.0)
 
 GIT
   remote: git@github.com:Nakilon/url2dimensions.git
@@ -112,4 +112,4 @@ DEPENDENCIES
   url2dimensions!
 
 BUNDLED WITH
-   1.16.0
+   1.16.1

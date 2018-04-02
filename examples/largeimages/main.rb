@@ -44,7 +44,7 @@ fail unless 1 == search_url["https://i.imgur.com/9JTxtjW.jpg"].size
 
 loop do
   begin
-    logger.warn "LOOP #{Time.now}"
+    logger.info "LOOP #{Time.now}"
   rescue => e
     puts "oops"
     Google::Cloud::ErrorReporting.report e
@@ -156,6 +156,6 @@ loop do
     end
   end
 
-  logger.warn "END LOOP #{Time.now}"
+  logger.info "END LOOP #{Time.now}"
   sleep 300
 end
