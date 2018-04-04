@@ -201,44 +201,8 @@ module RedditBot
     end
 
     def reddit_resp *args
-      response = nil
-      tap do
-        response = _resp *args
-        case response.code
-        when "502", "503", "520", "500", "521", "504", "400", "522", "504"
-          puts "LOL #{response.code} at #{Time.now}?"
-          p args
-          sleep 60
-          redo
-        when "409"
-          puts "Conflict (409)? at #{Time.now}?"
-          p args
-          sleep 5
-          redo
-        when "401"
-          puts "probably token is expired (401): #{response.body}"
-          sleep 5
-          # init *@secrets
-          @token_cached = nil # maybe just update_captcha?
-          throw :"401"
-        when "403"
-          puts "access denied: #{response.body} when requesting: #{args}"
-          sleep 300
-          redo
-          # throw :"403"
-        when "200"
-          "ok"
-        else
-          # puts response.body if response.code == "400"
-          # fail "#{response.code} at '#{args[1]}'"
-          fail "#{response.code} for '#{args}'"
-        end
-      end
-      response.body
-    end
-
-    def _resp mtd, url, form, headers, base_auth = nil
-      NetHTTPUtils.get_response(url, mtd, form: form, header: headers, auth: base_auth).tap do |response|
+      mtd, url, form, headers, base_auth = *args
+      NetHTTPUtils.request_data(url, mtd, form: form, header: headers, auth: base_auth) do |response|
         next unless remaining = response.to_hash["x-ratelimit-remaining"]
         if Gem::Platform.local.os == "darwin"
           puts %w{
