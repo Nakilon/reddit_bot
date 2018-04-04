@@ -4,7 +4,7 @@ gem "json"
 
 gem "nethttputils", git: "git@github.com:Nakilon/nethttputils.git"
 
-gem "reddit_bot", "~>1.6.0"
+gem "reddit_bot", "~>1.6.1"
 gem "nokogiri"
 
 gem "imgur2array", git: "git@github.com:Nakilon/imgur2array.git"
