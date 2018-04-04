@@ -1,60 +1,58 @@
 GIT
   remote: git@github.com:Nakilon/gcplogger.git
-  revision: 409838cfb0cff225bb1c1b7e686cd23f2be910d4
-  tag: v0.0.2.0
+  revision: 7c1451fac49bd0d242c6de43315ae6e9a70d8f7f
+  tag: v0.1.1.0
   specs:
-    gcplogger (0.0.2.0)
-      google-cloud-logging
+    gcplogger (0.1.1.0)
+      google-cloud-logging (~> 1.4.0)
+      public_suffix (~> 2.0)
 
 GIT
   remote: git@github.com:Nakilon/imgur2array.git
-  revision: 5eca5d843515d0502464194be42af24c0932a434
-  tag: v0.0.2.9
+  revision: c7bf5078aafc7958cdcb6b31836c68c44ffe978c
   specs:
-    imgur2array (0.0.2.9)
+    imgur2array (0.0.3.1)
 
 GIT
   remote: git@github.com:Nakilon/nethttputils.git
   revision: 620051619245a3b0b00447817831c6fb676d3df7
-  tag: v0.1.2.0
   specs:
     nethttputils (0.1.2.0)
 
 GIT
   remote: git@github.com:Nakilon/url2dimensions.git
-  revision: 2aae1c5a8a8f8d06c38ae3ab370ed4ed4c5d7a4b
-  tag: v0.0.0.6
+  revision: c738e255ba3bbd38d142aebabbc0ea13abac4750
+  tag: v0.0.0.8
   specs:
-    url2dimensions (0.0.0.6)
+    url2dimensions (0.0.0.8)
 
 GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    faraday (0.13.1)
+    faraday (0.14.0)
       multipart-post (>= 1.2, < 3)
-    fastimage (1.7.0)
-      addressable (~> 2.3, >= 2.3.5)
-    google-cloud-core (1.1.0)
+    fastimage (2.1.1)
+    google-cloud-core (1.2.0)
       google-cloud-env (~> 1.0)
     google-cloud-env (1.0.1)
       faraday (~> 0.11)
-    google-cloud-error_reporting (0.28.1)
+    google-cloud-error_reporting (0.30.0)
+      google-cloud-core (~> 1.2)
+      google-gax (~> 1.0)
+      stackdriver-core (~> 1.3)
+    google-cloud-logging (1.4.0)
       google-cloud-core (~> 1.1)
-      google-gax (~> 0.10.1)
+      google-gax (~> 1.0)
       stackdriver-core (~> 1.2)
-    google-cloud-logging (1.3.2)
-      google-cloud-core (~> 1.1)
-      google-gax (~> 0.10.1)
-      stackdriver-core (~> 1.2)
-    google-gax (0.10.2)
+    google-gax (1.0.1)
       google-protobuf (~> 3.2)
       googleapis-common-protos (>= 1.3.5, < 2.0)
       googleauth (~> 0.6.2)
       grpc (>= 1.7.2, < 2.0)
       rly (~> 0.2.3)
-    google-protobuf (3.5.0)
+    google-protobuf (3.5.1.2)
     googleapis-common-protos (1.3.7)
       google-protobuf (~> 3.0)
       googleapis-common-protos-types (~> 1.0)
@@ -69,25 +67,25 @@ GEM
       multi_json (~> 1.11)
       os (~> 0.9)
       signet (~> 0.7)
-    grpc (1.7.3)
+    grpc (1.10.0)
       google-protobuf (~> 3.1)
       googleapis-common-protos-types (~> 1.0.0)
       googleauth (>= 0.5.1, < 0.7)
     json (2.1.0)
-    jwt (1.5.6)
+    jwt (2.1.0)
     little-plugger (1.1.4)
     logging (2.2.2)
       little-plugger (~> 1.1)
       multi_json (~> 1.10)
     memoist (0.16.0)
     mini_portile2 (2.1.0)
-    multi_json (1.12.2)
+    multi_json (1.13.1)
     multipart-post (2.0.0)
     nokogiri (1.6.8.1)
       mini_portile2 (~> 2.1.0)
     os (0.9.6)
     public_suffix (2.0.5)
-    reddit_bot (1.5.2)
+    reddit_bot (1.6.0)
       json
     rly (0.2.3)
     signet (0.8.1)
@@ -95,20 +93,21 @@ GEM
       faraday (~> 0.9)
       jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
-    stackdriver-core (1.2.0)
+    stackdriver-core (1.3.0)
+      google-cloud-core (~> 1.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  fastimage (~> 1.7.0)
+  fastimage
   gcplogger!
   google-cloud-error_reporting
   imgur2array!
   json
   nethttputils!
   nokogiri
-  reddit_bot (~> 1.5.2)
+  reddit_bot (~> 1.6.0)
   url2dimensions!
 
 BUNDLED WITH
