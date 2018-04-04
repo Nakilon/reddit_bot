@@ -191,17 +191,15 @@ module RedditBot
 
     def resp_with_token mtd, path, form
       fail unless path.start_with? ?/
-      nil until _ = catch(:"401") do
-        reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
-          "Authorization" => "bearer #{token}",
-          "User-Agent" => "bot/#{@username}/#{RedditBot::VERSION} by /u/nakilon",
-        }
-      end
-      _
+      reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
+        "Authorization" => "bearer #{token}",
+        "User-Agent" => "bot/#{@username}/#{RedditBot::VERSION} by /u/nakilon",
+      }
     end
 
     def reddit_resp *args
       mtd, url, form, headers, base_auth = *args
+      begin
       NetHTTPUtils.request_data(url, mtd, form: form, header: headers, auth: base_auth) do |response|
         next unless remaining = response.to_hash["x-ratelimit-remaining"]
         if Gem::Platform.local.os == "darwin"
@@ -216,6 +214,12 @@ module RedditBot
         t = (response.to_hash["x-ratelimit-reset"][0].to_f + 1) / [remaining[0].to_f - 10, 1].max + 1
         puts "sleeping #{t} seconds because of x-ratelimit"
         sleep t
+      end
+      rescue NetHTTPUtils::Error => e
+        sleep 5
+        raise unless e.code == 401
+        @token_cached = nil
+        retry
       end
     end
 
