@@ -1,4 +1,10 @@
 GIT
+  remote: git@github.com:Nakilon/fastimage.git
+  revision: 1be9e5cd7a4ac9baa3c83efdd0bf111a52e69f48
+  specs:
+    fastimage (2.1.1)
+
+GIT
   remote: git@github.com:Nakilon/gcplogger.git
   revision: 7c1451fac49bd0d242c6de43315ae6e9a70d8f7f
   tag: v0.1.1.0
@@ -33,7 +39,6 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     faraday (0.14.0)
       multipart-post (>= 1.2, < 3)
-    fastimage (2.1.1)
     google-cloud-core (1.2.0)
       google-cloud-env (~> 1.0)
     google-cloud-env (1.0.1)
@@ -100,7 +105,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  fastimage
+  fastimage!
   gcplogger!
   google-cloud-error_reporting
   imgur2array!
