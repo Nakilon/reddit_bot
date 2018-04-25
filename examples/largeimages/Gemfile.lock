@@ -21,9 +21,10 @@ GIT
 
 GIT
   remote: git@github.com:Nakilon/nethttputils.git
-  revision: 620051619245a3b0b00447817831c6fb676d3df7
+  revision: 27777142af099556394691c772a33cf5f6548c4f
+  tag: v0.1.2.1
   specs:
-    nethttputils (0.1.2.0)
+    nethttputils (0.1.2.1)
 
 GIT
   remote: git@github.com:Nakilon/url2dimensions.git
