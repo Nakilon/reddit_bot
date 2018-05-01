@@ -9,7 +9,7 @@ gem "nokogiri"
 
 gem "imgur2array", git: "git@github.com:Nakilon/imgur2array.git"
 gem "fastimage", git: "git@github.com:Nakilon/fastimage.git"
-gem "url2dimensions", git: "git@github.com:Nakilon/url2dimensions.git", tag: "v0.0.0.8"
+gem "url2dimensions", git: "git@github.com:Nakilon/url2dimensions.git", tag: "v0.0.0.9"
 
 gem "gcplogger", git: "git@github.com:Nakilon/gcplogger.git", tag: "v0.1.1.0"
 gem "google-cloud-error_reporting"
