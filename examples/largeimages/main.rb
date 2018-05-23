@@ -89,6 +89,13 @@ loop do
 
       t = begin
         DirectLink url
+      rescue NetHTTPUtils::Error,
+             # FastImage::UnknownImageType,
+             # FastImage::ImageFetchFailure,
+             # DirectLink::ErrorMissingEnvVar,
+             DirectLink::ErrorNotFound,
+             DirectLink::ErrorBadLink => e
+        next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
       end
       logger.info "DirectLink: %p" % t
       tt = t.is_a?(Array) ? t : [t]
