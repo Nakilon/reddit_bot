@@ -4,15 +4,14 @@
 require "gcplogger"
 logger = GCPLogger.logger "largeimagesbot"
 
-fail("no ENV['ERROR_REPORTING_KEYFILE'] specified") unless ENV["ERROR_REPORTING_KEYFILE"]
+fail "no ENV['ERROR_REPORTING_KEYFILE'] specified" unless ENV["ERROR_REPORTING_KEYFILE"]
 require "google/cloud/error_reporting"
 Google::Cloud::ErrorReporting.configure do |config|
-  config.project_id = (JSON.load File.read ENV["ERROR_REPORTING_KEYFILE"])["project_id"]
+  config.project_id = JSON.load(File.read ENV["ERROR_REPORTING_KEYFILE"])["project_id"]
 end
 
 
-require "url2dimensions"
-Imgur.logger = logger
+require "directlink"
 
 require "nokogiri"
 
@@ -88,31 +87,23 @@ loop do
       next logger.warn "skipped a post by /u/redisforever" if author == "redisforever"  # opt-out
       next logger.warn "skipped a post by /u/bekalaki"     if author == "bekalaki"      # 9 ways to divide a karmawhore
 
-      next logger.warn "skipped (URL2Dimensions :skipped) #{url} from http://redd.it/#{id}" if :skipped == _ = begin
-        URL2Dimensions::get_dimensions CGI.unescape_html url
-      rescue URL2Dimensions::Error404
-        next logger.warn "skipped (URL2Dimensions::Error404) #{url} from http://redd.it/#{id}"
-      rescue URL2Dimensions::ErrorUnknown
-        next logger.warn "skipped (URL2Dimensions::ErrorUnknown) #{url} from http://redd.it/#{id}"
+      t = begin
+        DirectLink url
       end
-      fail "unable #{url} from http://redd.it/#{id}" unless _
-      width, height, best_direct_url, *all_direct_urls = _
-      logger.info "URL2Dimensions: %p" % [[width, height, best_direct_url, all_direct_urls.size]]
-      unless min_resolution <= width * height
+      logger.info "DirectLink: %p" % t
+      tt = t.is_a?(Array) ? t : [t]
+      unless min_resolution <= tt.first.width * tt.first.height
         next logger.debug "skipped low resolution #{source}"
       end
-      # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
       # puts "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on"
-      resolution = "[#{width}x#{height}]"
-      # require "cgi"
+      resolution = "[#{tt.first.width}x#{tt.first.height}]"
       next logger.warn "already submitted #{resolution} #{id}: '#{url}'" unless
         Gem::Platform.local.os == "darwin" || search_url[url].empty?
       logger.warn "resolution #{resolution} got from #{id}: #{url}"
-      # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
       title = "#{resolution}#{
-        " [#{all_direct_urls.size} images]" if all_direct_urls.size > 1
+        " [#{tt.size} images]" if tt.size > 1
       } #{
-        title.sub(/\s*\[?#{width}\s*[*x×]\s*#{height}\]?\s*/i, " ").
+        title.sub(/\s*\[?#{tt.first.width}\s*[*x×]\s*#{tt.first.height}\]?\s*/i, " ").
               sub("[OC]", " ").gsub(/\s+/, " ").strip.
               gsub(/(?<=.{190 - subreddit.size}).+/, "...")
       } /r/#{subreddit}".
@@ -138,11 +129,11 @@ loop do
         #      "id"=>"3a9rel",
         #      "name"=>"t3_3a9rel"}}}
       line1 = "[Original thread](#{permalink}) by /u/#{author}"
-      line2 = "Direct link#{" (the largest image)" if all_direct_urls.size > 1}: #{best_direct_url}"
+      line2 = "Direct link#{" (the largest image)" if tt.size > 1}: #{tt.first.url}"
       line3 = [
         "Direct links to all other images in album:",
-        all_direct_urls - [best_direct_url]
-      ] if all_direct_urls.size > 1
+        tt.map(&:url) - [tt.first.url]
+      ] if tt.size > 1
       text = [line1, line2, line3].compact.join("  \n")
       logger.info "new comment: #{text.inspect}"
       unless Gem::Platform.local.os == "darwin"
@@ -153,7 +144,7 @@ loop do
         end
       end
 
-      abort if ENV["TEST"]
+      abort if Gem::Platform.local.os == "darwin"
     end
   end
 
