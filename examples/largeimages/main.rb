@@ -91,7 +91,7 @@ loop do
         DirectLink url
       rescue NetHTTPUtils::Error,
              FastImage::UnknownImageType,
-             # FastImage::ImageFetchFailure,
+             FastImage::ImageFetchFailure,
              # DirectLink::ErrorMissingEnvVar,
              DirectLink::ErrorNotFound,
              DirectLink::ErrorBadLink => e
