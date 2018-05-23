@@ -6,7 +6,7 @@ gem "json"
 gem "reddit_bot", "~>1.6.3"
 gem "nokogiri"
 
-gem "directlink"#, git: "git@github.com:Nakilon/url2dimensions.git", tag: "v0.0.0.9"
+gem "directlink"
 
 gem "gcplogger", git: "git@github.com:Nakilon/gcplogger.git", tag: "v0.1.1.0"
 gem "google-cloud-error_reporting"

@@ -90,6 +90,7 @@ loop do
       t = begin
         DirectLink url
       rescue NetHTTPUtils::Error,
+             SocketError,
              FastImage::UnknownImageType,
              FastImage::ImageFetchFailure,
              # DirectLink::ErrorMissingEnvVar,
