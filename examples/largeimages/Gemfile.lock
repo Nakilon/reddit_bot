@@ -1,4 +1,12 @@
 GIT
+  remote: git@github.com:Nakilon/directlink.git
+  revision: a31b039dcbda79f5ed1cb5170448f65ba5dd84a1
+  specs:
+    directlink (0.0.1.6)
+      fastimage (~> 2.1.3)
+      nethttputils (~> 0.2.4.0)
+
+GIT
   remote: git@github.com:Nakilon/gcplogger.git
   revision: 7c1451fac49bd0d242c6de43315ae6e9a70d8f7f
   tag: v0.1.1.0
@@ -19,9 +27,6 @@ GEM
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    directlink (0.0.1.5)
-      fastimage (~> 2.1.3)
-      nethttputils (~> 0.2.4.0)
     faraday (0.14.0)
       multipart-post (>= 1.2, < 3)
     google-cloud-core (1.2.0)
@@ -91,7 +96,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  directlink
+  directlink!
   fastimage!
   gcplogger!
   google-cloud-error_reporting
