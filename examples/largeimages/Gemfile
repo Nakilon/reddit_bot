@@ -2,10 +2,10 @@
 
 gem "json"
 
-
 gem "reddit_bot", "~>1.6.3"
 gem "nokogiri"
 
+gem "fastimage", git: "git@github.com:sdsykes/fastimage.git", ref: "15bc4111c4c4e1af580b63c62e08decf2d5527d5"
 gem "directlink"
 
 gem "gcplogger", git: "git@github.com:Nakilon/gcplogger.git", tag: "v0.1.1.0"
