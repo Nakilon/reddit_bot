@@ -74,6 +74,7 @@ You obviously can't run these examples as is, because they use some dependencies
     :client_secret: Fqo.....................AFI
     :password: mybotpassword
     :login: MyBotUsername
+    # :user_agent: optional_custom_useragent_to_bypass_reddit_spam_protection
 
 To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
 

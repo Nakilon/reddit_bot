@@ -17,8 +17,7 @@ module RedditBot
     # [secrets] +Hash+ with keys :client_id, :client_secret, :password: and :login
     # [kwargs] keyword params may include :subreddit for clever methods
     def initialize secrets, **kwargs
-      @secrets = secrets.values_at *%i{ client_id client_secret password login }
-      @name = secrets[:login]
+      @name, @secret_password, @user_agent, *@secret_auth = secrets.values_at *%i{ login password user_agent client_id client_secret }
       # @ignore_captcha = true
       # @ignore_captcha = kwargs[:ignore_captcha] if kwargs.has_key?(:ignore_captcha)
       @subreddit = kwargs[:subreddit]
@@ -30,11 +29,12 @@ module RedditBot
     def json mtd, path, _form = []
       form = Hash[_form]
       response = JSON.parse resp_with_token mtd, path, form.merge({api_type: "json"})
-      if response.is_a?(Hash) && response["json"] # for example, flairlist.json and {"error": 403} do not have it
-        puts "ERROR OCCURED on #{[mtd, path]}" unless response["json"]["errors"].empty?
-        # pp response["json"]
-        response["json"]["errors"].each do |error, description|
-          puts "error: #{[error, description]}"
+      if response.is_a?(Hash) && response["json"] && # for example, flairlist.json and {"error": 403} do not have it
+         !response["json"]["errors"].empty?
+        puts "ERROR OCCURED on #{[mtd, path]}"
+        fail "unknown how to handle multiple errors" if 1 < response["json"]["errors"].size
+        puts "error: #{response["json"]["errors"]}"
+        error, description = response["json"]["errors"].first
           case error
           when "ALREADY_SUB" ; puts "was rejected by moderator if you didn't see in dups"
           # when "BAD_CAPTCHA" ; update_captcha
@@ -42,9 +42,13 @@ module RedditBot
           #     iden: @iden_and_captcha[0],
           #     captcha: @iden_and_captcha[1],
           #   } ) unless @ignore_captcha
+          when "RATELIMIT"
+            fail error unless description[/\Ayou are doing that too much\. try again in (\d) minutes\.\z/]
+            puts "retrying in #{$1.to_i + 1} minutes"
+            sleep ($1.to_i + 1) * 60
+            return json mtd, path, _form
           else ; fail error
           end
-        end
       end
       response
     end
@@ -163,16 +167,17 @@ module RedditBot
 
     def token
       return @token_cached if @token_cached
+      # TODO handle with nive error message if we get 403 -- it's probably because of bad user agent
       response = JSON.parse reddit_resp :post,
         "https://www.reddit.com/api/v1/access_token", {
           grant_type: "password",
-          username: @username = @secrets[3],
-          password: @secrets[2],
+          username: @name,
+          password: @secret_password,
         }, {
-          "User-Agent" => "bot/#{@username}/#{RedditBot::VERSION} by /u/nakilon",
-        }, [@secrets[0], @secrets[1]]
+          "User-Agent" => "bot/#{@user_agent || @name}/#{RedditBot::VERSION} by /u/nakilon",
+        }, @secret_auth
       unless @token_cached = response["access_token"]
-        fail "bot #{@username} isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
+        fail "bot #{@name} isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
         fail response.inspect
       end
       puts "new token is: #{@token_cached}"
@@ -195,10 +200,10 @@ module RedditBot
       begin
         reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
           "Authorization" => "bearer #{token}",
-          "User-Agent" => "bot/#{@username}/#{RedditBot::VERSION} by /u/nakilon",
+          "User-Agent" => "bot/#{@user_agent || @name}/#{RedditBot::VERSION} by /u/nakilon",
         }
       rescue NetHTTPUtils::Error => e
-        # sleep 5
+        sleep 5
         raise unless e.code == 401
         @token_cached = nil
         retry
@@ -206,9 +211,9 @@ module RedditBot
     end
 
     def reddit_resp *args
-      mtd, url, form, headers, base_auth = *args
+      mtd, url, form, headers, basic_auth = *args
       begin
-        NetHTTPUtils.request_data(url, mtd, form: form, header: headers, auth: base_auth) do |response|
+        NetHTTPUtils.request_data(url, mtd, form: form, header: headers, auth: basic_auth) do |response|
           next unless remaining = response.to_hash["x-ratelimit-remaining"]
           if Gem::Platform.local.os == "darwin"
             puts %w{
