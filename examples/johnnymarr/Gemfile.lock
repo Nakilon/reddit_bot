@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    json (2.1.0)
+    nethttputils (0.2.4.1)
+    reddit_bot (1.6.6)
+      json
+      nethttputils (~> 0.2.4.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  reddit_bot (~> 1.6.6)
+
+BUNDLED WITH
+   1.16.1
