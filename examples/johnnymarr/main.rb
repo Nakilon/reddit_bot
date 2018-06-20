@@ -31,8 +31,9 @@ loop do
     fail if e.code != 503
     sleep timeout += 1
     retry
-  end ).reverse_each do |tweet|
-    next if tweet["id"] <= id
+  end ).sort_by{ |tweet| -tweet["id"] }.take_while do |tweet|
+    tweet["id"] > id && (!File.exist?("id") || tweet["id"] > File.read("id").to_i)
+  end.reverse_each do |tweet|
     title, text, contains_media = Tweet2titleNtext[tweet]
     result = BOT.json :post, "/api/submit", {
       sr: SUBREDDIT,
@@ -40,12 +41,12 @@ loop do
       title: title,
       text: text,
     }.tap{ |h| h.merge!({ flair_id: flair["id"] }) }
-    if result["json"]["errors"].empty?
-      abort if ENV["ONCE"]
-      next
+    unless result["json"]["errors"].empty?
+      fail unless result["json"]["errors"].map(&:first) == ["ALREADY_SUB"]
+      puts "ALREADY_SUB error for #{tweet["id"]}"
     end
-    fail unless result["json"]["errors"].map(&:first) == ["ALREADY_SUB"]
-    puts "ALREADY_SUB error for #{tweet["id"]}"
+    File.write "id", tweet["id"]
+    abort if ENV["ONCE"]
   end
 
   puts "END LOOP #{Time.now}"
