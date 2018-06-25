@@ -88,7 +88,7 @@ loop do
       next logger.warn "skipped a post by /u/bekalaki"     if author == "bekalaki"      # 9 ways to divide a karmawhore
 
       t = begin
-        DirectLink url
+        DirectLink url, 60
       rescue NetHTTPUtils::Error,
              SocketError,
              FastImage::UnknownImageType,
