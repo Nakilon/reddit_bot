@@ -112,9 +112,8 @@ loop do
         " [#{tt.size} images]" if tt.size > 1
       } #{
         title.sub(/\s*\[?#{tt.first.width}\s*[*x×]\s*#{tt.first.height}\]?\s*/i, " ").
-              sub("[OC]", " ").gsub(/\s+/, " ").strip.
-              gsub(/(?<=.{190 - subreddit.size}).+/, "...")
-      } /r/#{subreddit}".
+              sub("[OC]", " ").gsub(/\s+/, " ").strip
+      } /r/#{subreddit}".gsub(/(?<=.{297}).+/, "...")
         gsub(/\s+\(\s+\)\s+/, " ")
       logger.warn "new post #{source}: #{url} #{title.inspect}"
       unless Gem::Platform.local.os == "darwin"
