@@ -113,8 +113,7 @@ loop do
       } #{
         title.sub(/\s*\[?#{tt.first.width}\s*[*x×]\s*#{tt.first.height}\]?\s*/i, " ").
               sub("[OC]", " ").gsub(/\s+/, " ").strip
-      } /r/#{subreddit}".gsub(/(?<=.{297}).+/, "...")
-        gsub(/\s+\(\s+\)\s+/, " ")
+      } /r/#{subreddit}".gsub(/\s+\(\s+\)\s+/, " ").sub(/(?<=.{297}).+/, "...")
       logger.warn "new post #{source}: #{url} #{title.inspect}"
       unless Gem::Platform.local.os == "darwin"
         result = BOT.json :post,
