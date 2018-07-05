@@ -49,7 +49,7 @@ GEM
     multipart-post (2.0.0)
     nethttputils (0.2.4.1)
     os (0.9.6)
-    public_suffix (3.0.2)
+    public_suffix (2.0.5)
     reddit_bot (1.6.6)
       json
       nethttputils (~> 0.2.4.1)
@@ -67,6 +67,7 @@ PLATFORMS
 
 DEPENDENCIES
   google-cloud-error_reporting
+  public_suffix (< 3.0)
   reddit_bot (~> 1.6.6)
 
 BUNDLED WITH
