@@ -231,7 +231,7 @@ module RedditBot
       rescue NetHTTPUtils::Error => e
         sleep 5
         raise unless e.code == 503 || e.code == 502
-        puts "API ERROR 503"
+        puts "API ERROR 502 OR 503"
         retry
       end
     end

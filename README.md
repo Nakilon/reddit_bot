@@ -27,6 +27,7 @@ The [examples folder](examples) includes:
 * **oneplus** -- bot that removes and modmails about links to 1080x1920 images
 * **yayornay** -- bot that flairs posts according to voting in top level comments
 * **realtimeww2** -- bot that posts tweets to a subreddit from a Twitter user timeline
+* **johnnymarr** -- another Twitter timeline streaming bot working in the similar way
 * **largeimages** -- this was my first bot -- it uses two approaches to track the most high resolution photos posted anywhere on Reddit to x-post them to [subreddit /r/largeimages](https://www.reddit.com/r/largeimages)
 * **largeimagesreview** -- script that was used /r/largeimages to calculates quality of x-posts from different subreddits based on mods activity (remove/approve) so it showed that /r/pics and /r/foodporn should better be excluded:
 
