@@ -4,9 +4,15 @@
 #   so it's possible to miss if bot is down for a while but in fact it's enough stable and does not go down.
 
 require_relative "../boilerplate"
-
 BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
 
+fail("no ENV['ERROR_REPORTING_KEYFILE'] specified") unless ENV["ERROR_REPORTING_KEYFILE"]
+require "google/cloud/error_reporting"
+Google::Cloud::ErrorReporting.configure do |config|
+  config.project_id = (JSON.load File.read ENV["ERROR_REPORTING_KEYFILE"])["project_id"]
+end
+
+reported = []
 loop do
   puts "LOOP #{Time.now}"
 
@@ -46,7 +52,12 @@ loop do
         when   "suggestion" then "suggestiondev"
         else puts "ignored https://reddit.com/#{id} #{current_flair_class.inspect}"
       end
-      choice = flairselector["choices"].find{ |choice| choice["flair_css_class"] == target }
+      unless choice = flairselector["choices"].find{ |choice| choice["flair_css_class"] == target }
+        next if reported.include? comment["data"]["link_id"]
+        Google::Cloud::ErrorReporting.report RuntimeError.new("no '#{target}' link flair in /r/#{subreddit}").tap{ |_| _.set_backtrace caller }
+        reported.push comment["data"]["link_id"]
+        next
+      end
       puts "assigning '#{target}' (#{choice}) flair to post https://reddit.com/#{id}"
       next if ENV["TEST"]
       _ = BOT.json :post,
