@@ -230,8 +230,8 @@ module RedditBot
         end
       rescue NetHTTPUtils::Error => e
         sleep 5
-        raise unless e.code == 503 || e.code == 502
-        puts "API ERROR 502 OR 503"
+        raise unless e.code.to_s.start_with? "50"
+        puts "API ERROR 50*"
         retry
       end
     end

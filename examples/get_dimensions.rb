@@ -1,4 +1,6 @@
-﻿# TODO maybe activate raise_on_failure optional FastImage param
+﻿# TODO deprecate in favor of the gem directlink
+
+# TODO maybe activate raise_on_failure optional FastImage param
 
 require "pp"
 # require "json"

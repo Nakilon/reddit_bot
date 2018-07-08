@@ -9,6 +9,4 @@ end
 
 require "reddit_bot"
 
-require_relative "#{Dir.home}/beat" unless Gem::Platform.local.os == "darwin"
-
 require "yaml"

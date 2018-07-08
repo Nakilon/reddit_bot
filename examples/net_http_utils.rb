@@ -1,3 +1,5 @@
+# TODO deprecate in favor of the gem nethttputils
+
 require "net/http"
 require "openssl"
 
