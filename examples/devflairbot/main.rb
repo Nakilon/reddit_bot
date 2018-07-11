@@ -16,6 +16,10 @@ reported = []
 loop do
   puts "LOOP #{Time.now}"
 
+  moderated = BOT.json(:get, "/subreddits/mine/moderator")["data"]["children"].map do |child|
+    fail unless child["kind"] == "t5"
+    child["data"]["display_name"].downcase
+  end
   [
     # ["ion", "Developer"],
     # ["survivetheculling", "Developer"],
@@ -23,6 +27,8 @@ loop do
     ["insurgency", "Developer"],
     ["Battalion1944", "Developer"],
   ].each do |subreddit, developer_class|
+    subreddit.downcase!
+    next puts "!!! can't moderate #{subreddit} !!!" unless moderated.include? subreddit
     puts "sub: #{subreddit}"
 
     JSON.parse( begin
