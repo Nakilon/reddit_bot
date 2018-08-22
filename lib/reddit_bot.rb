@@ -7,8 +7,15 @@ require "json"
 
 require "nethttputils"
 
-require_relative "reddit_bot/version"
+require_relative "reddit_bot/version" # TODO: deprecate this
+
 module RedditBot
+  require "logger"
+  class << self
+    attr_accessor :logger
+  end
+  self.logger = Logger.new STDOUT
+
   class Bot
 
     # bot's Reddit username; set via constructor parameter secrets[:login]
@@ -31,12 +38,12 @@ module RedditBot
       response = JSON.parse resp_with_token mtd, path, form.merge({api_type: "json"})
       if response.is_a?(Hash) && response["json"] && # for example, flairlist.json and {"error": 403} do not have it
          !response["json"]["errors"].empty?
-        puts "ERROR OCCURED on #{[mtd, path]}"
+        Module.nesting[1].logger.error "ERROR OCCURED on #{[mtd, path]}"
         fail "unknown how to handle multiple errors" if 1 < response["json"]["errors"].size
-        puts "error: #{response["json"]["errors"]}"
+        Module.nesting[1].logger.error "error: #{response["json"]["errors"]}"
         error, description = response["json"]["errors"].first
           case error
-          when "ALREADY_SUB" ; puts "was rejected by moderator if you didn't see in dups"
+          when "ALREADY_SUB" ; Module.nesting[1].logger.warn "was rejected by moderator if you didn't see in dups"
           # when "BAD_CAPTCHA" ; update_captcha
           #   json mtd, path, form.merger( {
           #     iden: @iden_and_captcha[0],
@@ -44,7 +51,7 @@ module RedditBot
           #   } ) unless @ignore_captcha
           when "RATELIMIT"
             fail error unless description[/\Ayou are doing that too much\. try again in (\d) minutes\.\z/]
-            puts "retrying in #{$1.to_i + 1} minutes"
+            Module.nesting[1].logger.info "retrying in #{$1.to_i + 1} minutes"
             sleep ($1.to_i + 1) * 60
             return json mtd, path, _form
           else ; fail error
@@ -68,7 +75,7 @@ module RedditBot
     # [reason] :nodoc:
     # [thing_id] +String+ fullname of a "link, commenr or message"
     def report reason, thing_id
-      puts "reporting '#{thing_id}'"
+      Module.nesting[1].logger.warn "reporting '#{thing_id}'"
       json :post, "/api/report",
         reason: "other",
         other_reason: reason,
@@ -79,8 +86,11 @@ module RedditBot
     # [link_flair_css_class] :nodoc:
     # [link_flair_text] :nodoc:
     def set_post_flair post, link_flair_css_class, link_flair_text
-      puts "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post["name"]}'"
-      return puts "possibly not enough permissions for /r/#{@subreddit}/api/flairselector" if {"error"=>403} == @flairselector_choices ||= json(:post, "/r/#{@subreddit}/api/flairselector", link: post["name"])
+      Module.nesting[1].logger.warn "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post["name"]}'"
+      if {"error"=>403} == @flairselector_choices ||= json(:post, "/r/#{@subreddit}/api/flairselector", link: post["name"])
+        Module.nesting[1].logger.error "possibly not enough permissions for /r/#{@subreddit}/api/flairselector"
+        return
+      end
       json :post, "/api/selectflair",
         link: post["name"],
         text: link_flair_text,
@@ -92,7 +102,7 @@ module RedditBot
     # [thing_id] +String+ fullname of a post (or self.post?), comment (and private message?)
     # [text] :nodoc:
     def leave_a_comment thing_id, text
-      puts "leaving a comment on '#{thing_id}'"
+      Module.nesting[1].logger.warn "leaving a comment on '#{thing_id}'"
       json(:post, "/api/comment",
         thing_id: thing_id,
         text: text,
@@ -180,7 +190,7 @@ module RedditBot
         fail "bot #{@name} isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
         fail response.inspect
       end
-      puts "new token is: #{@token_cached}"
+      Module.nesting[1].logger.info "new token is: #{@token_cached}"
       # update_captcha if "true" == resp_with_token(:get, "/api/needs_captcha", {})
       @token_cached
     end
@@ -216,7 +226,7 @@ module RedditBot
         NetHTTPUtils.request_data(url, mtd, form: form, header: headers, auth: basic_auth) do |response|
           next unless remaining = response.to_hash["x-ratelimit-remaining"]
           if Gem::Platform.local.os == "darwin"
-            puts %w{
+            Module.nesting[1].logger.debug %w{
               x-ratelimit-remaining
               x-ratelimit-used
               x-ratelimit-reset
@@ -225,13 +235,13 @@ module RedditBot
           fail remaining[0] if remaining[0].size < 4
           next if remaining[0].size > 4
           t = (response.to_hash["x-ratelimit-reset"][0].to_f + 1) / [remaining[0].to_f - 10, 1].max + 1
-          puts "sleeping #{t} seconds because of x-ratelimit"
+          Module.nesting[1].logger.info "sleeping #{t} seconds because of x-ratelimit"
           sleep t
         end
       rescue NetHTTPUtils::Error => e
         sleep 5
         raise unless e.code.to_s.start_with? "50"
-        puts "API ERROR 50*"
+        Module.nesting[1].logger.error "API ERROR 50*"
         retry
       end
     end
