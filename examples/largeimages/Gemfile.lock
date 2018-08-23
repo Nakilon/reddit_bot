@@ -16,13 +16,6 @@ GIT
       public_suffix (~> 2.0)
 
 GIT
-  remote: git@github.com:nakilon/reddit_bot.git
-  revision: d2ab4765573ea153e34c99b6f6a4f7bca21df6a7
-  specs:
-    reddit_bot (1.6.5)
-      json
-
-GIT
   remote: git@github.com:sdsykes/fastimage.git
   revision: 15bc4111c4c4e1af580b63c62e08decf2d5527d5
   ref: 15bc4111c4c4e1af580b63c62e08decf2d5527d5
@@ -80,14 +73,17 @@ GEM
       little-plugger (~> 1.1)
       multi_json (~> 1.10)
     memoist (0.16.0)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.3.0)
     multi_json (1.13.1)
     multipart-post (2.0.0)
     nethttputils (0.2.4.2)
-    nokogiri (1.6.8.1)
-      mini_portile2 (~> 2.1.0)
+    nokogiri (1.8.4)
+      mini_portile2 (~> 2.3.0)
     os (0.9.6)
     public_suffix (2.0.5)
+    reddit_bot (1.6.7)
+      json
+      nethttputils (~> 0.2.4.1)
     rly (0.2.3)
     signet (0.8.1)
       addressable (~> 2.3)
@@ -107,7 +103,7 @@ DEPENDENCIES
   google-cloud-error_reporting
   json
   nokogiri
-  reddit_bot!
+  reddit_bot
 
 BUNDLED WITH
    1.16.1
