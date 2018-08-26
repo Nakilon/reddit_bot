@@ -5,8 +5,6 @@ require "gcplogger"
 logger = GCPLogger.logger "cptflairbot3"
 
 loop do
-  Hearthbeat.beat "u_CPTFlairBot3_r_casualpokemontrades", 70 if Google::Cloud.env.compute_engine?
-
   unread = BOT.json :get, "/message/unread"
   unread["data"]["children"].each do |msg|
     next logger.info "bad destination: #{msg["data"]["dest"]}" unless msg["data"]["dest"] == "CPTFlairBot3"
