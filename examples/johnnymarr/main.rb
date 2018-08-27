@@ -28,7 +28,7 @@ loop do
       header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
     )
   rescue NetHTTPUtils::Error => e
-    fail if e.code != 503
+    fail unless [500, 503].include? e.code
     sleep timeout += 1
     retry
   end ).sort_by{ |tweet| -tweet["id"] }.take_while do |tweet|
