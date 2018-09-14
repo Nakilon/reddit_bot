@@ -35,7 +35,7 @@ module RedditBot
     # [_form] +Array+ or +Hash+ API method params
     def json mtd, path, _form = []
       form = Hash[_form]
-      response = JSON.parse resp_with_token mtd, path, form.merge({api_type: "json"})
+      response = JSON.load resp_with_token mtd, path, form.merge({api_type: "json"})
       if response.is_a?(Hash) && response["json"] && # for example, flairlist.json and {"error": 403} do not have it
          !response["json"]["errors"].empty?
         Module.nesting[1].logger.error "ERROR OCCURED on #{[mtd, path]}"
@@ -178,7 +178,7 @@ module RedditBot
     def token
       return @token_cached if @token_cached
       # TODO handle with nive error message if we get 403 -- it's probably because of bad user agent
-      response = JSON.parse reddit_resp :post,
+      response = JSON.load reddit_resp :post,
         "https://www.reddit.com/api/v1/access_token", {
           grant_type: "password",
           username: @name,
