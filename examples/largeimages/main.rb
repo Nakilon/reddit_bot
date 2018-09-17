@@ -97,6 +97,7 @@ loop do
         DirectLink url, 60
       rescue SocketError,
              Net::OpenTimeout,
+             Errno::ECONNRESET,
              NetHTTPUtils::Error,
              FastImage::UnknownImageType,
              FastImage::ImageFetchFailure,
