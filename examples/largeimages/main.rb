@@ -107,6 +107,7 @@ loop do
       end
       logger.info "DirectLink: %p" % t
       tt = t.is_a?(Array) ? t : [t]
+      next logger.error "probably crosspost of a self post: http://redd.it/#{id}" if tt.empty?
       unless min_resolution <= tt.first.width * tt.first.height
         next logger.debug "skipped low resolution #{source}"
       end
