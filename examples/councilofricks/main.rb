@@ -10,7 +10,14 @@ require "csv"
 ignored = []
 loop do
   names, flairs = begin
-    catch(:"404"){ JSON.parse NetHTTPUtils.request_data File.read "gas.url" } or raise(JSON::ParserError)
+    JSON.load begin
+      NetHTTPUtils.request_data File.read "gas.url"
+    rescue NetHTTPUtils::Error => e
+      fail e unless [404, 500].include? e.code
+      puts "smth wrong with GAS script"
+      sleep 60
+      retry
+    end
   rescue JSON::ParserError
     puts "smth wrong with GAS script"
     sleep 60
