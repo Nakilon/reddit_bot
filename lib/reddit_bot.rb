@@ -111,6 +111,25 @@ module RedditBot
       end
     end
 
+    @@skip_erroneous_descending_ids = lambda do |array|
+      array.reverse.each_with_object([]) do |item, result|
+        unless result.empty?
+          a, b = [item["id"], result.first["id"]]
+          next if a == b || a.size < b.size || !(a.size > b.size) && a < b
+        end
+        result.unshift item
+      end
+    end
+    fail unless p(@@skip_erroneous_descending_ids[[
+      {"id" => "0h"},
+      {"id" => "g"},
+      {"id" => "f"},
+      {"id" => "i"},
+      {"id" => "e"},
+      {"id" => "b"},
+      {"id" => "c"},
+      {"id" => "d"},
+    ]].flat_map(&:values)) == %w{ 0h i e d }
     # :yields: JSON objects: ["data"] part of post or self.post
     def new_posts subreddit = nil, caching = false
       cache = lambda do |id, &block|
@@ -133,9 +152,11 @@ module RedditBot
           fail if result["kind"] != "Listing"
           fail result["data"].keys.inspect unless result["data"].keys == %w{ after dist modhash whitelist_status children before } ||
                                                   result["data"].keys == %w{ modhash dist children after before }
-          result["data"]["children"].each do |post|
+          @@skip_erroneous_descending_ids[ result["data"]["children"].map do |post|
             fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
-            e << post["data"]
+            post["data"]
+          end ].each do |data|
+            e << data
           end
           break unless marker = result["data"]["after"]
           after = {after: marker}
