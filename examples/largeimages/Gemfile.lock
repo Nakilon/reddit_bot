@@ -80,14 +80,14 @@ GEM
     mini_portile2 (2.3.0)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    nethttputils (0.2.4.2)
+    nethttputils (0.2.5.1)
     nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
     os (0.9.6)
     public_suffix (2.0.5)
-    reddit_bot (1.6.7)
+    reddit_bot (1.6.10)
       json
-      nethttputils (~> 0.2.4.1)
+      nethttputils (~> 0.2.5.1)
     rly (0.2.3)
     signet (0.8.1)
       addressable (~> 2.3)
@@ -110,4 +110,4 @@ DEPENDENCIES
   reddit_bot
 
 BUNDLED WITH
-   1.16.1
+   1.17.1
