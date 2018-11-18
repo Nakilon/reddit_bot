@@ -3,7 +3,7 @@ GEM
   specs:
     json (2.1.0)
     nethttputils (0.2.5.1)
-    reddit_bot (1.6.9)
+    reddit_bot (1.6.10)
       json
       nethttputils (~> 0.2.5.1)
 
