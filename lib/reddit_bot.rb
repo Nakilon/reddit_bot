@@ -140,7 +140,7 @@ module RedditBot
           break unless marker = result["data"]["after"]
           after = {after: marker}
         end
-      end
+      end.to_a.sort_by{ |post| post["id"] }.reverse
     end
 
     # :yields: JSON objects: ["data"] part of post or self.post, top level comment (["children"] element)
