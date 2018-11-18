@@ -1,22 +1,17 @@
-GIT
-  remote: git@github.com:nakilon/reddit_bot.git
-  revision: 351c559e507289aa6385e769eb6d5c6de80ba629
-  specs:
-    reddit_bot (1.6.7)
-      json
-      nethttputils (~> 0.2.4.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
     json (2.1.0)
-    nethttputils (0.2.4.2)
+    nethttputils (0.2.5.1)
+    reddit_bot (1.6.9)
+      json
+      nethttputils (~> 0.2.5.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  reddit_bot!
+  reddit_bot
 
 BUNDLED WITH
-   1.16.1
+   1.17.1

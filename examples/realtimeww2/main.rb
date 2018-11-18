@@ -86,7 +86,7 @@ loop do
     flair["text"] == "Contains Media"
   end
 
-  timeout = 0
+  timeout = 1
   JSON.load( begin
     NetHTTPUtils.request_data(
       "https://api.twitter.com/1.1/statuses/user_timeline.json",
@@ -102,7 +102,8 @@ loop do
     end
   rescue NetHTTPUtils::Error => e
     fail if e.code != 503
-    sleep(timeout += 1)
+    sleep timeout
+    timeout *= 2
     retry
   end ).reverse_each do |tweet|
     next if tweet["id"] <= id
