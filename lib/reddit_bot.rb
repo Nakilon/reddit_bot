@@ -120,7 +120,7 @@ module RedditBot
         result.unshift item
       end
     end
-    fail unless p(@@skip_erroneous_descending_ids[[
+    fail unless @@skip_erroneous_descending_ids[[
       {"id" => "0h"},
       {"id" => "g"},
       {"id" => "f"},
@@ -129,7 +129,7 @@ module RedditBot
       {"id" => "b"},
       {"id" => "c"},
       {"id" => "d"},
-    ]].flat_map(&:values)) == %w{ 0h i e d }
+    ]].flat_map(&:values) == %w{ 0h i e d }
     # :yields: JSON objects: ["data"] part of post or self.post
     def new_posts subreddit = nil, caching = false
       cache = lambda do |id, &block|
