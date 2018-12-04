@@ -4,7 +4,6 @@ SUBREDDIT = "yayornay"
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDDIT
 
 loop do
-  Hearthbeat.beat "u_gotfan247_r_yayornay", 310 unless Gem::Platform.local.os == "darwin"
   puts "LOOP #{Time.now}"
 
   BOT.each_new_post_with_top_level_comments do |post, comments|
