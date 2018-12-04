@@ -4,7 +4,6 @@ BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: tr
 SUBREDDIT = "sexypizza"
 
 loop do
-  Hearthbeat.beat "u_SexyPizzaBot_r_sexypizza", 3610 unless Gem::Platform.local.os == "darwin"
   puts "LOOP #{Time.now}"
 
   flairs = BOT.json(:get, "/r/#{SUBREDDIT}/api/flairlist", {limit: 1000})["users"]
