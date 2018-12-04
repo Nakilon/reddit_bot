@@ -1,3 +1,4 @@
 source "https://rubygems.org"
 
+gem "public_suffix", "<3.0" # Ruby 2.0
 gem "directlink"
