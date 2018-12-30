@@ -1,5 +1,5 @@
 ﻿require_relative "../boilerplate"
-BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
+BOT = RedditBot::Bot.new YAML.load_file "secrets.yaml"
 
 require "gcplogger"
 logger = GCPLogger.logger "cptflairbot3"

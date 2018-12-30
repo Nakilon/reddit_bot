@@ -67,15 +67,23 @@ or via Gemfile:
 
 helloworld.rb:
 
-    require "reddit_bot"
+```ruby
+require "reddit_bot"
+```
 
-You obviously can't run these examples as is, because they use some dependencies that are not in git repo, like `secrets.yaml` file for Reddit authorization of the following format:
+You obviously can't run these examples as is, because they use local configs that are not in git repo, like `secrets.yaml` file for Reddit authorization of the following format:
 
     :client_id: Kb9.......6wBw
     :client_secret: Fqo.....................AFI
     :password: mybotpassword
     :login: MyBotUsername
     # :user_agent: optional_custom_useragent_to_bypass_reddit_spam_protection
+
+To change the log level:
+
+```ruby
+RedditBot.logger.level = Logger::ERROR
+```
 
 To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
 

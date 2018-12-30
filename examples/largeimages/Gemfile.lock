@@ -85,7 +85,7 @@ GEM
       mini_portile2 (~> 2.3.0)
     os (0.9.6)
     public_suffix (2.0.5)
-    reddit_bot (1.6.10)
+    reddit_bot (1.6.13)
       json
       nethttputils (~> 0.2.5.1)
     rly (0.2.3)

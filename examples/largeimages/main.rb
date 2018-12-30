@@ -16,7 +16,7 @@ require "directlink"
 require "nokogiri"
 
 require "../boilerplate"
-BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
+BOT = RedditBot::Bot.new YAML.load_file "secrets.yaml"
 
 INCLUDE = %w{
     user/kjoneslol/m/sfwpornnetwork

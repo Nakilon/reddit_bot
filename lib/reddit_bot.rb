@@ -1,7 +1,6 @@
 STDOUT.sync = true
 # require "pp"
 
-require "net/http"
 require "openssl"
 require "json"
 
@@ -228,13 +227,16 @@ module RedditBot
 
     def resp_with_token mtd, path, form
       fail unless path.start_with? ?/
+      timeout = 5
       begin
         reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
           "Authorization" => "bearer #{token}",
           "User-Agent" => "bot/#{@user_agent || @name}/#{RedditBot::VERSION} by /u/nakilon",
         }
       rescue NetHTTPUtils::Error => e
-        sleep 5
+        sleep timeout
+        Module.nesting[1].logger.info "sleeping #{timeout} seconds because of #{e.code}"
+        timeout *= 2
         raise unless e.code == 401
         @token_cached = nil
         retry

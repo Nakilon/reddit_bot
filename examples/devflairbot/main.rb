@@ -4,7 +4,7 @@
 #   so it's possible to miss if bot is down for a while but in fact it's enough stable and does not go down.
 
 require_relative "../boilerplate"
-BOT = RedditBot::Bot.new YAML.load File.read "secrets.yaml"
+BOT = RedditBot::Bot.new YAML.load_file "secrets.yaml"
 
 fail("no ENV['ERROR_REPORTING_KEYFILE'] specified") unless ENV["ERROR_REPORTING_KEYFILE"]
 require "google/cloud/error_reporting"
