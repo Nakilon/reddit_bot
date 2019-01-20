@@ -79,7 +79,7 @@ You obviously can't run these examples as is, because they use local configs tha
     :login: MyBotUsername
     # :user_agent: optional_custom_useragent_to_bypass_reddit_spam_protection
 
-To change the log level:
+To change log level:
 
 ```ruby
 RedditBot.logger.level = Logger::ERROR
