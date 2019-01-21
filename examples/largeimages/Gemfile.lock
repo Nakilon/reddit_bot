@@ -1,22 +1,29 @@
 GIT
-  remote: git@github.com:Nakilon/directlink.git
-  revision: aa4aa0c791ef7d8e551d553f04615e5f0f08d6b1
+  remote: git@github.com:nakilon/directlink.git
+  revision: b965d0c3171bd9b17d397bd7ff3ecbef599daf21
   specs:
-    directlink (0.0.4.8)
+    directlink (0.0.4.9)
       addressable
       fastimage (~> 2.1.3)
       kramdown
+      nethttputils (~> 0.3.2.3)
       nokogiri
       reddit_bot (~> 1.7.0)
 
 GIT
-  remote: git@github.com:Nakilon/gcplogger.git
+  remote: git@github.com:nakilon/gcplogger.git
   revision: 7c1451fac49bd0d242c6de43315ae6e9a70d8f7f
   tag: v0.1.1.0
   specs:
     gcplogger (0.1.1.0)
       google-cloud-logging (~> 1.4.0)
       public_suffix (~> 2.0)
+
+GIT
+  remote: git@github.com:nakilon/nethttputils.git
+  revision: 818adfdc7ecd648fcacd82ad742e89c89e92b8ec
+  specs:
+    nethttputils (0.3.2.4)
 
 GEM
   remote: https://rubygems.org/
@@ -74,7 +81,6 @@ GEM
     mini_portile2 (2.4.0)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    nethttputils (0.3.2.2)
     nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
     os (0.9.6)
@@ -99,6 +105,7 @@ DEPENDENCIES
   gcplogger!
   google-cloud-error_reporting
   json
+  nethttputils!
   nokogiri
 
 BUNDLED WITH
