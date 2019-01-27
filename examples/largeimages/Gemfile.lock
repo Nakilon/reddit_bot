@@ -1,8 +1,8 @@
 GIT
   remote: git@github.com:nakilon/directlink.git
-  revision: b965d0c3171bd9b17d397bd7ff3ecbef599daf21
+  revision: 653640a9d7e2fd9ec52e8fef58ff7916c568f63e
   specs:
-    directlink (0.0.4.9)
+    directlink (0.0.4.10)
       addressable
       fastimage (~> 2.1.3)
       kramdown
