@@ -1,8 +1,8 @@
 GIT
   remote: git@github.com:nakilon/directlink.git
-  revision: 653640a9d7e2fd9ec52e8fef58ff7916c568f63e
+  revision: a1645d3abca0182e6de80f1a7b37b6ad0513b672
   specs:
-    directlink (0.0.4.10)
+    directlink (0.0.6.0)
       addressable
       fastimage (~> 2.1.3)
       kramdown
@@ -21,9 +21,9 @@ GIT
 
 GIT
   remote: git@github.com:nakilon/nethttputils.git
-  revision: 818adfdc7ecd648fcacd82ad742e89c89e92b8ec
+  revision: 6450111a35803b474c2331d8e12da6546101c887
   specs:
-    nethttputils (0.3.2.4)
+    nethttputils (0.3.2.6)
 
 GEM
   remote: https://rubygems.org/
@@ -70,9 +70,9 @@ GEM
       google-protobuf (~> 3.1)
       googleapis-common-protos-types (~> 1.0.0)
       googleauth (>= 0.5.1, < 0.7)
-    json (2.1.0)
+    json (2.2.0)
     jwt (2.1.0)
-    kramdown (2.0.0)
+    kramdown (2.1.0)
     little-plugger (1.1.4)
     logging (2.2.2)
       little-plugger (~> 1.1)
@@ -81,7 +81,7 @@ GEM
     mini_portile2 (2.4.0)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    nokogiri (1.10.1)
+    nokogiri (1.10.2)
       mini_portile2 (~> 2.4.0)
     os (0.9.6)
     public_suffix (2.0.5)

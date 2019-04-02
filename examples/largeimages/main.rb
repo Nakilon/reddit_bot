@@ -105,7 +105,7 @@ loop do
              DirectLink::ErrorBadLink => e
         next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
       end
-      logger.info "DirectLink: %p" % t
+      logger.info "DirectLink: #{t.inspect}"
       tt = t.is_a?(Array) ? t : [t]
       next logger.error "probably crosspost of a self post: http://redd.it/#{id}" if tt.empty?
       unless min_resolution <= tt.first.width * tt.first.height
