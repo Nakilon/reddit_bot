@@ -245,6 +245,7 @@ module RedditBot
 
     def reddit_resp *args
       mtd, url, form, headers, basic_auth = *args
+      headers["Cookie:"] = "over18=1"
       begin
         NetHTTPUtils.request_data(url, mtd, form: form, header: headers, auth: basic_auth) do |response|
           next unless remaining = response.to_hash["x-ratelimit-remaining"]
