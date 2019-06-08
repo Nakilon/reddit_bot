@@ -21,9 +21,9 @@ GIT
 
 GIT
   remote: git@github.com:nakilon/nethttputils.git
-  revision: 6450111a35803b474c2331d8e12da6546101c887
+  revision: 102f734b311b947769e77413b553f544a889a76a
   specs:
-    nethttputils (0.3.2.6)
+    nethttputils (0.3.2.11)
 
 GEM
   remote: https://rubygems.org/
@@ -85,7 +85,7 @@ GEM
       mini_portile2 (~> 2.4.0)
     os (0.9.6)
     public_suffix (2.0.5)
-    reddit_bot (1.7.1)
+    reddit_bot (1.7.2)
       json
       nethttputils (~> 0.3.2.0)
     rly (0.2.3)
