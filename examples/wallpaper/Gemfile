@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
-gem "nokogiri", "~>1.6.7"   # Ruby 2.0
+gem "nokogiri", "~>1.10.4"
 gem "public_suffix", "<3.0" # Ruby 2.0
 gem "directlink"

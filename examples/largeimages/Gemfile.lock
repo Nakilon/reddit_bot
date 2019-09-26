@@ -81,7 +81,7 @@ GEM
     mini_portile2 (2.4.0)
     multi_json (1.13.1)
     multipart-post (2.0.0)
-    nokogiri (1.10.2)
+    nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     os (0.9.6)
     public_suffix (2.0.5)
@@ -106,7 +106,7 @@ DEPENDENCIES
   google-cloud-error_reporting
   json
   nethttputils!
-  nokogiri
+  nokogiri (~> 1.10.4)
 
 BUNDLED WITH
-   1.17.1
+   2.0.2

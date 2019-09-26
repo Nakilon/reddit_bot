@@ -12,10 +12,10 @@ GEM
     fastimage (2.1.5)
     json (2.1.0)
     kramdown (1.17.0)
-    mini_portile2 (2.1.0)
+    mini_portile2 (2.4.0)
     nethttputils (0.2.5.1)
-    nokogiri (1.6.8.1)
-      mini_portile2 (~> 2.1.0)
+    nokogiri (1.10.4)
+      mini_portile2 (~> 2.4.0)
     public_suffix (2.0.5)
     reddit_bot (1.6.13)
       json
@@ -26,8 +26,8 @@ PLATFORMS
 
 DEPENDENCIES
   directlink
-  nokogiri (~> 1.6.7)
+  nokogiri (~> 1.10.4)
   public_suffix (< 3.0)
 
 BUNDLED WITH
-   1.17.1
+   2.0.2

@@ -2,7 +2,7 @@
 
 gem "json"
 
-gem "nokogiri"
+gem "nokogiri", "~>1.10.4"
 
 gem "nethttputils", git: "git@github.com:nakilon/nethttputils.git"
 gem "directlink", git: "git@github.com:nakilon/directlink.git"
