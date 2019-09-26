@@ -22,15 +22,15 @@ INCLUDE = %w{
     user/kjoneslol/m/sfwpornnetwork
 
     r/woahdude
+    r/pic
 
     r/highres
     r/wallpapers
     r/wallpaper
     r/WQHD_Wallpaper
 
-    r/pic
-
     r/oldmaps
+    r/telephotolandscapes
 }
 EXCLUDE = %w{ foodporn powerwashingporn }
 
