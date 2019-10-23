@@ -10,7 +10,7 @@ loop do
     next logger.info "bad destination: #{msg["data"]["dest"]}" unless msg["data"]["dest"] == "CPTFlairBot3"
     case msg["data"]["subject"]
     when "casualpokemontrades"
-      unless /^(?<name>\S+( \S+)*) ?\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>\S+)$/ =~ msg["data"]["body"]
+      unless /^(?<name>\S+( \S+)*) ?\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>[a-z2-]+)$/ =~ msg["data"]["body"]
         logger.info "invalid message for #{msg["data"]["subject"]}: %p" % msg["data"]["body"] unless Google::Cloud.env.compute_engine?
         # puts "marking invalid message as read: %p" % msg["data"]["body"]
         # BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless Gem::Platform.local.os == "darwin"
