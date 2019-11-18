@@ -5,7 +5,7 @@ gem "json"
 gem "nokogiri", "~>1.10.4"
 
 gem "nethttputils", git: "git@github.com:nakilon/nethttputils.git"
-gem "directlink", git: "git@github.com:nakilon/directlink.git"
+gem "directlink", "~>0.0.8.5"
 
 gem "gcplogger", git: "git@github.com:nakilon/gcplogger.git", tag: "v0.1.1.0"
 gem "google-cloud-error_reporting"
