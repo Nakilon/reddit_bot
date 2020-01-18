@@ -101,7 +101,7 @@ loop do
       sleep t
     end
   rescue NetHTTPUtils::Error => e
-    fail if e.code != 503
+    fail unless [500, 503].include? e.code
     sleep timeout
     timeout *= 2
     retry
