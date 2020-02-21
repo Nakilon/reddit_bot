@@ -85,13 +85,17 @@ loop do
   ].each do |source, min_resolution, entries|
     logger.warn "#{source}.size: #{entries.size}"
     entries.each do |id, url, title, subreddit, author, permalink|
+      author.downcase!
       next if checked.include? id
       checked << id
       # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
       logger.debug "image url for #{id}: #{url}"
-      next logger.warn "skipped a post by /u/sjhill"       if author == "sjhill"        # opt-out
-      next logger.warn "skipped a post by /u/redisforever" if author == "redisforever"  # opt-out
-      next logger.warn "skipped a post by /u/bekalaki"     if author == "bekalaki"      # 9 ways to divide a karmawhore
+      next logger.warn "skipped a post by /u/sjhill"          if author == "sjhill"          # opt-out
+      next logger.warn "skipped a post by /u/redisforever"    if author == "redisforever"    # opt-out
+      next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # 9 ways to divide a karmawhore
+      next logger.warn "skipped a post by /u/cherryblackeyes" if author == "cherryblackeyes" # not nice
+      
+      https://www.reddit.com/r/LargeImages/comments/erg3b5/4977x6060_copied_features_of_thr_indian/ff3g4iy/
 
       t = begin
         DirectLink url, 60
