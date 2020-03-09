@@ -256,8 +256,9 @@ module RedditBot
               x-ratelimit-reset
             }.map{ |key| "#{key}=#{response.to_hash[key]}" }.join ", "
           end
-          fail remaining[0] if remaining[0].size < 4
-          next if remaining[0].size > 4
+          fail unless remaining[0][/\A\d{1,}\z/]
+          fail remaining[0] if remaining[0].size < 2
+          next if remaining[0].size > 2
           t = (response.to_hash["x-ratelimit-reset"][0].to_f + 1) / [remaining[0].to_f - 10, 1].max + 1
           Module.nesting[1].logger.info "sleeping #{t} seconds because of x-ratelimit"
           sleep t
