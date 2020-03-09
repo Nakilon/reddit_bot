@@ -40,7 +40,7 @@ search_url = lambda do |url|
   JSON.load( begin
     NetHTTPUtils.request_data "https://www.reddit.com/r/largeimages/search.json", form: {q: "url:#{url}", restrict_sr: "on"}, header: ["User-Agent", "ajsdjasdasd"]
   rescue NetHTTPUtils::Error => e
-    raise unless [503].include? e.code
+    raise unless [500, 503].include? e.code
     sleep 60
     retry
   end )["data"]["children"]
