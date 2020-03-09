@@ -94,7 +94,7 @@ loop do
       next logger.warn "skipped a post by /u/redisforever"    if author == "redisforever"    # opt-out
       next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # 9 ways to divide a karmawhore
       next logger.warn "skipped a post by /u/cherryblackeyes" if author == "cherryblackeyes" # he's not nice
-      next logger.warn "skipped gifv" if URI(link).host.split(?.) == %w{ v redd it }
+      next logger.warn "skipped gifv" if URI(url).host.split(?.) == %w{ v redd it }
 
       t = begin
         DirectLink url, 60
