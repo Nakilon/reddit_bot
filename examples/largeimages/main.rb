@@ -89,12 +89,17 @@ loop do
       next if checked.include? id
       checked << id
       # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
-      logger.debug "image url for #{id}: #{url}"
+      logger.info "image url for #{id}: #{url}"
       next logger.warn "skipped a post by /u/sjhill"          if author == "sjhill"          # opt-out
       next logger.warn "skipped a post by /u/redisforever"    if author == "redisforever"    # opt-out
       next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # 9 ways to divide a karmawhore
       next logger.warn "skipped a post by /u/cherryblackeyes" if author == "cherryblackeyes" # he's not nice
-      next logger.warn "skipped gifv" if URI(url).host.split(?.) == %w{ v redd it }
+      next logger.warn "skipped gifv" if ( begin
+        URI link
+      rescue URI::InvalidURIError
+        require "addressable"
+        URI Addressable::URI.escape link
+      end ).host.split(?.) == %w{ v redd it }
 
       t = begin
         DirectLink url, 60
@@ -108,11 +113,11 @@ loop do
              DirectLink::ErrorBadLink => e
         next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
       end
-      logger.info "DirectLink: #{t.inspect}"
+      logger.debug "DirectLink: #{t.inspect}"
       tt = t.is_a?(Array) ? t : [t]
       next logger.error "probably crosspost of a self post: http://redd.it/#{id}" if tt.empty?
       unless min_resolution <= tt.first.width * tt.first.height
-        next logger.debug "skipped low resolution #{source}"
+        next logger.info "skipped low resolution #{source}"
       end
       # puts "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on"
       resolution = "[#{tt.first.width}x#{tt.first.height}]"

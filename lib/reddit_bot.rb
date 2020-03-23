@@ -234,10 +234,10 @@ module RedditBot
           "User-Agent" => "bot/#{@user_agent || @name}/#{RedditBot::VERSION} by /u/nakilon",
         }
       rescue NetHTTPUtils::Error => e
+        raise unless e.code == 401
         sleep timeout
         Module.nesting[1].logger.info "sleeping #{timeout} seconds because of #{e.code}"
         timeout *= 2
-        raise unless e.code == 401
         @token_cached = nil
         retry
       end

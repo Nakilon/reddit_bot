@@ -96,6 +96,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  addressable
   directlink (~> 0.0.8.5)
   gcplogger!
   google-cloud-error_reporting
