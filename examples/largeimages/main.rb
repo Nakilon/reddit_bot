@@ -95,10 +95,10 @@ loop do
       next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # 9 ways to divide a karmawhore
       next logger.warn "skipped a post by /u/cherryblackeyes" if author == "cherryblackeyes" # he's not nice
       next logger.warn "skipped gifv" if ( begin
-        URI link
+        URI url
       rescue URI::InvalidURIError
         require "addressable"
-        URI Addressable::URI.escape link
+        URI Addressable::URI.escape url
       end ).host.split(?.) == %w{ v redd it }
 
       t = begin
