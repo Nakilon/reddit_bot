@@ -1,0 +1,23 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
+    byebug (11.0.1)
+    json (2.3.0)
+    nethttputils (0.4.0.0)
+      addressable
+    public_suffix (4.0.5)
+    reddit_bot (1.7.5)
+      json
+      nethttputils (~> 0.4.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  byebug
+  reddit_bot
+
+BUNDLED WITH
+   2.0.2
