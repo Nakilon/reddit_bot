@@ -16,7 +16,7 @@ require "directlink"
 require "nokogiri"
 
 require "../boilerplate"
-BOT = RedditBot::Bot.new YAML.load_file "secrets.yaml"
+bot = RedditBot::Bot.new YAML.load_file "secrets.yaml"
 
 INCLUDE = %w{
     user/kjoneslol/m/sfwpornnetwork
@@ -74,7 +74,7 @@ loop do
     ]
   end ) ],
     [:source_reddit, 30000000, ( INCLUDE.flat_map do |sortasub|
-    BOT.new_posts(sortasub).take(100).map do |child|
+    bot.new_posts(sortasub).take(100).map do |child|
       next if child["is_self"]
       next if EXCLUDE.include? child["subreddit"].downcase
       child.values_at(
@@ -117,14 +117,17 @@ loop do
       logger.debug "DirectLink: #{t.inspect}"
       tt = t.is_a?(Array) ? t : [t]
       next logger.error "probably crosspost of a self post: http://redd.it/#{id}" if tt.empty?
-      unless min_resolution <= tt.first.width * tt.first.height
-        next logger.info "skipped low resolution #{source}"
-      end
+      next logger.info "skipped low resolution #{source}" unless min_resolution <= tt.first.width * tt.first.height
       # puts "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on"
       resolution = "[#{tt.first.width}x#{tt.first.height}]"
-      next logger.warn "already submitted #{resolution} #{id}: '#{url}'" unless
-        Gem::Platform.local.os == "darwin" || search_url[url].empty?
-      logger.warn "resolution #{resolution} got from #{id}: #{url}"
+      next logger.warn "already submitted #{resolution} #{id}: '#{url}'" unless Gem::Platform.local.os == "darwin" || search_url[url].empty?
+
+      if "mapporn" == subreddit.downcase
+        system "curl -s '#{tt.first.url}' -o temp --retry 5" or fail
+        `vips pngsave temp temp.png`
+        next logger.warn "skipped /r/mapporn <10mb PNG id=#{id}" if 10000000 > File.size("temp.png")
+      end
+
       title = "#{resolution}#{
         " [#{tt.size} images]" if tt.size > 1
       } #{
@@ -133,7 +136,7 @@ loop do
       } /r/#{subreddit}".gsub(/\s+\(\s+\)\s+/, " ").sub(/(?<=.{297}).+/, "...")
       logger.warn "new post #{source}: #{url} #{title.inspect}"
       unless Gem::Platform.local.os == "darwin"
-        result = BOT.json :post,
+        result = bot.json :post,
           "/api/submit",
           {
             kind: "link",
@@ -160,7 +163,7 @@ loop do
       text = [line1, line2, line3].compact.join("  \n")
       logger.info "new comment: #{text.inspect}"
       unless Gem::Platform.local.os == "darwin"
-        result = BOT.leave_a_comment "#{result["json"]["data"]["name"]}", text.sub(/(?<=.{9000}).+/m, "...")
+        result = bot.leave_a_comment "#{result["json"]["data"]["name"]}", text.sub(/(?<=.{9000}).+/m, "...")
         unless result["json"]["errors"].empty?
           logger.error result.inspect
           fail "failed to leave comment"
