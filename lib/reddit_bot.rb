@@ -7,8 +7,6 @@ require "yaml"
 
 require "nethttputils"
 
-require_relative "reddit_bot/version" # TODO: deprecate this
-
 module RedditBot
   require "logger"
   class << self
@@ -205,7 +203,7 @@ module RedditBot
           username: @name,
           password: @secret_password,
         }, {
-          "User-Agent" => "bot/#{@user_agent || @name}/#{RedditBot::VERSION} by /u/nakilon",
+          "User-Agent" => "bot/#{@user_agent || @name}/#{Gem::Specification::load("#{__dir__}/../reddit_bot.gemspec").version} by /u/nakilon",
         }, @secret_auth
       unless @token_cached = response["access_token"]
         fail "bot #{@name} isn't a 'developer' of app at https://www.reddit.com/prefs/apps/" if response == {"error"=>"invalid_grant"}
@@ -232,7 +230,7 @@ module RedditBot
       begin
         reddit_resp mtd, "https://oauth.reddit.com" + path, form, {
           "Authorization" => "bearer #{token}",
-          "User-Agent" => "bot/#{@user_agent || @name}/#{RedditBot::VERSION} by /u/nakilon",
+          "User-Agent" => "bot/#{@user_agent || @name}/#{Gem::Specification::load("#{__dir__}/../reddit_bot.gemspec").version} by /u/nakilon",
         }
       rescue NetHTTPUtils::Error => e
         raise unless e.code == 401
