@@ -1,8 +1,6 @@
-require_relative "lib/reddit_bot/version"
-
 Gem::Specification.new do |spec|
   spec.name          = "reddit_bot"
-  spec.version       = RedditBot::VERSION
+  spec.version       = "1.7.5"
   spec.authors       = ["Victor Maslov"]
   spec.email         = ["nakilon@gmail.com"]
 

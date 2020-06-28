@@ -3,6 +3,7 @@ STDOUT.sync = true
 
 require "openssl"
 require "json"
+require "yaml"
 
 require "nethttputils"
 
@@ -247,22 +248,7 @@ module RedditBot
       mtd, url, form, headers, basic_auth = *args
       headers["Cookie:"] = "over18=1"
       begin
-        NetHTTPUtils.request_data(url, mtd, form: form, header: headers, auth: basic_auth) do |response|
-          next unless remaining = response.to_hash["x-ratelimit-remaining"]
-          if Gem::Platform.local.os == "darwin"
-            Module.nesting[1].logger.debug %w{
-              x-ratelimit-remaining
-              x-ratelimit-used
-              x-ratelimit-reset
-            }.map{ |key| "#{key}=#{response.to_hash[key]}" }.join ", "
-          end
-          fail unless remaining[0][/\A\d{1,}\z/]
-          fail remaining[0] if remaining[0].size < 2
-          next if remaining[0].size > 2
-          t = (response.to_hash["x-ratelimit-reset"][0].to_f + 1) / [remaining[0].to_f - 10, 1].max + 1
-          Module.nesting[1].logger.info "sleeping #{t} seconds because of x-ratelimit"
-          sleep t
-        end
+        NetHTTPUtils.request_data url, mtd, form: form, header: headers, auth: basic_auth
       rescue NetHTTPUtils::Error => e
         sleep 5
         raise unless e.code.to_s.start_with? "50"
@@ -272,4 +258,66 @@ module RedditBot
     end
 
   end
+
+  module Twitter
+    require "json"
+
+    def self.init_twitter twitter
+      const_set :TWITTER_ACCOUNT, twitter
+      const_set :TWITTER_ACCESS_TOKEN, JSON.load(
+        NetHTTPUtils.request_data "https://api.twitter.com/oauth2/token", :post,
+          auth: File.read("twitter.token").split,
+          form: {grant_type: :client_credentials}
+      )["access_token"]
+    end
+
+    require "cgi"
+    def self.tweet2titleNtext tweet
+      text = ""
+      contains_media = false
+      up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
+      if tweet["extended_entities"] && !tweet["extended_entities"]["media"].empty?
+        contains_media = true
+        tweet["extended_entities"]["media"].each_with_index do |media, i|
+          text.concat "* [Image #{i + 1}](#{media["media_url_https"]})\n\n"
+        end
+      end
+      if !tweet["entities"]["urls"].empty?
+        contains_media = true
+        tweet["entities"]["urls"].each_with_index do |url, i|
+          text.concat "* [Link #{i + 1}](#{url["expanded_url"]})\n\n"
+        end
+      end
+      text.concat "^- #{
+        up[tweet["user"]["name"]]
+      } [^\\(@#{TWITTER_ACCOUNT}\\)](https://twitter.com/#{TWITTER_ACCOUNT}) ^| [#{
+        up[Date.parse(tweet["created_at"]).strftime "%B %-d, %Y"]
+      }](https://twitter.com/#{TWITTER_ACCOUNT}/status/#{tweet["id"]})"
+      [CGI::unescapeHTML(tweet["full_text"]).sub(/( https:\/\/t\.co\/[0-9a-zA-Z]{10})*\z/, ""), text, contains_media]
+    end
+
+    def self.user_timeline
+      timeout = 1
+      JSON.load begin
+        NetHTTPUtils.request_data(
+          "https://api.twitter.com/1.1/statuses/user_timeline.json",
+          form: { screen_name: TWITTER_ACCOUNT, count: 200, tweet_mode: "extended" },
+          header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
+        ) do |res|
+          next unless res.key? "x-rate-limit-remaining"
+          remaining = res.fetch("x-rate-limit-remaining").to_i
+          next if 100 < remaining
+          t = (res.fetch("x-rate-limit-reset").to_i - Time.now.to_i + 1).fdiv remaining
+          puts "sleep #{t}"
+          sleep t
+        end
+      rescue NetHTTPUtils::Error => e
+        fail unless [500, 503].include? e.code
+        sleep timeout
+        timeout *= 2
+        retry
+      end
+    end
+  end
+
 end
