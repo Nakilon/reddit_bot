@@ -59,7 +59,7 @@ GEM
       google-protobuf (~> 3.1)
       googleapis-common-protos-types (~> 1.0.0)
       googleauth (>= 0.5.1, < 0.7)
-    json (2.2.0)
+    json (2.3.0)
     jwt (2.1.0)
     kramdown (2.3.0)
       rexml
