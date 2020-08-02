@@ -12,6 +12,7 @@ end
 
 
 require "directlink"
+DirectLink.logger.level = Logger::INFO
 
 require "nokogiri"
 
@@ -89,7 +90,7 @@ loop do
       next if checked.include? id
       checked << id
       # next if Gem::Platform.local.os == "darwin" # prevent concurrent posting
-      logger.info "image url for #{id}: #{url}"
+      logger.debug "image url for #{id}: #{url}"
       next logger.warn "skipped a post by /u/sjhill"          if author == "sjhill"          # opt-out
       next logger.warn "skipped a post by /u/redisforever"    if author == "redisforever"    # opt-out
       next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # 9 ways to divide a karmawhore

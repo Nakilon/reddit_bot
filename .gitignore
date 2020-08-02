@@ -1,0 +1,5 @@
+/examples/*/twitter.token
+temp
+*secret*
+.byebug_history
+/pkg
