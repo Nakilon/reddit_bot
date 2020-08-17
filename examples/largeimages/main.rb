@@ -12,7 +12,6 @@ end
 
 
 require "directlink"
-DirectLink.logger.level = Logger::INFO
 
 require "nokogiri"
 
@@ -123,8 +122,9 @@ loop do
       resolution = "[#{tt.first.width}x#{tt.first.height}]"
       next logger.warn "already submitted #{resolution} #{id}: '#{url}'" unless Gem::Platform.local.os == "darwin" || search_url[url].empty?
 
+      system "curl -s '#{tt.first.url}' -o temp --retry 5" or fail
+      next logger.warn "skipped <2mb id=#{id}" if 2000000 > File.size("temp")
       if "mapporn" == subreddit.downcase
-        system "curl -s '#{tt.first.url}' -o temp --retry 5" or fail
         `vips pngsave temp temp.png`
         next logger.warn "skipped /r/mapporn <10mb PNG id=#{id}" if 10000000 > File.size("temp.png")
       end
