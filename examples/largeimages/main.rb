@@ -104,14 +104,7 @@ loop do
 
       t = begin
         DirectLink url, 60
-      rescue SocketError,
-             Net::OpenTimeout,
-             Errno::ECONNRESET,
-             NetHTTPUtils::Error,
-             FastImage::UnknownImageType,
-             FastImage::ImageFetchFailure,
-             DirectLink::ErrorNotFound,
-             DirectLink::ErrorBadLink => e
+      rescue *DirectLink::NORMAL_EXCEPTIONS => e
         next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
       end
       logger.debug "DirectLink: #{t.inspect}"
