@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "reddit_bot"
-  spec.version       = "1.7.6"
+  spec.version       = "1.7.7"
   spec.authors       = ["Victor Maslov"]
   spec.email         = ["nakilon@gmail.com"]
 
@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   # spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "json"
-  spec.add_runtime_dependency "nethttputils", "~>0.4.0.0"
+  spec.add_runtime_dependency "nethttputils", "~>0.4.0"
   # spec.add_development_dependency "bundler", "~> 1.11"
   # spec.add_development_dependency "rake", "~> 10.0"
   # spec.add_development_dependency "rspec", "~> 3.0"
