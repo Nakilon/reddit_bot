@@ -4,6 +4,11 @@ bot = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: subredd
 twitter = RedditBot::Twitter.init_twitter "unisa"
 
 loop do
+  bot.json(:get, "/message/unread")["data"]["children"].each do |msg|
+    next unless %w{ nakilon technomod }.include? msg["data"]["author"]
+    abort "ordered to die" if %w{ die die } == msg["data"].values_at("subject", "body")
+  end
+
   id = bot.new_posts.find do |post|
     /\(https:\/\/twitter\.com\/#{RedditBot::Twitter::TWITTER_ACCOUNT}\/status\/(\d{18,})\)/i =~ post["selftext"] and break $1
   end.to_i
