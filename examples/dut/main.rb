@@ -1,7 +1,7 @@
 require "reddit_bot"
 subreddit = "dut".freeze
 bot = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: subreddit
-twitter = RedditBot::Twitter.init_twitter "DUT_Tweets"
+RedditBot::Twitter.init_twitter "DUT_Tweets"
 
 loop do
   bot.json(:get, "/message/unread")["data"]["children"].each do |msg|
@@ -9,14 +9,11 @@ loop do
     abort "ordered to die" if %w{ die die } == msg["data"].values_at("subject", "body")
   end
 
-  id = bot.new_posts.find do |post|
-    /\(https:\/\/twitter\.com\/#{RedditBot::Twitter::TWITTER_ACCOUNT}\/status\/(\d{18,})\)/i =~ post["selftext"] and break $1
-  end.to_i
-  fail "no tweets found in subreddit" if id.zero? unless ENV["FIRST_RUN"]
-
-  fail unless flair = bot.json(:get, "/r/#{subreddit}/api/link_flair").find do |flair|
-    flair["text"] == "Twitter"
-  end
+  id = bot.new_posts.flat_map do |post|
+    post["selftext"].scan(/\(https:\/\/twitter\.com\/#{RedditBot::Twitter::TWITTER_ACCOUNT}\/status\/(\d{18,})\)/i).flatten.map(&:to_i).max
+  end.find(&:itself)
+  abort "no tweets found in subreddit" if id.zero? unless ENV["FIRST_RUN"]
+  abort "flair isn't available" unless flair = bot.json(:get, "/r/#{subreddit}/api/link_flair").find{ |flair| flair["text"] == "Twitter" }
 
   timeline = RedditBot::Twitter.user_timeline
   timeline.replace timeline.take 2 if ENV["FIRST_RUN"]  # against 200 posts long flood

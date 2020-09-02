@@ -1,5 +1,4 @@
 source "https://rubygems.org"
+ruby ">=2.2"
 
 gem "reddit_bot"#, git: "git@github.com:nakilon/reddit_bot.git"
-
-gem "byebug"

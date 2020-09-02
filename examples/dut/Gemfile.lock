@@ -17,5 +17,8 @@ PLATFORMS
 DEPENDENCIES
   reddit_bot
 
+RUBY VERSION
+   ruby 2.3.8p459
+
 BUNDLED WITH
    2.0.2
