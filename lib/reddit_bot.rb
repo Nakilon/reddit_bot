@@ -152,7 +152,9 @@ module RedditBot
                                                   result["data"].keys == %w{ modhash dist children after before }
           @@skip_erroneous_descending_ids[ result["data"]["children"].map do |post|
             fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
-            post["data"]
+            post["data"].dup.tap do |data|
+              data["url"] = "https://www.reddit.com" + data["url"] if /\A\/r\/[0-9a-zA-Z_]+\/comments\/[0-9a-z]{5,6}\// =~ data["url"] if data["crosspost_parent"]
+            end
           end ].each do |data|
             e << data
           end

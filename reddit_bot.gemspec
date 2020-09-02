@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "reddit_bot"
-  spec.version       = "1.7.7"
+  spec.version       = "1.7.8"
   spec.authors       = ["Victor Maslov"]
   spec.email         = ["nakilon@gmail.com"]
 
