@@ -301,14 +301,7 @@ module RedditBot
           "https://api.twitter.com/1.1/statuses/user_timeline.json",
           form: { screen_name: TWITTER_ACCOUNT, count: 200, tweet_mode: "extended" },
           header: { Authorization: "Bearer #{TWITTER_ACCESS_TOKEN}" }
-        ) do |res|
-          next unless res.key? "x-rate-limit-remaining"
-          remaining = res.fetch("x-rate-limit-remaining").to_i
-          next if 100 < remaining
-          t = (res.fetch("x-rate-limit-reset").to_i - Time.now.to_i + 1).fdiv remaining
-          puts "sleep #{t}"
-          sleep t
-        end
+        )
       rescue NetHTTPUtils::Error => e
         fail unless [500, 503].include? e.code
         sleep timeout
