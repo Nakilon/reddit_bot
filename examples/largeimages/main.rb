@@ -99,11 +99,9 @@ loop do
         t = begin
           DirectLink url, 60
         rescue DirectLink::ErrorAssert => e
-          if e.to_s.start_with? "unexpected http error 403 for https://api.imgur.com/3/image/"
-            sleep 60
-            retry
-          else
-          raise
+          raise unless e.to_s.start_with? "unexpected http error 403 for https://api.imgur.com/3/image/"
+          sleep 60
+          retry
         rescue *DirectLink::NORMAL_EXCEPTIONS => e
           next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
         end
