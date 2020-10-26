@@ -48,14 +48,7 @@ end
 fail unless 1 == search_url["https://i.imgur.com/9JTxtjW.jpg"].size
 
 loop do
-  begin
-    logger.info "LOOP #{Time.now}"
-  rescue => e
-    puts "oops"
-    Google::Cloud::ErrorReporting.report e
-    sleep 5
-    raise
-  end
+  logger.info "LOOP #{Time.now}"
 
   [ [:source_ultireddit, 10000000, ( Nokogiri::XML( begin
         NetHTTPUtils.request_data ENV["FEEDPCBR_URL"]
@@ -95,22 +88,33 @@ loop do
       next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # 9 ways to divide a karmawhore
       next logger.warn "skipped a post by /u/cherryblackeyes" if author == "cherryblackeyes" # he's not nice
       next logger.warn "skipped a post by /u/abel_a_kay"      if author == "abel_a_kay"      # posting very similar images of the same thing for the history
-      next logger.warn "skipped gifv" if ( begin
+
+      begin
+      next logger.info "skipped gifv" if ( begin
         URI url
       rescue URI::InvalidURIError
         require "addressable"
         URI Addressable::URI.escape url
       end ).host.split(?.) == %w{ v redd it }
-
-      t = begin
-        DirectLink url, 60
-      rescue *DirectLink::NORMAL_EXCEPTIONS => e
-        next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
+        t = begin
+          DirectLink url, 60
+        rescue DirectLink::ErrorAssert => e
+          if e.to_s.start_with? "unexpected http error 403 for https://api.imgur.com/3/image/"
+            sleep 60
+            retry
+          else
+          raise
+        rescue *DirectLink::NORMAL_EXCEPTIONS => e
+          next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
+        end
+      rescue => e
+        Google::Cloud::ErrorReporting.report e
+        raise
       end
       logger.debug "DirectLink: #{t.inspect}"
       tt = t.is_a?(Array) ? t : [t]
       next logger.error "probably crosspost of a self post: http://redd.it/#{id}" if tt.empty?
-      next logger.info "skipped low resolution #{source}" unless min_resolution <= tt.first.width * tt.first.height
+      next logger.debug "skipped low resolution #{source}" unless min_resolution <= tt.first.width * tt.first.height
       # puts "https://www.reddit.com/r/LargeImages/search.json?q=url%3A#{CGI.escape url}&restrict_sr=on"
       resolution = "[#{tt.first.width}x#{tt.first.height}]"
       next logger.warn "already submitted #{resolution} #{id}: '#{url}'" unless Gem::Platform.local.os == "darwin" || search_url[url].empty?
@@ -128,7 +132,7 @@ loop do
         title.sub(/\s*\[?#{tt.first.width}\s*[*x×]\s*#{tt.first.height}\]?\s*/i, " ").
               sub("[OC]", " ").gsub(/\s+/, " ").strip
       } /r/#{subreddit}".gsub(/\s+\(\s+\)\s+/, " ").sub(/(?<=.{297}).+/, "...")
-      logger.warn "new post #{source}: #{url} #{title.inspect}"
+      logger.warn "try of new post #{source}: #{url} #{title.inspect}"
       unless Gem::Platform.local.os == "darwin"
         result = bot.json :post,
           "/api/submit",
@@ -139,6 +143,7 @@ loop do
             title: title,
           }
         next unless result["json"]["errors"].empty?
+        logger.warn "success of new post #{source}: #{url} #{title.inspect}"
         logger.info "post url: #{result["json"]["data"]["url"]}"
       end
         # {"json"=>
