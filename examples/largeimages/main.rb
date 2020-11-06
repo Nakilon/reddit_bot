@@ -106,7 +106,9 @@ loop do
           next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
         end
       rescue => e
-        Google::Cloud::ErrorReporting.report e
+        Google::Cloud::ErrorReporting.report e do |error_event|
+          error_event.message = "#{error_event.message} (id = #{id})"
+        end
         raise
       end
       logger.debug "DirectLink: #{t.inspect}"
@@ -128,7 +130,10 @@ loop do
         " [#{tt.size} images]" if tt.size > 1
       } #{
         title.sub(/\s*\[?#{tt.first.width}\s*[*x×]\s*#{tt.first.height}\]?\s*/i, " ").
-              sub("[OC]", " ").gsub(/\s+/, " ").strip
+              sub(/\s*\[?#{tt.first.height}\s*[*x×]\s*#{tt.first.width}\]?\s*/i, " ").
+              sub(/\[OC\]/i, " ").
+              sub(/\(OC\)/i, " ").
+              sub("links in comments", " ").gsub(/\s+/, " ").strip
       } /r/#{subreddit}".gsub(/\s+\(\s+\)\s+/, " ").sub(/(?<=.{297}).+/, "...")
       logger.warn "try of new post #{source}: #{url} #{title.inspect}"
       unless Gem::Platform.local.os == "darwin"
