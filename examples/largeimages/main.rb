@@ -107,7 +107,7 @@ loop do
         end
       rescue => e
         Google::Cloud::ErrorReporting.report e do |error_event|
-          error_event.message = "#{error_event.message} (id = #{id})"
+          error_event.message = "(id = #{id}, url = #{url})\n#{error_event.message}"
         end
         raise
       end
