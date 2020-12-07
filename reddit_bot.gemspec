@@ -1,23 +1,21 @@
 Gem::Specification.new do |spec|
   spec.name          = "reddit_bot"
   spec.version       = "1.7.8"
-  spec.authors       = ["Victor Maslov"]
-  spec.email         = ["nakilon@gmail.com"]
+  spec.summary       = "Simple library for Reddit bots"
 
-  spec.summary       = "Library for Reddit bots"
-  spec.description   = "better than PRAW"
-  spec.homepage      = "https://github.com/Nakilon/reddit_bot"
+  spec.author        = "Victor Maslov aka Nakilon"
+  spec.email         = "nakilon@gmail.com"
   spec.license       = "MIT"
+  spec.metadata      = {"source_code_uri" => "https://github.com/Nakilon/reddit_bot"}
 
-  spec.files         = `git ls-files -z`.split("\x0")#.reject { |f| f.match(%r{^(test|spec|features)/})/ }
-  # spec.require_paths = ["lib"]
-
-  spec.add_runtime_dependency "json"
-  spec.add_runtime_dependency "nethttputils", "~>0.4.1.0"
+  spec.add_dependency "json"
+  spec.add_dependency "nethttputils", "~>0.4.1.0"
   # spec.add_development_dependency "bundler", "~> 1.11"
   # spec.add_development_dependency "rake", "~> 10.0"
   # spec.add_development_dependency "rspec", "~> 3.0"
   spec.required_ruby_version = ">= 2.0.0"
+
+  spec.files         = %w{ LICENSE.txt reddit_bot.gemspec lib/reddit_bot.rb }
 end
 
   # spec.test_files    = ["spec/"]
