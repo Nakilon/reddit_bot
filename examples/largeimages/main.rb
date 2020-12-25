@@ -85,9 +85,10 @@ loop do
       logger.debug "image url for #{id}: #{url}"
       next logger.warn "skipped a post by /u/sjhill"          if author == "sjhill"          # opt-out
       next logger.warn "skipped a post by /u/redisforever"    if author == "redisforever"    # opt-out
-      next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # 9 ways to divide a karmawhore
+      next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # flood
       next logger.warn "skipped a post by /u/cherryblackeyes" if author == "cherryblackeyes" # he's not nice
-      next logger.warn "skipped a post by /u/abel_a_kay"      if author == "abel_a_kay"      # posting very similar images of the same thing for the history
+      next logger.warn "skipped a post by /u/abel_a_kay"      if author == "abel_a_kay"      # flood
+      next logger.warn "skipped the dead cutehalloweencostumeideas domain" if id == "76ituf"
 
       begin
       next logger.info "skipped gifv" if ( begin
