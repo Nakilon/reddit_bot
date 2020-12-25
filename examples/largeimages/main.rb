@@ -97,7 +97,7 @@ loop do
         URI Addressable::URI.escape url
       end ).host.split(?.) == %w{ v redd it }
         t = begin
-          DirectLink url, 60
+          DirectLink url, 600
         rescue DirectLink::ErrorAssert => e
           raise unless e.to_s.start_with? "unexpected http error 403 for https://api.imgur.com/3/image/"
           sleep 60
