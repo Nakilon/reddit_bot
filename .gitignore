@@ -1,5 +1,9 @@
-/examples/*/twitter.token
-temp
-*secret*
-.byebug_history
+.DS_Store
+
+/Gemfile.lock
 /pkg
+
+.byebug_history
+
+temp*
+*secret*
