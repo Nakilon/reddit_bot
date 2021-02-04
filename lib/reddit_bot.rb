@@ -1,5 +1,4 @@
 STDOUT.sync = true
-# require "pp"
 
 require "openssl"
 require "json"
@@ -15,12 +14,8 @@ module RedditBot
   self.logger = Logger.new STDOUT
 
   class Bot
-
-    # bot's Reddit username; set via constructor parameter secrets[:login]
     attr_reader :name
 
-    # [secrets] +Hash+ with keys :client_id, :client_secret, :password: and :login
-    # [kwargs] keyword params may include :subreddit for clever methods
     def initialize secrets, **kwargs
       @name, @secret_password, @user_agent, *@secret_auth = secrets.values_at *%i{ login password user_agent client_id client_secret }
       # @ignore_captcha = true
@@ -28,9 +23,6 @@ module RedditBot
       @subreddit = kwargs[:subreddit]
     end
 
-    # [mtd] +Symbol+ :get or :post
-    # [path] +String+ an API method
-    # [_form] +Array+ or +Hash+ API method params
     def json mtd, path, _form = []
       form = Hash[_form]
       response = JSON.load resp_with_token mtd, path, form.merge({api_type: "json"})
@@ -70,8 +62,6 @@ module RedditBot
     #   # ["previous", result["data"]["children"].last["id"]],
     # end
 
-    # [reason] :nodoc:
-    # [thing_id] +String+ fullname of a "link, commenr or message"
     def report reason, thing_id
       Module.nesting[1].logger.warn "reporting '#{thing_id}'"
       json :post, "/api/report",
@@ -80,9 +70,6 @@ module RedditBot
         thing_id: thing_id
     end
 
-    # [post] JSON object of a post of self.post
-    # [link_flair_css_class] :nodoc:
-    # [link_flair_text] :nodoc:
     def set_post_flair post, link_flair_css_class, link_flair_text
       Module.nesting[1].logger.warn "setting flair '#{link_flair_css_class}' with text '#{link_flair_text}' to post '#{post["name"]}'"
       if {"error"=>403} == @flairselector_choices ||= json(:post, "/r/#{@subreddit}/api/flairselector", link: post["name"])
@@ -97,8 +84,6 @@ module RedditBot
         }["flair_template_id"]
     end
 
-    # [thing_id] +String+ fullname of a post (or self.post?), comment (and private message?)
-    # [text] :nodoc:
     def leave_a_comment thing_id, text
       Module.nesting[1].logger.warn "leaving a comment on '#{thing_id}'"
       json(:post, "/api/comment",
@@ -164,7 +149,6 @@ module RedditBot
       end
     end
 
-    # :yields: JSON objects: ["data"] part of post or self.post, top level comment (["children"] element)
     def each_new_post_with_top_level_comments
       # TODO add keys assertion like in method above?
       json(:get, "/r/#{@subreddit}/new")["data"]["children"].each do |post|
@@ -178,7 +162,6 @@ module RedditBot
       end
     end
 
-    # [article] +String+ ID36 of a post or self.post
     def each_comment_of_the_post_thread article
       Enumerator.new do |e|
         f = lambda do |smth|
@@ -191,6 +174,27 @@ module RedditBot
         f[ json(:get, "/comments/#{article}", depth: 100500, limit: 100500).tap do |t|
           fail "smth weird about /comments/<id> response" unless t.size == 2
         end[1] ]
+      end
+    end
+
+    def subreddit_iterate what
+      Enumerator.new do |e|
+        after = {}
+        loop do
+          break unless marker = json(:get, "/r/#{@subreddit}/#{what}", {limit: 100}.merge(after)).tap do |result|
+            fail if %w{ kind data } != result.keys
+            fail if "Listing" != result["kind"]
+            fail result["data"].keys.inspect unless result["data"].keys == %w{ after dist modhash whitelist_status children before } ||
+                                                    result["data"].keys == %w{ modhash dist children after before }
+            result["data"]["children"].each do |post|
+              fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
+              e << ( post["data"].tap do |data|
+                data["url"] = "https://www.reddit.com" + data["url"] if /\A\/r\/[0-9a-zA-Z_]+\/comments\/[0-9a-z]{5,6}\// =~ data["url"] if data["crosspost_parent"]
+              end )
+            end
+          end["data"]["after"]
+          after = {after: marker}
+        end
       end
     end
 

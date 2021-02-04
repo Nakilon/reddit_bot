@@ -9,7 +9,7 @@ loop do
     abort "ordered to die" if %w{ die die } == msg["data"].values_at("subject", "body")
   end
 
-  id = bot.new_posts.flat_map do |post|
+  id = bot.new_posts.map do |post|
     post["selftext"].scan(/\(https:\/\/twitter\.com\/#{RedditBot::Twitter::TWITTER_ACCOUNT}\/status\/(\d{18,})\)/i).flatten.map(&:to_i).max
   end.find(&:itself)
   abort "no tweets found in subreddit" if id.zero? unless ENV["FIRST_RUN"]
