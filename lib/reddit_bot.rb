@@ -177,11 +177,11 @@ module RedditBot
       end
     end
 
-    def subreddit_iterate what
+    def subreddit_iterate what, **kwargs
       Enumerator.new do |e|
         after = {}
         loop do
-          break unless marker = json(:get, "/r/#{@subreddit}/#{what}", {limit: 100}.merge(after)).tap do |result|
+          break unless marker = json(:get, "/r/#{@subreddit}/#{what}", {limit: 100}.merge(after).merge(kwargs)).tap do |result|
             fail if %w{ kind data } != result.keys
             fail if "Listing" != result["kind"]
             fail result["data"].keys.inspect unless result["data"].keys == %w{ after dist modhash whitelist_status children before } ||
