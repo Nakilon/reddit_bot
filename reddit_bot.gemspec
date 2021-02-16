@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "reddit_bot"
-  spec.version       = "1.8.1"
+  spec.version       = "1.9.0"
   spec.summary       = "Simple library for Reddit bots"
 
   spec.author        = "Victor Maslov aka Nakilon"

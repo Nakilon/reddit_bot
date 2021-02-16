@@ -25,7 +25,7 @@ loop do
     # ["survivetheculling", "Developer"],
     ["vigorgame", "Developer"],
     ["insurgency", "Developer"],
-    ["Battalion1944", "Developer"],
+    # ["Battalion1944", "Developer"],
   ].each do |subreddit, developer_class|
     subreddit.downcase!
     next puts "!!! can't moderate #{subreddit} !!!" unless moderated.include? subreddit

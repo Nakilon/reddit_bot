@@ -25,7 +25,12 @@ module RedditBot
 
     def json mtd, path, _form = []
       form = Hash[_form]
-      response = JSON.load resp_with_token mtd, path, form.merge({api_type: "json"})
+      response = begin
+        JSON.load resp_with_token mtd, path, form.merge({api_type: "json"})
+      rescue JSON::ParserError
+        $!.message.slice! 1000..-1
+        raise
+      end
       if response.is_a?(Hash) && response["json"] && # for example, flairlist.json and {"error": 403} do not have it
          !response["json"]["errors"].empty?
         Module.nesting[1].logger.error "ERROR OCCURED on #{[mtd, path]}"
