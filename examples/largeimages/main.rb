@@ -91,12 +91,12 @@ loop do
       next logger.warn "skipped the dead cutehalloweencostumeideas domain" if id == "76ituf"
 
       begin
-      next logger.info "skipped gifv" if ( begin
-        URI url
-      rescue URI::InvalidURIError
-        require "addressable"
-        URI Addressable::URI.escape url
-      end ).host.split(?.) == %w{ v redd it }
+        next logger.info "skipped gifv" if ( begin
+          URI url
+        rescue URI::InvalidURIError
+          require "addressable"
+          URI Addressable::URI.escape url
+        end ).host.split(?.) == %w{ v redd it }
         t = begin
           DirectLink url, 600
         rescue DirectLink::ErrorAssert => e
