@@ -99,7 +99,7 @@ loop do
           URI Addressable::URI.escape url
         end.host.split(?.)
         next logger.info "skipped gifv" if domain == %w{ v redd it }
-        logger.info "domain: #{domain.inspect}"
+        logger.debug "domain: #{domain.inspect}"
         t = begin
           DirectLink url, 600
         rescue DirectLink::ErrorAssert => e
