@@ -31,6 +31,7 @@ INCLUDE = %w{
 
     r/oldmaps
     r/telephotolandscapes
+    r/IRLbattlemaps
 }
 EXCLUDE = %w{ foodporn powerwashingporn }
 
@@ -123,7 +124,7 @@ loop do
       next logger.warn "already submitted #{resolution} #{id}: '#{url}'" unless Gem::Platform.local.os == "darwin" || search_url[url].empty?
 
       system "curl -s '#{tt.first.url}' -o temp --retry 5" or fail
-      next logger.warn "skipped <2mb id=#{id}" if 2000000 > File.size("temp")
+      next logger.warn "skipped <1.3mb id=#{id}" if 1300000 > File.size("temp")
       if "mapporn" == subreddit.downcase
         `vips pngsave temp temp.png`
         next logger.warn "skipped /r/mapporn <10mb PNG id=#{id}" if 10000000 > File.size("temp.png")
