@@ -1,5 +1,4 @@
-# $ PLOT=_ cpulimit -i -l 50 ruby main.rb
-# $        cpulimit -i -l 50 ruby main.rb
+# $ PLOT=_ cpulimit -i -l 50 ruby optimize.rb
 
 require "pp"
 
@@ -258,4 +257,3 @@ __END__
 require "byebug"
 byebug
 byebug
-
