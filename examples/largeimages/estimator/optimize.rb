@@ -2,12 +2,6 @@
 
 require "pp"
 
-quit = false
-Signal.trap("INT") do
-  quit = true
-  puts "quitting..."
-end
-
 mean = ->(arr){ arr.inject(:+).fdiv arr.size }
 median = ->(arr){ arr.size.odd? ? arr.sort[arr.size/2] : mean[arr.sort[arr.size/2-1,2]] }
 aa = ->(arr){   mean[ arr.map{ |_| (_ -   mean[arr]).abs } ] }
@@ -21,84 +15,17 @@ md = lambda do |arr|
   median.call arr.product(arr).map{ |a,b| (a-b).abs }
 end
 
-cache_file = lambda do |id, &block|
-  require "yaml"
-  filename = "cache/#{id}.yaml"
-  if File.exist? filename
-    YAML.load_file filename
-  else
-    block.call.tap{ |_| File.write filename, YAML.dump(_); exit if quit }
-  end
-end
-cache_dbm = lambda do |id, &block|
-  require "dbm"
-  DBM.open("cache.dbm") do |dbm| #, 0666, DBM::WRCREAT)
-    if dbm.key? id
-      dbm.fetch(id).to_f
-    else
-      block.call.tap{ |_| dbm.store id, _.to_s }
-    end
-  end.tap{ exit if quit }
-end
-
 optimize = lambda do |exc_set = [], exc_fs = []|
-  fs, train = [
-    [:mean,   false, 50,  true,  0.4,       false, 40, false, 0.000006],
-    [:median, false, 120, true,  0.3,       false, 60, false, 0.0005  ],
-    [:aa,     false, 40,  false, 0.0000075, false, 40, false, 0.000004],
-    [:am,     false, 50,  false, 0.00001,   false, 50, false, 0.000005],
-    [:ma,     false, 50,  false, 0.00001,   false, 50, false, 0.000005],
-    [:mm,     true,  150, true,  0.3,       false, 70, true,  0.15    ],
-    [:ad,     false, 30,  false, 0.0000075, false, 30, false, 0.000003],
-    [:md,     false, 50,  true,  0.25,      false, 40, false, 0.00004 ],
-  ], %w{
-    good/m1q6td.jpg
-    bad/m7is26.jpg
-    good/m7is3y.jpg
-    bad/m1q6ub.jpg
-    bad/m7iqem.jpg
-    bad/m1q4le.jpg
-    bad/lycjnp.jpg
-    bad/m1q39s.jpg
-    good/lu8flc.jpg
-  }
+  require_relative "common"
+  fs, train = Estimator.fs_train
+  struct = Estimator.struct
 
-  struct = Struct.new \
-    *fs.flat_map{ |_,| %i{ s v }.flat_map{ |b| %i{ bhd bdh }.map{ |__| :"#{b}_#{__}_#{_}" } } },
-    :width, :height, :size,
-    :id, :cls
-  all = train.sort.map do |file|
-    require "vips"
-    hsv = Vips::Image.new_from_file(file).colourspace("hsv")
-    fail unless hsv.bands == 3
-    require "digest"
-    md5 = Digest::MD5.file file
-    struct.new *(
-      fs.flat_map do |metric, *rest|
-        rest.each_slice(2).zip(
-          %i{ s v }.zip(hsv.bandsplit[1,2]).flat_map do |band_name, band|
-            hist1 = cache_file.call("#{md5}-#{band_name}-blur_hist_diff") do
-              ((band.hist_find - band.+(0).gaussblur(1).hist_find).abs / band.hist_find.max).to_a.flatten
-            end
-            hist2 = cache_file.call("#{md5}-#{band_name}-blur_diff_hist") do
-              (band - band.+(0).gaussblur(1)).abs.*(10).hist_find.to_a.flatten
-            end
-            %i{ blur_hist_diff blur_diff_hist }.zip([hist1, hist2]).map do |hist_name, hist|
-              cache_dbm.call("#{Digest::MD5.hexdigest hist.to_s}-#{metric}-#{band_name}-#{hist_name}") do
-                binding.local_variable_get(metric).call hist
-              end
-            end
-          end
-        ).map{ |(log, r), v| (log ? Math::log(v+1) : v) * r }
-      end
-    ), hsv.width * 0.0002, hsv.height * 0.0002, File.size(file) * 0.00000005,
-      File.basename(file).split(?.).first, file.split(File::SEPARATOR).first.to_sym
-  end
+  all = Estimator.all
   logs = struct.new *(
     fs.flat_map do |_, *rest|
       rest.each_slice(2).map{ |log, _| log }
     end
-  ), false, false, false
+  ), false, false, false  # TODO: stop reading keys from this because I can't comment these three out
 
   logs.to_h.compact.each do |f, log|
     min, max = all.map(&f).minmax
@@ -151,7 +78,7 @@ optimize = lambda do |exc_set = [], exc_fs = []|
         d.zero? ? 0 : (tp * tp).fdiv(d),
         [-fs.size, -set.size]
       ]
-      p pcbr.table.size if pcbr.table.size % 100 == 0
+      puts "pcbr.table.size: #{pcbr.table.size}" if pcbr.table.size % 100 == 0
     end
     if best != t = pcbr.table.max_by{ |_,(fm,_),| fm }.tap{ |(f,set),(fm,_),| break [fm, set, f] }
       best, prev_time = t, Time.now
@@ -176,7 +103,7 @@ optimize = lambda do |exc_set = [], exc_fs = []|
     break puts "all combinations tested" unless combinations
     abort "wtf" if combinations.empty?
     break if Time.now - prev_time > 60 && pcbr.table.size > 10000
-    exit if quit
+    exit if Estimator.class_variable_get(:@@quit)
   end
 
   best, g = pcbr.table.group_by{ |_,(fm,_),| fm }.max_by(&:first)
@@ -251,9 +178,3 @@ end
 # [[:s_bhd_mean, :s_bhd_mm], ["lycjnp", "m1q4le", "m7iqem", "m7is26", "m1q6td", "m7is3y"]]
 # [[:s_bhd_mean, :s_bhd_mm], ["lycjnp", "m1q39s", "m7iqem", "m7is26", "m1q6td", "m7is3y"]]
 # [[:s_bhd_mean, :s_bhd_mm, :s_bhd_md], ["m1q39s", "m1q4le", "m7iqem", "m7is26", "lu8flc", "m1q6td"]]
-
-__END__
-
-require "byebug"
-byebug
-byebug
