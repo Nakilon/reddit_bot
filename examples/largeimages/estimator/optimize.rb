@@ -2,22 +2,10 @@
 
 require "pp"
 
-mean = ->(arr){ arr.inject(:+).fdiv arr.size }
-median = ->(arr){ arr.size.odd? ? arr.sort[arr.size/2] : mean[arr.sort[arr.size/2-1,2]] }
-aa = ->(arr){   mean[ arr.map{ |_| (_ -   mean[arr]).abs } ] }
-ma = ->(arr){ median[ arr.map{ |_| (_ -   mean[arr]).abs } ] }
-am = ->(arr){   mean[ arr.map{ |_| (_ - median[arr]).abs } ] }
-mm = ->(arr){ median[ arr.map{ |_| (_ - median[arr]).abs } ] }
-ad = lambda do |arr| # Mean absolute difference
-  mean.call arr.product(arr).map{ |a,b| (a-b).abs }
-end
-md = lambda do |arr|
-  median.call arr.product(arr).map{ |a,b| (a-b).abs }
-end
+require_relative "common"
 
 optimize = lambda do |exc_set = [], exc_fs = []|
-  require_relative "common"
-  fs, train = Estimator.fs_train
+  fs = Estimator.get_fs
   struct = Estimator.struct
 
   all = Estimator.all
@@ -119,42 +107,9 @@ optimize = lambda do |exc_set = [], exc_fs = []|
 
   fh.each{ |i, a| UnicodePlot.histogram(a, nbins: 10, title: i          ,         xlabel: "").render }
   sh.each{ |i, a| UnicodePlot.histogram(a, nbins: 10, title: [i, all[i].id].to_s, xlabel: "").render }
-
 end
 
-# optimize.call
-# 0.6666666666666666
-# [[:s_bhd_mean, :s_bhd_median, :s_bhd_aa, :v_bhd_aa, :v_bhd_ma, :v_bdh_ad, :width], ["m1q39s", "m1q4le", "m1q6ub", "m7is26", "lu8flc", "m1q6td"]]
-# [[:s_bhd_mean, :v_bhd_mean, :s_bhd_median, :s_bhd_aa, :v_bdh_ad, :width], ["m1q39s", "m1q4le", "m1q6ub", "m7is26", "lu8flc", "m1q6td"]]
-# s_bdh_median v_bdh_median v_bhd_am s_bdh_mm v_bdh_md height
-# [0, "lycjnp"] [4, "m7iqem"] [8, "m7is3y"]
-
-# optimize.call [0, 4, 8], %i{ s_bdh_median v_bdh_median v_bhd_am s_bdh_mm v_bdh_md height }
-# 0.75
-# [[:s_bhd_md], ["m1q39s", "m1q4le", "m7is26", "lu8flc", "m1q6td"]]
-
-# optimize.call [0, 4], %i{ v_bhd_am s_bdh_mm v_bdh_md }
-# 0.6
-# [[:v_bhd_median, :s_bhd_md, :s_bdh_md], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
-# [[:v_bhd_median, :s_bhd_aa, :s_bdh_md], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
-# [[:v_bhd_median, :v_bdh_median, :s_bhd_md], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
-
-# optimize.call [0, 4], %i{ s_bdh_median v_bdh_median v_bhd_am s_bdh_mm v_bdh_md height }
-# 0.75
-# [[:s_bhd_mean, :s_bhd_am, :s_bhd_mm], ["m1q39s", "m1q4le", "m7is26", "lu8flc", "m1q6td"]]
-# [[:s_bhd_md], ["m1q39s", "m1q4le", "m7is26", "lu8flc", "m1q6td"]]
-
-# optimize.call [0, 4], %i{ v_bhd_am s_bdh_mm }
-# 0.5
-# [[:s_bhd_md], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
-# [[:s_bhd_ad], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
-# [[:s_bhd_am], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
-# [[:s_bhd_mean], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
-
-# optimize.call [0, 4], %i{ v_bhd_am s_bdh_mm v_bdh_mean s_bhd_median }
-# 0.6
-# [[:s_bhd_ma, :v_bhd_mm, :v_bdh_md], ["m1q39s", "lu8flc", "m1q6td"]]
-# [[:v_bdh_median, :v_bhd_mm, :s_bhd_ad], ["m1q39s", "m1q4le", "lu8flc", "m1q6td"]]
+require_relative "train1.rb"
 
 # optimize.call
 # 0.75

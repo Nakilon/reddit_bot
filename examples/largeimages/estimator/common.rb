@@ -4,37 +4,29 @@ module Estimator
     @@quit = true
     puts "quitting..."
   end
-  def self.fs_train
-    [ [
-      [:mean,   false, 50,  true,  0.4,       false, 40, false, 0.000006],
-      [:median, false, 120, true,  0.3,       false, 60, false, 0.0005  ],
-      [:aa,     false, 40,  false, 0.0000075, false, 40, false, 0.000004],
-      [:am,     false, 50,  false, 0.00001,   false, 50, false, 0.000005],
-      [:ma,     false, 50,  false, 0.00001,   false, 50, false, 0.000005],
-      [:mm,     true,  150, true,  0.3,       false, 70, true,  0.15    ],
-      [:ad,     false, 30,  false, 0.0000075, false, 30, false, 0.000003],
-      [:md,     false, 50,  true,  0.25,      false, 40, false, 0.00004 ],
-    ], %w{
-      good/m1q6td.jpg
-      bad/m7is26.jpg
-      good/m7is3y.jpg
-      bad/m1q6ub.jpg
-      bad/m7iqem.jpg
-      bad/m1q4le.jpg
-      bad/lycjnp.jpg
-      bad/m1q39s.jpg
-      good/lu8flc.jpg
-    } ]
+  class << self
+    attr_accessor :get_fs
+    attr_accessor :get_train
   end
   def self.struct
-    fs, train = fs_train
     Struct.new \
-      *fs.flat_map{ |_,| %i{ s v }.flat_map{ |b| %i{ bhd bdh }.map{ |__| :"#{b}_#{__}_#{_}" } } },
+      *get_fs.flat_map{ |_,| %i{ s v }.flat_map{ |b| %i{ bhd bdh }.map{ |__| :"#{b}_#{__}_#{_}" } } },
       :width, :height, :size,
       :id, :cls
   end
   def self.analyze file
-    fs, train = fs_train
+    mean = ->(arr){ arr.inject(:+).fdiv arr.size }
+    median = ->(arr){ arr.size.odd? ? arr.sort[arr.size/2] : mean[arr.sort[arr.size/2-1,2]] }
+    aa = ->(arr){   mean[ arr.map{ |_| (_ -   mean[arr]).abs } ] }
+    ma = ->(arr){ median[ arr.map{ |_| (_ -   mean[arr]).abs } ] }
+    am = ->(arr){   mean[ arr.map{ |_| (_ - median[arr]).abs } ] }
+    mm = ->(arr){ median[ arr.map{ |_| (_ - median[arr]).abs } ] }
+    ad = lambda do |arr| # Mean absolute difference
+      mean.call arr.product(arr).map{ |a,b| (a-b).abs }
+    end
+    md = lambda do |arr|
+      median.call arr.product(arr).map{ |a,b| (a-b).abs }
+    end
     cache_file = lambda do |id, &block|
       require "yaml"
       filename = "cache/#{id}.yaml"
@@ -60,7 +52,7 @@ module Estimator
     require "digest"
     md5 = Digest::MD5.file file
     struct.new *(
-      fs.flat_map do |metric, *rest|
+      get_fs.flat_map do |metric, *rest|
         rest.each_slice(2).zip(
           %i{ s v }.zip(hsv.bandsplit[1,2]).flat_map do |band_name, band|
             hist1 = cache_file.call("#{md5}-#{band_name}-blur_hist_diff") do
@@ -81,7 +73,6 @@ module Estimator
       File.basename(file).split(?.).first, file.split(File::SEPARATOR).first.to_sym
   end
   def self.all
-    fs, train = fs_train
-    train.sort.map &method(:analyze)
+    get_train.sort.map &method(:analyze)
   end
 end
