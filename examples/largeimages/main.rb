@@ -107,7 +107,7 @@ loop do
           sleep 60
           retry
         rescue *DirectLink::NORMAL_EXCEPTIONS => e
-          next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}"
+          next logger.error "skipped (#{e}) #{url} from http://redd.it/#{id}".force_encoding("utf-8").scrub
         end
       rescue => e
         Google::Cloud::ErrorReporting.report e do |error_event|
