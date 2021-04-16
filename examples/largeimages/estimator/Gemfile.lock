@@ -1,0 +1,45 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.7.0)
+      public_suffix (>= 2.0.2, < 5.0)
+    cloud_events (0.2.0)
+    directlink (0.0.10.0)
+      addressable
+      fastimage (~> 2.2.0)
+      kramdown
+      nethttputils (~> 0.4.1.0)
+      nokogiri
+      reddit_bot (~> 1.8.0)
+    fastimage (2.2.3)
+    functions_framework (0.6.0)
+      cloud_events (~> 0.1)
+      puma (~> 4.3)
+      rack (~> 2.1)
+    json_pure (2.5.1)
+    kramdown (2.3.1)
+      rexml
+    mini_portile2 (2.4.0)
+    nethttputils (0.4.1.1)
+      addressable
+    nio4r (2.5.7)
+    nokogiri (1.10.10)
+      mini_portile2 (~> 2.4.0)
+    public_suffix (4.0.6)
+    puma (4.3.7)
+      nio4r (~> 2.0)
+    rack (2.2.3)
+    reddit_bot (1.8.0)
+      json_pure
+      nethttputils (~> 0.4.1.0)
+    rexml (3.2.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  directlink
+  functions_framework
+
+BUNDLED WITH
+   2.1.4
