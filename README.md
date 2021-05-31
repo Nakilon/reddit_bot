@@ -3,6 +3,8 @@
 [![Join the chat at https://gitter.im/Nakilon/reddit_bot](https://badges.gitter.im/Nakilon/reddit_bot.svg)](https://gitter.im/Nakilon/reddit_bot)
 [![Gem Version](https://badge.fury.io/rb/reddit_bot.svg)](http://badge.fury.io/rb/reddit_bot)
 
+> ⚠️ currently it is recommended to use at least v1.7.6 ⚠️
+
 ### What
 
 This library provides an easy way to run bots and scripts that use Reddit API.  
