@@ -89,6 +89,7 @@ loop do
       next logger.warn "skipped a post by /u/bekalaki"        if author == "bekalaki"        # flood
       next logger.warn "skipped a post by /u/cherryblackeyes" if author == "cherryblackeyes" # he's not nice
       next logger.warn "skipped a post by /u/abel_a_kay"      if author == "abel_a_kay"      # flood
+      next logger.warn "skipped a post by /u/gdmfsobtc"       if author == "gdmfsobtc"       # shitty gun photos
       next logger.warn "skipped the dead cutehalloweencostumeideas domain" if id == "76ituf"
 
       begin
