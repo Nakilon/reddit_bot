@@ -138,8 +138,11 @@ module RedditBot
           result = cache.call(args){ json *args }
           fail if result.keys != %w{ kind data }
           fail if result["kind"] != "Listing"
-          fail result["data"].keys.inspect unless result["data"].keys == %w{ after dist modhash whitelist_status children before } ||
-                                                  result["data"].keys == %w{ modhash dist children after before }
+          fail result["data"].keys.inspect unless [
+                                                    %w{ after dist modhash whitelist_status children before },
+                                                    %w{ modhash dist children after before },
+                                                    %w{ after dist modhash geo_filter children before },
+                                                  ].include? result["data"].keys
           @@skip_erroneous_descending_ids[ result["data"]["children"].map do |post|
             fail "unknown type post['kind']: #{post["kind"]}" unless post["kind"] == "t3"
             post["data"].dup.tap do |data|
