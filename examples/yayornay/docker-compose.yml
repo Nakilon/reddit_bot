@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   bot:
-    container_name: realtimeww2
+    container_name: yayornay
     image: ruby:2.3-alpine
     working_dir: /usr/src/app
     command: sh -c "gem update bundler && bundle install && bundle exec ruby main.rb"
