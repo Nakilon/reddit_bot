@@ -1,3 +1,3 @@
 source "https://rubygems.org"
 
-gem "reddit_bot", "~>1.9.0", git: "git@github.com:nakilon/reddit_bot.git"
+gem "reddit_bot", "~>1.9.0", git: "https://github.com/nakilon/reddit_bot"

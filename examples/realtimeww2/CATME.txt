@@ -1,1 +1,2 @@
-TEST=_ bundle exec ruby main.rb
+to test: TEST=_ bundle exec ruby main.rb
+to do only one post and quit: ONCE=_ ...

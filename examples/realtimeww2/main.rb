@@ -1,8 +1,8 @@
-# env var ONCE=_ to do only one post and quit
+require "pp"
 
-require_relative "../boilerplate"
+require "reddit_bot"
 
-require "nethttputils"
+require "yaml"
 TWITTER_ACCESS_TOKEN = JSON.load(
   NetHTTPUtils.request_data "https://api.twitter.com/oauth2/token", :post,
     auth: File.read("twitter.token").split,
