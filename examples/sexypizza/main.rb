@@ -1,11 +1,12 @@
-require_relative "../boilerplate"
+require "pp"
+
+require "reddit_bot"
+require "yaml"
 
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 SUBREDDIT = "sexypizza"
 
 loop do
-  puts "LOOP #{Time.now}"
-
   flairs = BOT.json(:get, "/r/#{SUBREDDIT}/api/flairlist", {limit: 1000})["users"]
 
   text = \
