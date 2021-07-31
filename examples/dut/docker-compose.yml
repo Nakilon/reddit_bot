@@ -1,0 +1,26 @@
+version: "3.2"
+services:
+  bot:
+    container_name: dut
+    image: ruby:2.3-alpine
+    working_dir: /usr/src/app
+    command: sh -c "gem update bundler && apk add git && bundle install && bundle exec ruby main.rb"
+    volumes:
+      - type: bind
+        source: ./main.rb
+        target: /usr/src/app/main.rb
+      - type: bind
+        source: ./Gemfile
+        target: /usr/src/app/Gemfile
+      - type: bind
+        source: ./Gemfile.lock
+        target: /usr/src/app/Gemfile.lock
+      - type: bind
+        source: ./secrets.yaml
+        target: /usr/src/app/secrets.yaml
+      - type: bind
+        source: ./twitter.token
+        target: /usr/src/app/twitter.token
+    environment:
+      - FIRST_RUN
+      - ONCE
