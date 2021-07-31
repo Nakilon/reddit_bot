@@ -1,8 +1,10 @@
-﻿require_relative "../boilerplate"
+﻿require "reddit_bot"
+require "yaml"
+
 BOT = RedditBot::Bot.new YAML.load_file "secrets.yaml"
 
 require "gcplogger"
-logger = GCPLogger.logger "cptflairbot3"
+logger = GCPLogger.logger "cptflairbot3#{"-test" if ENV["TEST"]}"
 
 loop do
   unread = BOT.json :get, "/message/unread"
@@ -49,8 +51,9 @@ loop do
         else
           raise e
         end
-      end
-      BOT.json :post, "/api/read_message", {id: msg["data"]["name"]}
+      end unless ENV["TEST"]
+      BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless ENV["TEST"]
+      puts "dry-run #{id}" if ENV["TEST"]
     else
       next logger.debug "bad subject: #{msg["data"]["subject"]}"
     end
