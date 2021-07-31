@@ -1,11 +1,10 @@
-require_relative "../boilerplate"
+require "reddit_bot"
+require "yaml"
 
 SUBREDDIT = "yayornay"
 BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), subreddit: SUBREDDIT
 
 loop do
-  puts "LOOP #{Time.now}"
-
   BOT.each_new_post_with_top_level_comments do |post, comments|
     yay = []
     nay = []
