@@ -1,0 +1,14 @@
+test
+  syntax check:         $ node --check app.js
+  deploy test function: $ gcloud functions deploy casualpokemontrades-test --entry-point casualpokemontrades --runtime nodejs14 --trigger-topic casualpokemontrades-test
+  we need huge timeout because JS logs are for some reason appear only after the Function logs
+    $ npx mocha test/system.test.js --timeout 20000 --exit
+  if credentials error: $ gcloud auth application-default login
+deploy:   $ gcloud functions deploy casualpokemontrades
+test
+  1. message bot
+  2. see Ruby logs in a minute
+  2. see Function logs
+  3. see Spreadsheet update
+  4. see iframe update in minutes
+clean up: $ gcloud functions delete casualpokemontrades-test

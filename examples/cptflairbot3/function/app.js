@@ -1,4 +1,6 @@
-exports.casualpokemontrades = function(event, callback) {
+"use strict";
+
+exports.casualpokemontrades = function(message, context) {
 
   // based on https://www.tomas-dvorak.cz/posts/nodejs-request-without-dependencies/
   const getContent = function(url) {
@@ -22,19 +24,21 @@ exports.casualpokemontrades = function(event, callback) {
     } );
   };
 
-  const storage = require("@google-cloud/storage")();
+  const {Storage} = require("@google-cloud/storage");
+  const storage = new Storage();
   storage.
     bucket("casualpokemontrades.function.nakilon.pro").
     file("gas_hook_id.secret").
     download( function(err, contents) {
-      const log_payload = JSON.parse(Buffer.from(event.data.data, "base64").toString()).jsonPayload;
-      console.log(log_payload);
-      const path = "https://script.google.com/macros/s/" + contents.toString() + "/exec?payload=" + Buffer.from(JSON.stringify(log_payload)).toString("base64");
-      console.log(path);
+      const msg = Buffer.from(message.data, "base64").toString();
+      console.log(msg);
+      const parsed = JSON.parse(msg);
+      console.log(parsed.insertId);
+      const path = "https://script.google.com/macros/s/" + contents.toString() + "/exec?payload=" + Buffer.from(JSON.stringify(parsed.jsonPayload)).toString("base64");
       getContent(path);
+      console.log(path);
+      console.log("OK");
         // then((html) => console.log(html)).
         // catch((err) => console.error(err));
     } );
-
-  callback();
 };

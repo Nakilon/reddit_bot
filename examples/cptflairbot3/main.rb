@@ -1,21 +1,20 @@
 ﻿require "reddit_bot"
 require "yaml"
 
-BOT = RedditBot::Bot.new YAML.load_file "secrets.yaml"
+bot = RedditBot::Bot.new YAML.load_file "secrets.yaml"
 
 require "gcplogger"
 logger = GCPLogger.logger "cptflairbot3#{"-test" if ENV["TEST"]}"
 
 loop do
-  unread = BOT.json :get, "/message/unread"
-  unread["data"]["children"].each do |msg|
+  bot.json(:get, "/message/unread")["data"]["children"].each do |msg|
     next logger.info "bad destination: #{msg["data"]["dest"]}" unless msg["data"]["dest"] == "CPTFlairBot3"
     case msg["data"]["subject"]
     when "casualpokemontrades"
       unless /^(?<name>\S+( \S+)*) ?\n(?<id>\d\d\d\d-\d\d\d\d-\d\d\d\d)\n(?<css_class>[a-z2-]+)$/ =~ msg["data"]["body"]
         logger.info "invalid message for #{msg["data"]["subject"]}: %p" % msg["data"]["body"] unless Google::Cloud.env.compute_engine?
         # puts "marking invalid message as read: %p" % msg["data"]["body"]
-        # BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless Gem::Platform.local.os == "darwin"
+        # bot.json :post, "/api/read_message", {id: msg["data"]["name"]} unless Gem::Platform.local.os == "darwin"
         next
       end
       if name.size > 50
@@ -23,7 +22,7 @@ loop do
         next
       end
       begin
-        BOT.json :post, "/r/#{msg["data"]["subject"]}/api/flair", {
+        bot.json :post, "/r/#{msg["data"]["subject"]}/api/flair", {
           name: msg["data"]["author"],
           text: {
             "casualpokemontrades" => "#{id} | #{name}",
@@ -52,7 +51,7 @@ loop do
           raise e
         end
       end unless ENV["TEST"]
-      BOT.json :post, "/api/read_message", {id: msg["data"]["name"]} unless ENV["TEST"]
+      bot.json :post, "/api/read_message", {id: msg["data"]["name"]} unless ENV["TEST"]
       puts "dry-run #{id}" if ENV["TEST"]
     else
       next logger.debug "bad subject: #{msg["data"]["subject"]}"
