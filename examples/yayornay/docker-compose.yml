@@ -1,6 +1,6 @@
 version: "3.2"
 services:
-  bot:
+  main:
     container_name: yayornay
     image: ruby:2.3-alpine
     working_dir: /usr/src/app
@@ -9,12 +9,12 @@ services:
       - type: bind
         source: ./main.rb
         target: /usr/src/app/main.rb
-      - type: bind
-        source: ./Gemfile
-        target: /usr/src/app/Gemfile
+        read_only: true
       - type: bind
         source: ./Gemfile.lock
         target: /usr/src/app/Gemfile.lock
+        read_only: true
       - type: bind
         source: ./secrets.yaml
         target: /usr/src/app/secrets.yaml
+        read_only: true

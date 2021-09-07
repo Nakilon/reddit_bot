@@ -1,26 +1,27 @@
-version: "3"
+version: "3.2"
 services:
-  bot:
+  main:
     container_name: cptflairbot3
     image: ruby:2.3-alpine
     working_dir: /usr/src/app
     command: sh -c "gem update bundler && apk add git && bundle install && apk add libc6-compat && bundle exec ruby main.rb"
+    environment:
+      - LOGGING_KEYFILE=key.json
+      - TEST
     volumes:
       - type: bind
         source: ./main.rb
         target: /usr/src/app/main.rb
-      - type: bind
-        source: ./Gemfile
-        target: /usr/src/app/Gemfile
+        read_only: true
       - type: bind
         source: ./Gemfile.lock
         target: /usr/src/app/Gemfile.lock
+        read_only: true
       - type: bind
         source: ./secrets.yaml
         target: /usr/src/app/secrets.yaml
+        read_only: true
       - type: bind
-        source: ${SECRET_errors_writer_and_logging_writer}
-        target: /usr/src/app/keyfile.json
-    environment:
-      - LOGGING_KEYFILE=keyfile.json
-      - TEST
+        source: ${SECRET_key_path}
+        target: /usr/src/app/key.json
+        read_only: true
