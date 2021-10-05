@@ -1,12 +1,6 @@
-STDOUT.sync = true
+STDOUT.sync = true  # why? because of docker?
+
 require "pp"
-
-if Gem.loaded_specs.include? "nethttputils"
-  require "nethttputils"
-else
-  require_relative "net_http_utils"
-end
-
+require "nethttputils"  # do we still need it?
 require "reddit_bot"
-
 require "yaml"

@@ -285,6 +285,7 @@ module RedditBot
 
     require "cgi"
     def self.tweet2titleNtext tweet
+      pp tweet if ENV["TEST"]
       text = ""
       contains_media = false
       up = ->s{ s.split.map{ |w| "^#{w}" }.join " " }
