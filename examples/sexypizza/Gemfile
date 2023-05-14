@@ -1,3 +1,2 @@
 source "https://rubygems.org"
-
-gem "reddit_bot", "~>1.9.0"
+gem "reddit_bot", "~>1.11.0"

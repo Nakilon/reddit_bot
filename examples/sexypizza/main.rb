@@ -1,13 +1,11 @@
-require "pp"
-
 require "reddit_bot"
 require "yaml"
 
-BOT = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
+bot = RedditBot::Bot.new YAML.load(File.read "secrets.yaml"), ignore_captcha: true
 SUBREDDIT = "sexypizza"
 
 loop do
-  flairs = BOT.json(:get, "/r/#{SUBREDDIT}/api/flairlist", {limit: 1000})["users"]
+  flairs = bot.json(:get, "/r/#{SUBREDDIT}/api/flairlist", {limit: 1000})["users"]
 
   text = \
     "**Vote with your flair!**\n\n" +
@@ -19,10 +17,9 @@ loop do
       map{ |flair, group| "#{flair} | #{group.size}" }.
       join("\n")
 
-  if text != BOT.json(:get, "/r/#{SUBREDDIT}/wiki/toppings")["data"]["content_md"]
+  if text != bot.json(:get, "/r/#{SUBREDDIT}/wiki/toppings")["data"]["content_md"]
     puts "editing wiki page '/r/#{SUBREDDIT}/wiki/toppings'"
-    pp text
-    p BOT.json :post,
+    bot.json :post,
       "/r/#{SUBREDDIT}/api/wiki/edit",
       page: "toppings",
       content: text
