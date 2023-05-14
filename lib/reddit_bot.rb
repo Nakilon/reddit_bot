@@ -1,58 +1,48 @@
-STDOUT.sync = true
-
-require "openssl"
 require "json"
 require "yaml"
 
 require "nethttputils"
 
 module RedditBot
-  require "logger"
   class << self
-    attr_accessor :logger
+    attr_reader :logger
   end
-  self.logger = Logger.new STDOUT
+  require "logger"
+  @logger = Logger.new STDOUT
+  @logger.level = Logger::WARN
+  @logger.level = ENV["LOGLEVEL_#{name}"].to_sym if ENV.include? "LOGLEVEL_#{name}"
 
   class Bot
     attr_reader :name
 
     def initialize secrets, **kwargs
       @name, @secret_password, @user_agent, *@secret_auth = secrets.values_at *%i{ login password user_agent client_id client_secret }
-      # @ignore_captcha = true
-      # @ignore_captcha = kwargs[:ignore_captcha] if kwargs.has_key?(:ignore_captcha)
       @subreddit = kwargs[:subreddit]
     end
 
     def json mtd, path, _form = []
-      form = Hash[_form]
+      form = _form.to_h
       response = begin
         JSON.load resp_with_token mtd, path, form.merge({api_type: "json"})
       rescue JSON::ParserError
         $!.message.slice! 1000..-1
         raise
       end
-      if response.is_a?(Hash) && response["json"] && # for example, flairlist.json and {"error": 403} do not have it
-         !response["json"]["errors"].empty?
+      return response unless response.is_a?(Hash) && response["json"] && !response["json"]["errors"].empty?
+      # for example, flairlist.json and {"error": 403} do not have it
         Module.nesting[1].logger.error "ERROR OCCURED on #{[mtd, path]}"
         fail "unknown how to handle multiple errors" if 1 < response["json"]["errors"].size
         Module.nesting[1].logger.error "error: #{response["json"]["errors"]}"
         error, description = response["json"]["errors"].first
-          case error
+      case error
           when "ALREADY_SUB" ; Module.nesting[1].logger.warn "was rejected by moderator if you didn't see in dups"
-          # when "BAD_CAPTCHA" ; update_captcha
-          #   json mtd, path, form.merger( {
-          #     iden: @iden_and_captcha[0],
-          #     captcha: @iden_and_captcha[1],
-          #   } ) unless @ignore_captcha
           when "RATELIMIT"
             fail error unless description[/\Ayou are doing that too much\. try again in (\d) minutes\.\z/]
             Module.nesting[1].logger.info "retrying in #{$1.to_i + 1} minutes"
             sleep ($1.to_i + 1) * 60
             return json mtd, path, _form
           else ; fail error
-          end
       end
-      response
     end
 
     # # [subreddit] +String+ subreddit name without "/r" prefix

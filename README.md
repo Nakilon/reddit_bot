@@ -1,22 +1,14 @@
 # RedditBot
 
-[![Join the chat at https://gitter.im/Nakilon/reddit_bot](https://badges.gitter.im/Nakilon/reddit_bot.svg)](https://gitter.im/Nakilon/reddit_bot)
 [![Gem Version](https://badge.fury.io/rb/reddit_bot.svg)](http://badge.fury.io/rb/reddit_bot)
-
-> ⚠️ currently it is recommended to use at least v1.7.6 ⚠️
 
 ### What
 
 This library provides an easy way to run bots and scripts that use Reddit API.  
 I ([/u/nakilon](https://www.reddit.com/u/nakilon)) currently run near 10 bots with it.
 
-### Why
-
-Python (and so PRAW) sucks.
-
 ### Examples
 
-I'm not usually publish every program (since there are thousand of them and adequate programmer knows that publishing everything is like throwing trash on street) but I'll add bots here so you could see how to use the library.  
 The [examples folder](examples) includes:
 
 * **sexypizza** -- bot that updates wiki page with current flairs statistics
@@ -71,15 +63,15 @@ helloworld.rb:
 
 ```ruby
 require "reddit_bot"
+p RedditBot::Bot.new(YAML.load File.read "secrets.yaml").json(:get, "/api/v1/me")
 ```
 
-You obviously can't run these examples as is, because they use local configs that are not in git repo, like `secrets.yaml` file for Reddit authorization of the following format:
+The Reddit authorization YAML file format:
 
     :client_id: Kb9.......6wBw
     :client_secret: Fqo.....................AFI
     :password: mybotpassword
     :login: MyBotUsername
-    # :user_agent: optional_custom_useragent_to_bypass_reddit_spam_protection
 
 To change log level:
 
@@ -90,14 +82,3 @@ RedditBot.logger.level = Logger::ERROR
 To update the gem version in Gemfile.lock when using Gemfile like this: `gem "reddit_bot", "~>1.1.0"`, do the:
 
     $ bundle update reddit_bot
-
-### Contributing and License
-
-Bug reports and pull requests are welcome.  
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-### TODO
-
-* write more usage instructions here
-* manual on how to create bots with Reddit web interface and run via bash console
-* about NetHTTPUtils dependency; and that get_response returns String code not Integer like request_data

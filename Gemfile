@@ -1,5 +1,7 @@
 source "https://rubygems.org"
-
 gemspec
-
-# git: "git@github.com:Nakilon/nethttputils.git", tag: "v0.0.1.4"
+gem "nethttputils", "~>0.4.4.0"
+gem "minitest", github: "nakilon/minitest", branch: "patch"
+gem "minitest-around"
+gem "nakischema", "~>0.2.1"
+gem "webmockdump"
